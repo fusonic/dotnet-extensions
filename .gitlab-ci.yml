@@ -1,0 +1,22 @@
+image: mcr.microsoft.com/dotnet/core/sdk:2.2
+stages:
+    - build
+    - publish
+
+build:
+    stage: build
+    script: 
+        - dotnet pack -c Release ./src/Hangfire/src
+        - dotnet pack -c Release ./src/Abstractions/src
+    artifacts:
+        when: on_success
+        paths:
+            - ./src/*/src/bin/Release/*.nupkg
+            - ./src/*/src/bin/Release/*.snupkg
+
+publish:
+    stage: publish
+    script:
+        - dotnet nuget push src/Abstractions/src/bin/Release/Fusonic.Extensions.Abstractions.*.nupkg -k $Nuget_Key -s https://api.nuget.org/v3/index.json
+        - dotnet nuget push src/Hangfire/src/bin/Release/Fusonic.Extensions.Hangfire.*.nupkg -k $Nuget_Key -s https://api.nuget.org/v3/index.json
+    when: manual
