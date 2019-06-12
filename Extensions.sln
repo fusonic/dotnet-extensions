@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abstractions", "src\Abstrac
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hangfire", "src\Hangfire\src\Hangfire.csproj", "{199B157A-F20F-4096-9A9D-1A2214070818}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hangfire.Tests", "src\Hangfire\test\Hangfire.Tests\Hangfire.Tests.csproj", "{1E49506C-6A7C-4E98-A0E8-0169F941E2BD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hangfire.Tests", "src\Hangfire\test\Hangfire.Tests\Hangfire.Tests.csproj", "{1E49506C-6A7C-4E98-A0E8-0169F941E2BD}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{95D2383B-80C5-46AA-9190-826A0377A156}"
 EndProject
@@ -16,6 +16,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.gitlab-ci.yml = .gitlab-ci.yml
 		README.md = README.md
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspnetCore.Http.Tests", "src\AspNetCore.Http\test\AspnetCore.Http.Tests\AspnetCore.Http.Tests.csproj", "{4443416D-35A0-48B0-AA92-785FECFDE582}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetCore.Http", "src\AspNetCore.Http\src\AspNetCore.Http.csproj", "{D143C220-7C80-4331-99EF-95D65E5AA448}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,12 +39,21 @@ Global
 		{1E49506C-6A7C-4E98-A0E8-0169F941E2BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1E49506C-6A7C-4E98-A0E8-0169F941E2BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1E49506C-6A7C-4E98-A0E8-0169F941E2BD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4443416D-35A0-48B0-AA92-785FECFDE582}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4443416D-35A0-48B0-AA92-785FECFDE582}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4443416D-35A0-48B0-AA92-785FECFDE582}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4443416D-35A0-48B0-AA92-785FECFDE582}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D143C220-7C80-4331-99EF-95D65E5AA448}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D143C220-7C80-4331-99EF-95D65E5AA448}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D143C220-7C80-4331-99EF-95D65E5AA448}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D143C220-7C80-4331-99EF-95D65E5AA448}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{1E49506C-6A7C-4E98-A0E8-0169F941E2BD} = {95D2383B-80C5-46AA-9190-826A0377A156}
+		{4443416D-35A0-48B0-AA92-785FECFDE582} = {95D2383B-80C5-46AA-9190-826A0377A156}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DCAD7035-5EC8-4B6E-82B5-769C5A4892EA}

@@ -14,6 +14,7 @@ build:
     script: 
         - dotnet pack -c Release ./src/Hangfire/src
         - dotnet pack -c Release ./src/Abstractions/src
+        - dotnet pack -c Release ./src/AspNetCore.Http/src
     artifacts:
         when: on_success
         paths:
@@ -25,4 +26,7 @@ publish:
     script:
         - dotnet nuget push src/Abstractions/src/bin/Release/Fusonic.Extensions.Abstractions.*.nupkg -k $Nuget_Key -s https://api.nuget.org/v3/index.json
         - dotnet nuget push src/Hangfire/src/bin/Release/Fusonic.Extensions.Hangfire.*.nupkg -k $Nuget_Key -s https://api.nuget.org/v3/index.json
+        - dotnet nuget push src/AspnetCore.Http/src/bin/Release/AspnetCore.Http.*.nupkg -k $Nuget_Key -s https://api.nuget.org/v3/index.json
     when: manual
+    only: 
+        - master
