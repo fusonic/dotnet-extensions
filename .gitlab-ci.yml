@@ -1,7 +1,13 @@
 image: mcr.microsoft.com/dotnet/core/sdk:2.2
 stages:
+    - test
     - build
     - publish
+
+test:
+    stage: test:
+    script:
+        - dotnet test Extensions.sln
 
 build:
     stage: build
