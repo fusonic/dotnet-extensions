@@ -5,7 +5,7 @@ stages:
     - publish
 
 test:
-    stage: test:
+    stage: test
     script:
         - dotnet test Extensions.sln
 
