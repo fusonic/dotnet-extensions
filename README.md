@@ -4,6 +4,8 @@
 
 [![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.Hangfire.svg?label=Fusonic.Extensions.Hangfire&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.Hangfire/)
 
+[![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.AspnetCore.Http.svg?label=Fusonic.Extensions.AspnetCore.Http&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.AspnetCore.Http/)
+
 The goal of **Fusonic Extensions** is to provide .NET application developers with reusable librariers that promotes best practice to steer developers towards the pit of success.
 Only well tested and proven code lands in Fusonic Extensions.
 
