@@ -24,9 +24,9 @@ build:
 publish:
     stage: publish
     script:
-        - dotnet nuget push src/Abstractions/src/bin/Release/Fusonic.Extensions.Abstractions.*.nupkg -k $Nuget_Key -s https://api.nuget.org/v3/index.json
-        - dotnet nuget push src/Hangfire/src/bin/Release/Fusonic.Extensions.Hangfire.*.nupkg -k $Nuget_Key -s https://api.nuget.org/v3/index.json
-        - dotnet nuget push src/AspnetCore.Http/src/bin/Release/AspnetCore.Http.*.nupkg -k $Nuget_Key -s https://api.nuget.org/v3/index.json
+        - dotnet nuget push src/Abstractions/src/bin/Release/Fusonic.Extensions.Abstractions.*.nupkg -k $Nuget_Key -s https://api.nuget.org/v3/index.json || true
+        - dotnet nuget push src/Hangfire/src/bin/Release/Fusonic.Extensions.Hangfire.*.nupkg -k $Nuget_Key -s https://api.nuget.org/v3/index.json || true
+        - dotnet nuget push src/AspnetCore.Http/src/bin/Release/AspnetCore.Http.*.nupkg -k $Nuget_Key -s https://api.nuget.org/v3/index.json || true
     when: manual
     only: 
         - master
