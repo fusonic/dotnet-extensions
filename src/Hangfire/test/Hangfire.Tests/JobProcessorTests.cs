@@ -1,6 +1,6 @@
 using System.Globalization;
 using System.Threading.Tasks;
-using Fusonic.Extensions.Hangfire.Internal;
+using Fusonic.Extensions.Hangfire;
 using SimpleInjector;
 using Xunit;
 

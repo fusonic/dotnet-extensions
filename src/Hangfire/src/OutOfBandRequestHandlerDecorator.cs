@@ -2,13 +2,14 @@
 using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
-using Fusonic.Extensions.Hangfire.Internal;
 using Hangfire;
 using MediatR;
 
 namespace Fusonic.Extensions.Hangfire
 {
-    public class OutOfBandRequestHandlerDecorator<TRequest> : IRequestHandler<TRequest, Unit> where TRequest : IRequest<Unit>
+    public class OutOfBandRequestHandlerDecorator<TRequest, TProcessor> : IRequestHandler<TRequest, Unit>
+        where TRequest : IRequest<Unit>
+        where TProcessor : class, IJobProcessor
     {
         private readonly IRequestHandler<TRequest, Unit> inner;
         private readonly IBackgroundJobClient client;
@@ -35,7 +36,7 @@ namespace Fusonic.Extensions.Hangfire
                 UiCulture = CultureInfo.CurrentUICulture
             };
 
-            client.Enqueue<JobProcessor>(c => c.ProcessAsync(job));
+            client.Enqueue<TProcessor>(c => c.ProcessAsync(job));
         }
     }
 }

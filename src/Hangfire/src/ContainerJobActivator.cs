@@ -3,7 +3,7 @@ using Hangfire;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;
 
-namespace Fusonic.Extensions.Hangfire.Internal
+namespace Fusonic.Extensions.Hangfire
 {
     public sealed class ContainerJobActivator : JobActivator
     {

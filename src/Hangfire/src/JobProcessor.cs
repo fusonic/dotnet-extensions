@@ -5,16 +5,16 @@ using System.Threading.Tasks;
 using MediatR;
 using SimpleInjector;
 
-namespace Fusonic.Extensions.Hangfire.Internal
+namespace Fusonic.Extensions.Hangfire
 {
-    public class JobProcessor
+    public class JobProcessor : IJobProcessor
     {
         private readonly Container container;
 
         public JobProcessor(Container container)
             => this.container = container;
 
-        public Task ProcessAsync(HangfireJob job)
+        public virtual Task ProcessAsync(HangfireJob job)
         {
             if (job.Culture != null)
                 CultureInfo.CurrentCulture = job.Culture;

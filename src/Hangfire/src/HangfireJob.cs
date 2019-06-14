@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 
-namespace Fusonic.Extensions.Hangfire.Internal
+namespace Fusonic.Extensions.Hangfire
 {
     public class HangfireJob
     {
