@@ -1,10 +1,6 @@
-using System;
 using System.Globalization;
-using System.Threading;
 using System.Threading.Tasks;
-using Fusonic.Extensions.Abstractions;
 using Fusonic.Extensions.Hangfire.Internal;
-using MediatR;
 using SimpleInjector;
 using Xunit;
 
@@ -12,12 +8,7 @@ namespace Hangfire.Tests
 {
     public class HangfireJobProcessorTests
     {
-        public HangfireJobProcessorTests()
-        {
-            Container = new Container();
-        }
-
-        private Container Container { get; }
+        private Container Container { get; } = new Container();
 
         protected T GetInstance<T>()
             where T : class
@@ -98,58 +89,6 @@ namespace Hangfire.Tests
                 Message = new CommandWithCulture(),
                 HandlerType = typeof(CommandHandlerWithCulture).AssemblyQualifiedName
             });
-        }
-
-        public class Command : ICommand { }
-
-        public class CommandHandler : IRequestHandler<Command>
-        {
-            public Task<Unit> Handle(Command request, CancellationToken cancellationToken)
-                => Unit.Task;
-        }
-
-        public class CommandWithCulture : ICommand { }
-
-        public class CommandHandlerWithCulture : IRequestHandler<CommandWithCulture>
-        {
-            private readonly Action callback;
-            
-            public CommandHandlerWithCulture(Action callback)
-                => this.callback = callback;
-
-            public Task<Unit> Handle(CommandWithCulture request, CancellationToken cancellationToken)
-            {
-                callback();
-                return Unit.Task;
-            }
-        }
-
-        public class Notification : INotification { }
-
-        public class NotificationHandler : INotificationHandler<Notification>
-        {
-            public Task Handle(Notification notification, CancellationToken cancellationToken)
-                => Task.CompletedTask;
-        }
-
-        public class SyncNotificationHandler : NotificationHandler<Notification>
-        {
-            protected override void Handle(Notification notification) { }
-        }
-
-        public class Request : IRequest { }
-
-        public class RequestHandler : AsyncRequestHandler<Request>
-        {
-            protected override Task Handle(Request request, CancellationToken cancellationToken)
-                => Task.CompletedTask;
-        }
-
-        public class SyncRequest : IRequest { }
-
-        public class SyncRequestHandler : RequestHandler<SyncRequest>
-        {
-            protected override void Handle(SyncRequest request) { }
         }
     }
 }

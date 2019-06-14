@@ -29,10 +29,10 @@ namespace Fusonic.Extensions.Hangfire.Internal
             return InvokeAsync((dynamic)handler, (dynamic)message);
         }
 
-        protected virtual Task InvokeAsync<TRequest, Unit>(IRequestHandler<TRequest, Unit> handler, TRequest request) where TRequest : IRequest<Unit>
+        private Task InvokeAsync<TRequest, Unit>(IRequestHandler<TRequest, Unit> handler, TRequest request) where TRequest : IRequest<Unit>
             => handler.Handle(request, CancellationToken.None);
 
-        protected virtual Task InvokeAsync<TRequest>(INotificationHandler<TRequest> handler, TRequest request) where TRequest : INotification
+        private Task InvokeAsync<TRequest>(INotificationHandler<TRequest> handler, TRequest request) where TRequest : INotification
             => handler.Handle(request, CancellationToken.None);
     }
 }

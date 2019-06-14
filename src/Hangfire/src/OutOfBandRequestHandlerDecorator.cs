@@ -8,7 +8,7 @@ using MediatR;
 
 namespace Fusonic.Extensions.Hangfire
 {
-    public class OutOfBandRequestHandlerDecorator<TRequest> : IRequestHandler<TRequest, Unit> where TRequest : IRequest
+    public class OutOfBandRequestHandlerDecorator<TRequest> : IRequestHandler<TRequest, Unit> where TRequest : IRequest<Unit>
     {
         private readonly IRequestHandler<TRequest, Unit> inner;
         private readonly IBackgroundJobClient client;
