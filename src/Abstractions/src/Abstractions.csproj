@@ -8,7 +8,7 @@
     <PackageProjectUrl>https://gitlab.com/fusonic/devops/dotnet/extensions</PackageProjectUrl>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <Version>1.0.2</Version>
+    <Version>1.0.3</Version>
     <Company>Fusonic GmbH</Company>
     <Authors>Fusonic</Authors>
   </PropertyGroup>
