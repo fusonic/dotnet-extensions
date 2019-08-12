@@ -1,10 +1,10 @@
-﻿using Fusonic.Extensions.Hangfire;
+﻿using Hangfire;
 using MediatR;
 using NSubstitute;
 using SimpleInjector;
 using Xunit;
 
-namespace Hangfire.Tests
+namespace Fusonic.Extensions.Hangfire.Tests
 {
     public class ContainerExtensionsTests
     {

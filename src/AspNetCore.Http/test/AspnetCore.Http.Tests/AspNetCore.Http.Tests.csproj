@@ -5,9 +5,9 @@
 
     <IsPackable>false</IsPackable>
 
-    <AssemblyName>Fusonic.Extensions.AspnetCore.Http.Tests</AssemblyName>
+    <AssemblyName>Fusonic.Extensions.AspNetCore.Http.Tests</AssemblyName>
 
-    <RootNamespace>Fusonic.Extensions.AspnetCore.Http.Tests</RootNamespace>
+    <RootNamespace>Fusonic.Extensions.AspNetCore.Http.Tests</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

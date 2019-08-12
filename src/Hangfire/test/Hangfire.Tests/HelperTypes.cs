@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Fusonic.Extensions.Abstractions;
 using MediatR;
 
-namespace Hangfire.Tests
+namespace Fusonic.Extensions.Hangfire.Tests
 {
     public class OutOfBandCommand : ICommand { }
 

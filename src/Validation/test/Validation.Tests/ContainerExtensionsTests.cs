@@ -1,0 +1,50 @@
+﻿using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using SimpleInjector;
+using Xunit;
+
+namespace Fusonic.Extensions.Validation.Tests
+{
+    public class ContainerExtensionsTests
+    {
+        [Fact]
+        public void RegisteresAllValidators()
+        {
+            var container = new Container();
+            container.RegisterValidators(new []{typeof(TestValidator).Assembly});
+            container.Verify();
+
+            var validators = container.GetAllInstances<IValidator<TestObject>>();
+            Assert.Equal(3, validators.Count());
+        }
+
+        [Fact]
+        public void RegistersInRightOrder()
+        {
+            var container = new Container();
+            container.RegisterValidators(new[] { typeof(TestValidator).Assembly });
+            container.Verify();
+
+            var validators = container.GetAllInstances<IValidator<TestObject>>();
+            Assert.IsType<DataAnnotationsValidator<TestObject>>(validators.First());
+        }
+    }
+
+    public class TestValidator : IValidator<TestObject>
+    {
+        public Task<ValidationResult> ValidateAsync(TestObject instance, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class TestGenericValidator<T> : IValidator<T>
+    {
+        public Task<ValidationResult> ValidateAsync(T instance, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}

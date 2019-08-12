@@ -4,6 +4,10 @@
     <TargetFramework>netcoreapp2.2</TargetFramework>
 
     <IsPackable>false</IsPackable>
+
+    <AssemblyName>Fusonic.Extensions.Hangfire.Tests</AssemblyName>
+
+    <RootNamespace>Fusonic.Extensions.Hangfire.Tests</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Net.Http.Headers;
 using Xunit;
 
-namespace Fusonic.Extensions.AspnetCore.Http.Tests
+namespace Fusonic.Extensions.AspNetCore.Http.Tests
 {
     public class CacheHeaderMiddlewareTests
     {

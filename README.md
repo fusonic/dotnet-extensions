@@ -23,6 +23,12 @@ Provides Hangfire extensions, especially suited for CQRS developement. (Out of b
 [![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.AspnetCore.Http.svg?label=Fusonic.Extensions.AspnetCore.Http&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.AspnetCore.Http/) 
 Provides aspnet core http extensions (Middelwares, Utilities ...)
 
+[![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.Validation.svg?label=Fusonic.Extensions.Validation&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.Validation/) 
+Provides validation pipeline and recursive DataAnnotations annotation
+
+[![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.Validation.Mvc.svg?label=Fusonic.Extensions.Validation.Mvc&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.Validation.Mvc/) 
+Provides an integration for validation to aspnetcore mvc
+
 Important information
 ===============
 

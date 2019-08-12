@@ -1,10 +1,9 @@
 using System.Globalization;
 using System.Threading.Tasks;
-using Fusonic.Extensions.Hangfire;
 using SimpleInjector;
 using Xunit;
 
-namespace Hangfire.Tests
+namespace Fusonic.Extensions.Hangfire.Tests
 {
     public class HangfireJobProcessorTests
     {
