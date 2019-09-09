@@ -71,6 +71,9 @@ namespace Fusonic.Extensions.Validation
 
         private static void ValidateCollection(ICollection collection, string path, ModelValidationResult result)
         {
+            if (collection is null)
+                return;
+
             var i = 0;
             foreach (var item in collection)
             {

@@ -30,6 +30,18 @@ namespace Fusonic.Extensions.Validation.Tests
             var validators = container.GetAllInstances<IValidator<TestObject>>();
             Assert.IsType<DataAnnotationsValidator<TestObject>>(validators.First());
         }
+
+        [Fact]
+        public void RegisteresWithOverridingEnabled()
+        {
+            var container = new Container();
+            container.Options.AllowOverridingRegistrations = true;
+            container.RegisterValidators(new[] { typeof(TestValidator).Assembly });
+            container.Verify();
+
+            var validators = container.GetAllInstances<IValidator<TestObject>>();
+            Assert.Equal(3, validators.Count());
+        }
     }
 
     public class TestValidator : IValidator<TestObject>

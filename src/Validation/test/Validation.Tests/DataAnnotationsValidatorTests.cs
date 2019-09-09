@@ -98,6 +98,18 @@ namespace Fusonic.Extensions.Validation.Tests
         }
 
         [Fact]
+        public void ValidatesNullCollections()
+        {
+            var model = new TestObjectWithCollection
+            {
+                Test = null
+            };
+
+            var result = DataAnnotationsValidator.Validate(model);
+            Assert.True(result.IsValid);
+        }
+
+        [Fact]
         public void PreventsRecursion()
         {
             var model = new RecursiveTestObject
