@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using SimpleInjector;
@@ -35,16 +34,12 @@ namespace Fusonic.Extensions.Validation.Tests
     public class TestValidator : IValidator<TestObject>
     {
         public Task<ValidationResult> ValidateAsync(TestObject instance, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
+            => Task.FromResult(ValidationResult.Success());
     }
 
-    public class TestGenericValidator<T> : IValidator<T>
+    public class TestGenericValidator<T> : IValidator<T> where T : notnull
     {
         public Task<ValidationResult> ValidateAsync(T instance, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
+            => Task.FromResult(ValidationResult.Success());
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using System;
+using System.Security.Claims;
 using Fusonic.Extensions.Abstractions;
 using Microsoft.AspNetCore.Http;
 
@@ -11,6 +12,7 @@ namespace Fusonic.Extensions.AspNetCore.Http
         public HttpContextUserAccessor(IHttpContextAccessor contextAccessor)
             => this.contextAccessor = contextAccessor;
 
-        public ClaimsPrincipal User => contextAccessor.HttpContext.User;
+        public ClaimsPrincipal User
+            => (contextAccessor.HttpContext ?? throw new InvalidOperationException("No HttpContext available.")).User;
     }
 }

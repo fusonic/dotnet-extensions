@@ -10,7 +10,7 @@ namespace Fusonic.Extensions.Validation.Mvc
         {
             if (context.Result == null && !context.ModelState.IsValid)
             {
-                var ex = (ObjectValidationException)context.ModelState[DataAnnotationsModelValidator.ValidationResultKey]?.Errors.SingleOrDefault()?.Exception;
+                var ex = (ObjectValidationException?)context.ModelState[DataAnnotationsModelValidator.ValidationResultKey]?.Errors.SingleOrDefault()?.Exception;
 
                 if (ex is null)
                     context.Result = new BadRequestResult();
@@ -20,7 +20,6 @@ namespace Fusonic.Extensions.Validation.Mvc
         }
 
         public void OnActionExecuted(ActionExecutedContext context)
-        {
-        }
+        { }
     }
 }

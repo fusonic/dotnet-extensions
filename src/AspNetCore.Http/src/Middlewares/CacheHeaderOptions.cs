@@ -10,7 +10,7 @@ namespace Fusonic.Extensions.AspNetCore.Http.Middlewares
         public Dictionary<PathString, CacheControlHeaderValue> Routes { get; } = new Dictionary<PathString, CacheControlHeaderValue>();
 
         /// <summary> The default header that will be set if no routes match /summary>
-        public CacheControlHeaderValue DefaultHeader { get; set; }
+        public CacheControlHeaderValue? DefaultHeader { get; set; }
 
         /// <summary>Configures <paramref name="value"/> for the given <paramref name="routes"/></summary>.
         public void ConfigureValueForRoutes(CacheControlHeaderValue value, IEnumerable<string> routes)

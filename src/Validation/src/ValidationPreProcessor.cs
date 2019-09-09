@@ -6,6 +6,7 @@ using MediatR.Pipeline;
 namespace Fusonic.Extensions.Validation
 {
     internal class ValidationPreProcessor<TRequest> : IRequestPreProcessor<TRequest>
+        where TRequest : notnull
     {
         private readonly IEnumerable<IValidator<TRequest>> validators;
 

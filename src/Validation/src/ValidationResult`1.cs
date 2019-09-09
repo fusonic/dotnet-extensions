@@ -2,7 +2,7 @@
 
 namespace Fusonic.Extensions.Validation
 {
-    public class ValidationResult<TError> : ValidationResult
+    public class ValidationResult<TError> : ValidationResult where TError : notnull
     {
         private readonly List<TError> errors = new List<TError>();
 

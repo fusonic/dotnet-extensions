@@ -8,7 +8,7 @@ namespace Fusonic.Extensions.Hangfire
 {
     public static class ContainerExtensions
     {
-        public static void RegisterOutOfBandDecorators(this Container container, Action<OutOfBandOptions> configure = null)
+        public static void RegisterOutOfBandDecorators(this Container container, Action<OutOfBandOptions>? configure = null)
         {
             var options = new OutOfBandOptions();
             configure?.Invoke(options);

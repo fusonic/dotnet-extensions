@@ -8,6 +8,8 @@ namespace Fusonic.Extensions.Validation
         public abstract bool IsValid { get; }
 
         public static ValidationResult Success() => new ValidationResult<object>();
-        public static ValidationResult Error<TError>(TError error) => new ValidationResult<TError>(error);
+
+        public static ValidationResult<TError> Error<TError>(TError error) where TError : notnull
+            => new ValidationResult<TError>(error);
     }
 }

@@ -26,7 +26,7 @@ namespace Fusonic.Extensions.Hangfire
                 => scope = AsyncScopedLifestyle.BeginScope(container);
 
             public override object Resolve(Type type)
-                => scope.Container.GetInstance(type);
+                => scope.Container!.GetInstance(type);
 
             public override void DisposeScope()
             {

@@ -79,7 +79,7 @@ namespace Fusonic.Extensions.Validation.Tests
                         Test = "valid"
                     },
                     new TestItem()
-                } 
+                }
             };
 
             var result = DataAnnotationsValidator.Validate(model);

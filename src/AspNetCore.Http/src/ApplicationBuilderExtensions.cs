@@ -6,7 +6,7 @@ namespace Fusonic.Extensions.AspNetCore.Http
 {
     public static class ApplicationBuilderExtensions
     {
-        public static IApplicationBuilder UseCacheHeaders(this IApplicationBuilder app, Action<CacheHeaderOptions> configure = null)
+        public static IApplicationBuilder UseCacheHeaders(this IApplicationBuilder app, Action<CacheHeaderOptions>? configure = null)
         {
             var options = new CacheHeaderOptions();
             configure?.Invoke(options);

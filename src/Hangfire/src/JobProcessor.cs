@@ -23,7 +23,7 @@ namespace Fusonic.Extensions.Hangfire
                 CultureInfo.CurrentUICulture = job.UiCulture;
 
             var handlerType = Type.GetType(job.HandlerType, true);
-            var handler = container.GetInstance(handlerType);
+            var handler = container.GetInstance(handlerType!);
             var message = job.Message;
 
             return InvokeAsync((dynamic)handler, (dynamic)message);

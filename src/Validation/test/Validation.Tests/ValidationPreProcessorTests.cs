@@ -51,7 +51,7 @@ namespace Fusonic.Extensions.Validation.Tests
         {
             await Assert.ThrowsAsync<ObjectValidationException>(() => mediator.Send(new TestCommand()));
 
-            await handler.DidNotReceiveWithAnyArgs().Handle(null, CancellationToken.None);
+            await handler.DidNotReceiveWithAnyArgs().Handle(Arg.Any<TestCommand>(), CancellationToken.None);
         }
 
         [Fact]
@@ -59,33 +59,33 @@ namespace Fusonic.Extensions.Validation.Tests
         {
             await Assert.ThrowsAsync<ObjectValidationException>(() => mediator.Send(new TestCommand()));
 
-            await validator.DidNotReceiveWithAnyArgs().ValidateAsync(null, CancellationToken.None);
+            await validator.DidNotReceiveWithAnyArgs().ValidateAsync(Arg.Any<TestCommand>(), CancellationToken.None);
         }
 
         [Fact]
         public async Task CallsValidatorWhenObjectValidationPasses()
         {
-            validator.ValidateAsync(null, CancellationToken.None).ReturnsForAnyArgs(ValidationResult.Error(0));
+            validator.ValidateAsync(Arg.Any<TestCommand>(), CancellationToken.None).ReturnsForAnyArgs(ValidationResult.Error(0));
 
             await Assert.ThrowsAsync<ObjectValidationException>(() => mediator.Send(new TestCommand { Test = "valid" }));
 
-            await validator.ReceivedWithAnyArgs(1).ValidateAsync(null, CancellationToken.None);
+            await validator.ReceivedWithAnyArgs(1).ValidateAsync(Arg.Any<TestCommand>(), CancellationToken.None);
         }
 
         [Fact]
         public async Task CallsHandlerWhenAllValidationsPass()
         {
-            validator.ValidateAsync(null, CancellationToken.None).ReturnsForAnyArgs(ValidationResult.Success());
+            validator.ValidateAsync(Arg.Any<TestCommand>(), CancellationToken.None).ReturnsForAnyArgs(ValidationResult.Success());
 
             await mediator.Send(new TestCommand { Test = "valid" });
 
-            await handler.ReceivedWithAnyArgs(1).Handle(null, CancellationToken.None);
+            await handler.ReceivedWithAnyArgs(1).Handle(Arg.Any<TestCommand>(), CancellationToken.None);
         }
     }
 
     public class TestCommand : IRequest
     {
         [Required]
-        public string Test { get; set; }
+        public string? Test { get; set; }
     }
 }

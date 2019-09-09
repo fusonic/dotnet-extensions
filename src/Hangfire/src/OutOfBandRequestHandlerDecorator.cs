@@ -28,10 +28,8 @@ namespace Fusonic.Extensions.Hangfire
 
         private void EnqueueHangfireJob(Type handler, object command)
         {
-            var job = new HangfireJob
+            var job = new HangfireJob(command, handler.AssemblyQualifiedName!)
             {
-                Message = command,
-                HandlerType = handler.AssemblyQualifiedName,
                 Culture = CultureInfo.CurrentCulture,
                 UiCulture = CultureInfo.CurrentUICulture
             };
