@@ -29,4 +29,5 @@ publish:
         - dotnet nuget push src/Validation.Mvc/src/bin/Release/*.nupkg -k $Nuget_Key -s https://api.nuget.org/v3/index.json || true
     when: manual
     only: 
+        - /^release\/.*$/
         - master
