@@ -98,6 +98,18 @@ namespace Fusonic.Extensions.Validation.Tests
         }
 
         [Fact]
+        public void ValidatesNullCollections()
+        {
+            var model = new TestObjectWithCollection
+            {
+                Test = null
+            };
+
+            var result = DataAnnotationsValidator.Validate(model);
+            Assert.True(result.IsValid);
+        }
+
+        [Fact]
         public void PreventsRecursion()
         {
             var model = new RecursiveTestObject
@@ -107,6 +119,16 @@ namespace Fusonic.Extensions.Validation.Tests
 
             var result = DataAnnotationsValidator.Validate(model);
             Assert.False(result.IsValid);
+        }
+
+
+        [Fact]
+        public void ReturnsTrueIfValidatingPrimitive()
+        {
+            var result = DataAnnotationsValidator.Validate("test");
+            Assert.True(result.IsValid);
+            result = DataAnnotationsValidator.Validate(2134);
+            Assert.True(result.IsValid);
         }
     }
 }

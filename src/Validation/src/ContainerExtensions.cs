@@ -16,8 +16,11 @@ namespace Fusonic.Extensions.Validation
                     IncludeGenericTypeDefinitions = true
                 });
 
-            container.Collection.Append(typeof(IValidator<>), typeof(DataAnnotationsValidator<>));
-            container.Collection.Register(typeof(IValidator<>), validators);
+            container.Collection.Register(typeof(IValidator<>), new[] { typeof(DataAnnotationsValidator<>) });
+            foreach (var validator in validators)
+            {
+                container.Collection.Append(typeof(IValidator<>), validator);
+            }
 
             container.Collection.Append(typeof(IRequestPreProcessor<>), typeof(ValidationPreProcessor<>));
         }
