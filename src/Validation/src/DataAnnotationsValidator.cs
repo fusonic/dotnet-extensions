@@ -13,7 +13,7 @@ namespace Fusonic.Extensions.Validation
 
         private static ModelValidationResult ValidateNode(object instance, string path, ModelValidationResult result)
         {
-            if (instance is null)
+            if (instance is null || !IsComplex(instance.GetType()))
                 return result;
 
             foreach (var property in instance.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance))
@@ -33,7 +33,7 @@ namespace Fusonic.Extensions.Validation
                 {
                     ValidateCollection((ICollection)value, propertyPath, result);
                 }
-                else if (IsComplex(property.PropertyType))
+                else
                 {
                     ValidateNode(value, propertyPath, result);
                 }
