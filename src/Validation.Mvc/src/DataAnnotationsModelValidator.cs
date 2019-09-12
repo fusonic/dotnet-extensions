@@ -29,6 +29,13 @@ namespace Fusonic.Extensions.Validation.Mvc
 
                 actionContext.ModelState.AddModelError(ValidationResultKey, new ObjectValidationException(model, result), modelMetadataProvider.GetMetadataForType(model.GetType()));
             }
+
+            // set all unvalidated entries to valid
+            foreach (var (key, entry) in actionContext.ModelState)
+            {
+                if (entry.ValidationState == ModelValidationState.Unvalidated)
+                    entry.ValidationState = ModelValidationState.Valid;
+            }
         }
     }
 }
