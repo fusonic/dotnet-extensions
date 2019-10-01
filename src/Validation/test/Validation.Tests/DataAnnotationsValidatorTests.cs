@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Http;
 using Xunit;
 
 namespace Fusonic.Extensions.Validation.Tests
@@ -119,6 +120,19 @@ namespace Fusonic.Extensions.Validation.Tests
 
             var result = DataAnnotationsValidator.Validate(model);
             Assert.False(result.IsValid);
+        }
+
+        [Fact]
+        // Header dictionary implements IEnumerable but not ICollection
+        public void ValidatesHeaderDictionary()
+        {
+            var dictionary = new
+            {
+                Dict = new HeaderDictionary()
+            };
+
+            var result = DataAnnotationsValidator.Validate(dictionary);
+            Assert.True(result.IsValid);
         }
 
 

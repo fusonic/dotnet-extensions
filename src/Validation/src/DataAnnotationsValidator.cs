@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -29,9 +29,9 @@ namespace Fusonic.Extensions.Validation
                     }
                 }
 
-                if (typeof(ICollection).IsAssignableFrom(property.PropertyType))
+                if (IsComplex(property.PropertyType) && typeof(IEnumerable).IsAssignableFrom(property.PropertyType))
                 {
-                    ValidateCollection((ICollection)value, propertyPath, result);
+                    ValidateCollection((IEnumerable)value, propertyPath, result);
                 }
                 else
                 {
@@ -69,7 +69,7 @@ namespace Fusonic.Extensions.Validation
             return string.Concat(path, ".", property);
         }
 
-        private static void ValidateCollection(ICollection collection, string path, ModelValidationResult result)
+        private static void ValidateCollection(IEnumerable collection, string path, ModelValidationResult result)
         {
             if (collection is null)
                 return;
