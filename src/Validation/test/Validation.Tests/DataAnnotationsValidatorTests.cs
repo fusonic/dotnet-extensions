@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using Xunit;
 
@@ -121,6 +122,19 @@ namespace Fusonic.Extensions.Validation.Tests
             Assert.False(result.IsValid);
         }
 
+        [Fact]
+        // Header dictionary implements IEnumerable but not ICollection
+        public void ValidatesHeaderDictionary()
+        {
+            var dictionary = new
+            {
+                Dict = new HeaderDictionary()
+            };
+
+            var result = DataAnnotationsValidator.Validate(dictionary);
+            Assert.True(result.IsValid);
+        }
+
 
         [Fact]
         public void ReturnsTrueIfValidatingPrimitive()
@@ -129,6 +143,86 @@ namespace Fusonic.Extensions.Validation.Tests
             Assert.True(result.IsValid);
             result = DataAnnotationsValidator.Validate(2134);
             Assert.True(result.IsValid);
+        }
+
+        private class HeaderDictionary : ICollection<KeyValuePair<string, string>>, IEnumerable<KeyValuePair<string, string>>, IEnumerable, IDictionary<string, string>
+        {
+            private IDictionary<string, string> dictionaryImplementation = new Dictionary<string, string>();
+
+            public HeaderDictionary()
+            {
+            }
+
+            public IEnumerator<KeyValuePair<string, string>> GetEnumerator()
+            {
+                return dictionaryImplementation.GetEnumerator();
+            }
+
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return ((IEnumerable) dictionaryImplementation).GetEnumerator();
+            }
+
+            public void Add(KeyValuePair<string, string> item)
+            {
+                dictionaryImplementation.Add(item);
+            }
+
+            public void Clear()
+            {
+                dictionaryImplementation.Clear();
+            }
+
+            public bool Contains(KeyValuePair<string, string> item)
+            {
+                return dictionaryImplementation.Contains(item);
+            }
+
+            public void CopyTo(KeyValuePair<string, string>[] array, int arrayIndex)
+            {
+                dictionaryImplementation.CopyTo(array, arrayIndex);
+            }
+
+            public bool Remove(KeyValuePair<string, string> item)
+            {
+                return dictionaryImplementation.Remove(item);
+            }
+
+            public int Count => dictionaryImplementation.Count;
+
+            public bool IsReadOnly => dictionaryImplementation.IsReadOnly;
+
+            public void Add(string key, string value)
+            {
+                dictionaryImplementation.Add(key, value);
+            }
+
+            public bool ContainsKey(string key)
+            {
+                return dictionaryImplementation.ContainsKey(key);
+            }
+
+            public bool Remove(string key)
+            {
+                return dictionaryImplementation.Remove(key);
+            }
+
+            public bool TryGetValue(string key, out string value)
+            {
+#nullable disable
+                return dictionaryImplementation.TryGetValue(key, out value);
+#nullable enable
+            }
+
+            public string this[string key]
+            {
+                get => dictionaryImplementation[key];
+                set => dictionaryImplementation[key] = value;
+            }
+
+            public ICollection<string> Keys => dictionaryImplementation.Keys;
+
+            public ICollection<string> Values => dictionaryImplementation.Values;
         }
     }
 }
