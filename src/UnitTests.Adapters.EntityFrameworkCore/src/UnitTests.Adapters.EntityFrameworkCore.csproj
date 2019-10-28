@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Version>1.0.0</Version>
+    <LangVersion>8.0</LangVersion>
+    <AssemblyName>Fusonic.Extensions.UnitTests.Adapters.EntityFrameworkCore</AssemblyName>
+    <RootNamespace>Fusonic.Extensions.UnitTests.Adapters.EntityFrameworkCore</RootNamespace>
+    <Nullable>enable</Nullable>
+    <PackageProjectUrl>https://gitlab.com/fusonic/devops/dotnet/extensions</PackageProjectUrl>
+    <Authors>Fusonic</Authors>
+    <Company>Fusonic GmbH</Company>
+    <Description>Adds basic database support using EF Core to the unit tests. Does not ship any database providers. Additional adapters are required. </Description>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningsAsErrors />
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\UnitTests\src\UnitTests.csproj" />
+  </ItemGroup>
+
+</Project>
