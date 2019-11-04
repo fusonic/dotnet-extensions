@@ -66,7 +66,7 @@ namespace Fusonic.Extensions.UnitTests.Adapters.PostgreSql
 
         public void SeedDb(TDbContext dbContext)
         {
-            using (var connection = new NpgsqlConnection(connectionString))
+            using (var connection = PostgreSqlUtil.CreatePostgresDbConnection(connectionString))
             using (var cmd = connection.CreateCommand())
             {
                 connection.Open();

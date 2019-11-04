@@ -175,7 +175,7 @@ namespace Fusonic.Extensions.UnitTests.Adapters.PostgreSql
         }
 
         /// <summary> Creates a connection using the given connection string, but replacing the database with postgres. </summary>
-        private static NpgsqlConnection CreatePostgresDbConnection(string connectionString) 
+        public static NpgsqlConnection CreatePostgresDbConnection(string connectionString) 
             => new NpgsqlConnection(ReplaceDb(connectionString, "postgres"));
 
         /// <summary> Replaces the database in a connection string with another one. </summary>
