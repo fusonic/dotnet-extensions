@@ -1,16 +1,21 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
     <Version>1.0.1</Version>
     <LangVersion>8.0</LangVersion>
-    <AssemblyName>Fusonic.Extensions.UnitTests.Adapters.PostgreSql</AssemblyName>
-    <RootNamespace>Fusonic.Extensions.UnitTests.Adapters.PostgreSql</RootNamespace>
     <Nullable>enable</Nullable>
     <PackageProjectUrl>https://gitlab.com/fusonic/devops/dotnet/extensions</PackageProjectUrl>
     <Authors>Fusonic</Authors>
     <Company>Fusonic GmbH</Company>
-    <Description>Adds support for database tests using PostgreSql for EF Core.</Description>
+    <Description>Tools for creating template DBs and cleaning them up using PostgreSql.</Description>
+    <AssemblyName>Fusonic.Extensions.UnitTests.Tools.PostgreSql</AssemblyName>
+    <RootNamespace>Fusonic.Extensions.UnitTests.Tools.PostgreSql</RootNamespace>
+
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>pgtestutil</ToolCommandName>
+
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -19,11 +24,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="CommandLineParser" Version="2.6.0" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="2.2.4" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\UnitTests.Adapters.EntityFrameworkCore\src\UnitTests.Adapters.EntityFrameworkCore.csproj" />
+    <ProjectReference Include="..\UnitTests.Adapters.PostgreSql\src\UnitTests.Adapters.PostgreSql.csproj" />
   </ItemGroup>
 
 </Project>

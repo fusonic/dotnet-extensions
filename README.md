@@ -30,16 +30,16 @@ Provides validation pipeline and recursive DataAnnotations annotation
 Provides an integration for validation to aspnetcore mvc
 
 [![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.UnitTests.svg?label=Fusonic.Extensions.UnitTests&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.UnitTests/)
-Xunit-based testing base classes. Supports DI with SimpleInjector, MediatR-event-recordings, Lifetime-Scoped calls, a test context and so on. See the [unit test documentation](src/UnitTests/docs/README.md) for more details.
+Xunit-based testing base classes. Supports DI with SimpleInjector, MediatR-event-recordings, Lifetime-Scoped calls, a test context and so on. See the [unit test documentation](docs/UnitTests/README.md) for more details.
 
 [![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.UnitTests.Adapters.EntityFrameworkCore.svg?label=Fusonic.Extensions.UnitTests.Adapters.EntityFrameworkCore&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.UnitTests.Adapters.EntityFrameworkCore/)
-Adds basic database support using EF Core to the unit tests. Does not ship any database providers. Additional adapters are required. See the [unit test documentation](src/UnitTests/docs/README.md) for more details.
+Adds basic database support using EF Core to the unit tests. Does not ship any database providers. Additional adapters are required. See the [unit test documentation](docs/UnitTests/README.md) for more details.
 
 [![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.UnitTests.Adapters.InMemoryDatabase.svg?label=Fusonic.Extensions.UnitTests.Adapters.InMemoryDatabase&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.UnitTests.Adapters.InMemoryDatabase/)
-Adds support for database tests using the InMemoryDatabase for EF Core. See the [unit test documentation](src/UnitTests/docs/README.md) for more details.
+Adds support for database tests using the InMemoryDatabase for EF Core. See the [unit test documentation](docs/UnitTests/README.md) for more details.
 
 [![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.UnitTests.Adapters.PostgreSql.svg?label=Fusonic.Extensions.UnitTests.Adapters.PostgreSql&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.UnitTests.Adapters.PostgreSql/)
-Adds support for database tests using PostgreSql for EF Core. See the [unit test documentation](src/UnitTests/docs/README.md) for more details.
+Adds support for database tests using PostgreSql for EF Core. See the [unit test documentation](docs/UnitTests/README.md) for more details.
 
 Important information
 ===============

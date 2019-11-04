@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading;
 using System.Threading.Tasks;
 using Fusonic.Extensions.UnitTests.Adapters.EntityFrameworkCore;
 using Fusonic.Extensions.UnitTests.Logging;

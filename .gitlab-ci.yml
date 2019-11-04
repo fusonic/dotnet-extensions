@@ -31,6 +31,7 @@ publish:
         - dotnet nuget push src/UnitTests.Adapters.EntityFrameworkCore/src/bin/Release/*.nupkg -k $Nuget_Key -s https://api.nuget.org/v3/index.json || true
         - dotnet nuget push src/UnitTests.Adapters.InMemoryDatabase/src/bin/Release/*.nupkg -k $Nuget_Key -s https://api.nuget.org/v3/index.json || true
         - dotnet nuget push src/UnitTests.Adapters.PostgreSql/src/bin/Release/*.nupkg -k $Nuget_Key -s https://api.nuget.org/v3/index.json || true
+        - dotnet nuget push src/UnitTests.Tools.PostgreSql/src/bin/Release/*.nupkg -k $Nuget_Key -s https://api.nuget.org/v3/index.json || true
     when: manual
     only: 
         - /^release\/.*$/

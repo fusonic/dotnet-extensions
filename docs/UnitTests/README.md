@@ -12,6 +12,8 @@
     - [NoDb](#nodb)
     - [InMemory](#inmemory)
     - [PostgreSql](#postgresql)
+      - [CLI - Test DB Templates](#cli---test-db-templates)
+      - [Cleanup](#cleanup)
     - [SQL Server](#sql-server)
 
 ## Introduction
@@ -201,7 +203,7 @@ You'll get some new supporting methods to call:
 
 ### NoDb
 
-This one throws an exception when the `DbContextOptions` get resolved. You can use it to ensure that no DB gets created or just to skip the DB overhead when you don't need it. You don't need any extra configuration for it (unless you want it as default). Mark a test or a test class with `[NoDatabase]` to use it.
+This one does not configure the DbContext at all. You can use it to ensure that no DB gets created or just to skip the DB overhead when you don't need it. You don't need any extra configuration for it. Mark a test or a test class with `[NoDatabase]` to use it.
 
 ### InMemory
 
@@ -239,11 +241,50 @@ PostgreSqlUtil.Cleanup(connectionString, "YourProjectTest");
 PostgreSqlUtil.CreateTestDbTemplate<YourDbContext>(connectionString, o => new YourDbContext(o), o => o.UseNodaTime(), c => new TestDataSeed(c).Seed());
 ```
 
+Alternatively, if you have implemented an `ITestDbTemplateCreator` as [outlined below](#cli---test-db-templates), you can just use it via LinqPad or using the `pgtestutil`.
+
 **Attribute parameters:**
 
 The `PostgreSqlTestAttribute` has the following parameters:
 
 - **EnableLogging:** EF Core output will be logged to the Xunit test output if set to `true`. Default: `false`
+
+#### CLI - Test DB Templates
+
+If you have a database to test against, it is probably a good idea to use test templates. They are already migrated to the current state and pre-seeded, so every database test is good to go from the start.
+
+To manage the test databases via CLI there is a tool called `pgtestutil`. Install it using the command
+
+```bash
+dotnet tool install --global Fusonic.Extensions.UnitTests.Tools.PostgreSql
+```
+
+You then can access it via the command `pgtestutil`. Use `pgtestutil -h` or `pgtestutil help <command>` to get help about the detailed usage of this tool.
+
+For creating a test database template with this tool you have to implement `ITestDbTemplateCreator`. The tool instantiates the implementation to create the template. The implementation should be straight forward as you can utilize `PostgreSqlUtil`. It could look like this:
+
+```cs
+public class TestDbTemplateCreator : ITestDbTemplateCreator
+{
+    public void Create(string connectionString)
+    {
+        //The connection string contains the test db name that gets used as prefix.
+        var dbName = PostgreSqlUtil.GetDatabase(connectionString);
+
+        //Drop all databases that may still be there from previously stopped tests.
+        PostgreSqlUtil.Cleanup(connectionString, dbPrefix: dbName);
+
+        //Create the template
+        PostgreSqlUtil.CreateTestDbTemplate<HomeDbContext>(connectionString, o => new HomeDbContext(o), seed: c => new TestDataSeed(c).Seed());
+    }
+}
+```
+
+This then can be called with `pgtestutil template -c "ConnectionString" -a Path\To\Your\Assembly.dll`
+
+#### Cleanup
+
+Normally the tests and CI jobs do a fine job of cleaning everything up. However, if for example you just stop an environment while a test is running and delete it then, it may happen that there are remains of unused test databases on the RDS server. To get rid of them, there is a template for a nightly task available. See `Cleanup-TestDatabases` in our project `gitlab-ci-tools` for details.
 
 ### SQL Server
 

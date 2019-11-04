@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -15,14 +17,24 @@ namespace Fusonic.Extensions.UnitTests.Adapters.PostgreSql
         private static readonly Regex getDatabaseRegex = new Regex("Database=([^;]+)");
 
         /// <summary>
-        /// Drops all test databases with the given prefix. As the test databases normally have a pipe "|" between the prefix and the unique identifier, that pipe will be added to the given prefix
-        /// as a small safeguard that only test databases get deleted.
+        /// Drops all test databases with the given prefix. Excludes those from deleting that continue with one of the strings in the exclude-parameter.
+        /// Example:
+        ///   Prefix = Test_
+        ///   Exclude = branch1, branch2
+        /// Deletes all databases beginning with Test_ except those beginning with Test_branch1 and Test_branch2.
+        /// 
         /// </summary>
         /// <param name="connectionString">Connection string to the postgres database.</param>
         /// <param name="dbPrefix">Prefix of the test databases that should be dropped.</param>
-        public static void Cleanup(string connectionString, string dbPrefix)
+        /// <param name="exclude">Excludes databases from deleting that continue with one of the strings in the exclude-parameter.</param>
+        /// <param name="dryRun">Does not drop the databases. Only outputs the databases that would get dropped.</param>
+        public static void Cleanup(string connectionString, string dbPrefix, IEnumerable<string>? exclude = null, bool dryRun = false)
         {
-            using var connection = CreateAdminConnection(connectionString);
+            EnsureNotPostgres(dbPrefix);
+
+            var ignoreDbs = exclude?.Select(e => dbPrefix + e).ToList() ?? new List<string>();
+
+            using var connection = CreatePostgresDbConnection(connectionString);
             using var cmd = connection.CreateCommand();
             connection.Open();
 
@@ -36,8 +48,18 @@ namespace Fusonic.Extensions.UnitTests.Adapters.PostgreSql
             while (reader.Read())
             {
                 var dbName = (string)reader[0];
-                Console.Out.WriteLine($"Dropping {dbName}");
-                DropDb(connectionString, dbName);
+                
+                if (ignoreDbs.Any(dbName.StartsWith))
+                    continue;
+
+                if (dryRun)
+                    Console.Out.WriteLine($"[DryRun] Would drop {dbName}");
+                
+                else
+                {
+                    Console.Out.WriteLine($"Dropping {dbName}");
+                    DropDb(connectionString, dbName);
+                }
             }
         }
 
@@ -48,10 +70,12 @@ namespace Fusonic.Extensions.UnitTests.Adapters.PostgreSql
         /// <param name="dbName">Database that should be dropped.</param>
         public static void DropDb(string connectionString, string dbName)
         {
-            TerminateUsers(connectionString, dbName);
-
-            using var connection = CreateAdminConnection(connectionString);
+            EnsureNotPostgres(dbName);
+            
+            using var connection = CreatePostgresDbConnection(connectionString);
             connection.Open();
+            connection.Execute($"ALTER DATABASE \"{dbName}\" CONNECTION LIMIT 0");
+            TerminateUsers(dbName, connection);
             connection.Execute($"DROP DATABASE \"{dbName}\"");
         }
 
@@ -62,18 +86,20 @@ namespace Fusonic.Extensions.UnitTests.Adapters.PostgreSql
         /// <param name="dbName">Name of the database where the sessions should be terminated.</param>
         public static void TerminateUsers(string connectionString, string dbName)
         {
-            using var connection = CreateAdminConnection(connectionString);
+            using var connection = CreatePostgresDbConnection(connectionString);
             connection.Open();
-
-            connection.Execute($@"SELECT pg_terminate_backend(pg_stat_activity.pid)
-                                  FROM pg_stat_activity
-                                  WHERE pg_stat_activity.datname = '{dbName}'
-                                  AND pid <> pg_backend_pid()");
+            TerminateUsers(dbName, connection);
         }
 
-        /// <summary>
-        /// Creates a test database.
-        /// </summary>
+        private static void TerminateUsers(string dbName, NpgsqlConnection postgresDbConnection)
+        {
+            postgresDbConnection.Execute($@"SELECT pg_terminate_backend(pg_stat_activity.pid)
+                                            FROM pg_stat_activity
+                                            WHERE pg_stat_activity.datname = '{dbName}'
+                                            AND pid <> pg_backend_pid()");
+        }
+
+        /// <summary> Creates a test database. </summary>
         /// <param name="connectionString">Connection string to the test database. The database does not have to exist.</param>
         /// <param name="dbContextFactory">Returns a DbContext using the given options.</param>
         /// <param name="npgsqlOptionsAction">The configuration action for .UseNpgsql().</param>
@@ -89,8 +115,8 @@ namespace Fusonic.Extensions.UnitTests.Adapters.PostgreSql
             NpgsqlConnection.ClearAllPools();
 
             //Open connection to the postgres-DB (for drop, create, alter)
-            using var adminConnection = CreateAdminConnection(connectionString);
-            adminConnection.Open();
+            using var connection = CreatePostgresDbConnection(connectionString);
+            connection.Open();
 
             //get database from connection string. Also safeguard against changes on admin-DB.
             var dbName = GetDatabase(connectionString);
@@ -101,16 +127,16 @@ namespace Fusonic.Extensions.UnitTests.Adapters.PostgreSql
                 throw new ArgumentException("I don't think the postgres database should be your test template...'");
 
             //Drop existing Test-DB
-            if (adminConnection.ExecuteScalar<bool>($"SELECT EXISTS(SELECT * FROM pg_catalog.pg_database WHERE datname='{dbName}')"))
+            if (connection.ExecuteScalar<bool>($"SELECT EXISTS(SELECT * FROM pg_catalog.pg_database WHERE datname='{dbName}')"))
             {
                 Console.WriteLine("Dropping database " + dbName);
-                adminConnection.Execute($"ALTER DATABASE \"{dbName}\" IS_TEMPLATE false");
+                connection.Execute($"ALTER DATABASE \"{dbName}\" IS_TEMPLATE false");
                 DropDb(connectionString, dbName);
             }
 
             //Create database
             Console.WriteLine("Creating database " + dbName);
-            adminConnection.Execute($"CREATE DATABASE \"{dbName}\" TEMPLATE template0 IS_TEMPLATE true");
+            connection.Execute($"CREATE DATABASE \"{dbName}\" TEMPLATE template0 IS_TEMPLATE true");
 
             //Migrate & run seed
             var options = new DbContextOptionsBuilder<TDbContext>().UseNpgsql(connectionString, npgsqlOptionsAction).Options;
@@ -128,7 +154,7 @@ namespace Fusonic.Extensions.UnitTests.Adapters.PostgreSql
 
             //Convert to template
             Console.WriteLine("Setting connection limit on template");
-            adminConnection.Execute($"ALTER DATABASE \"{dbName}\" CONNECTION LIMIT 0");
+            connection.Execute($"ALTER DATABASE \"{dbName}\" CONNECTION LIMIT 0");
             TerminateUsers(connectionString, dbName);
 
             Console.WriteLine("Done");
@@ -148,18 +174,15 @@ namespace Fusonic.Extensions.UnitTests.Adapters.PostgreSql
             return (T)cmd.ExecuteScalar();
         }
 
-        private static NpgsqlConnection CreateAdminConnection(string connectionString) 
+        /// <summary> Creates a connection using the given connection string, but replacing the database with postgres. </summary>
+        private static NpgsqlConnection CreatePostgresDbConnection(string connectionString) 
             => new NpgsqlConnection(ReplaceDb(connectionString, "postgres"));
 
-        /// <summary>
-        /// Replaces the database in a connection string with another one.
-        /// </summary>
+        /// <summary> Replaces the database in a connection string with another one. </summary>
         public static string ReplaceDb(string connectionString, string dbName)
             => getDatabaseRegex.Replace(connectionString, $"Database={dbName}");
 
-        /// <summary>
-        /// Returns the database name in the connection string or null, if it could not be matched.
-        /// </summary>
+        /// <summary> Returns the database name in the connection string or null, if it could not be matched. </summary>
         public static string? GetDatabase(string connectionString)
         {
             var match = getDatabaseRegex.Match(connectionString);
@@ -167,6 +190,12 @@ namespace Fusonic.Extensions.UnitTests.Adapters.PostgreSql
                 return null;
 
             return match.Groups[1].Value;
+        }
+
+        private static void EnsureNotPostgres(string dbName)
+        {
+            if ("postgres".Equals(dbName?.ToLower().Trim()))
+                throw new ArgumentException("You can't do this on the postgres database.");
         }
     }
 }

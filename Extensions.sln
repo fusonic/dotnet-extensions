@@ -35,7 +35,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests.Adapters.EntityFr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests.Adapters.InMemoryDatabase", "src\UnitTests.Adapters.InMemoryDatabase\src\UnitTests.Adapters.InMemoryDatabase.csproj", "{04A105F0-F543-4275-BD7A-67449DAC9A2D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests.Tests", "src\UnitTests\test\UnitTests.Tests\UnitTests.Tests.csproj", "{83826F58-A87E-4EE9-A530-716F17EDC5DD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests.Tests", "src\UnitTests\test\UnitTests.Tests\UnitTests.Tests.csproj", "{83826F58-A87E-4EE9-A530-716F17EDC5DD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests.Tools.PostgreSql", "src\UnitTests.Tools.PostgreSql\UnitTests.Tools.PostgreSql.csproj", "{DB27C5E2-2C9B-41A7-AFF9-412ADA304DD5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -95,6 +97,10 @@ Global
 		{83826F58-A87E-4EE9-A530-716F17EDC5DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{83826F58-A87E-4EE9-A530-716F17EDC5DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{83826F58-A87E-4EE9-A530-716F17EDC5DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB27C5E2-2C9B-41A7-AFF9-412ADA304DD5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB27C5E2-2C9B-41A7-AFF9-412ADA304DD5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB27C5E2-2C9B-41A7-AFF9-412ADA304DD5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB27C5E2-2C9B-41A7-AFF9-412ADA304DD5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
