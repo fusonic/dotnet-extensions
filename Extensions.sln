@@ -37,7 +37,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests.Adapters.InMemory
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests.Tests", "src\UnitTests\test\UnitTests.Tests\UnitTests.Tests.csproj", "{83826F58-A87E-4EE9-A530-716F17EDC5DD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests.Tools.PostgreSql", "src\UnitTests.Tools.PostgreSql\UnitTests.Tools.PostgreSql.csproj", "{DB27C5E2-2C9B-41A7-AFF9-412ADA304DD5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests.Tools.PostgreSql", "src\UnitTests.Tools.PostgreSql\src\UnitTests.Tools.PostgreSql.csproj", "{DB27C5E2-2C9B-41A7-AFF9-412ADA304DD5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

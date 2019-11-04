@@ -29,7 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\UnitTests.Adapters.PostgreSql\src\UnitTests.Adapters.PostgreSql.csproj" />
+    <ProjectReference Include="..\..\UnitTests.Adapters.PostgreSql\src\UnitTests.Adapters.PostgreSql.csproj" />
   </ItemGroup>
 
 </Project>
