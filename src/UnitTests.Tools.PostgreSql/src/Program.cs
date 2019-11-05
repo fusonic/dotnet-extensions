@@ -90,7 +90,7 @@ namespace Fusonic.Extensions.UnitTests.Tools.PostgreSql
         {
             [Option('c', "connectionstring", Required = true, HelpText = "Connection string to the database.")]
             public string? ConnectionString { get; set; }
-            
+
             [Option('p', "prefix", Required = true, HelpText = "All databases starting with this prefix are deleted.")]
             public string? Prefix { get; set; }
 
@@ -98,7 +98,7 @@ namespace Fusonic.Extensions.UnitTests.Tools.PostgreSql
             public IEnumerable<string>? Exclude { get; set; }
 
             [Option(HelpText = "Do not drop databases. Only output which databases would be dropped.")]
-            public bool DryRun { get; set;}
+            public bool DryRun { get; set; }
         }
 
         [Verb("drop", HelpText = "Drops a specific database. All connected users will be terminated before.")]

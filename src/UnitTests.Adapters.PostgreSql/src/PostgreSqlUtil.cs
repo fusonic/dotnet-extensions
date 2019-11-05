@@ -38,23 +38,19 @@ namespace Fusonic.Extensions.UnitTests.Adapters.PostgreSql
             using var cmd = connection.CreateCommand();
             connection.Open();
 
-            //ensure that only test-dbs get dropped by appending the pipe used in the db names
-            if (!dbPrefix.EndsWith("|"))
-                dbPrefix += "|";
-
             cmd.CommandText = $"SELECT datname FROM pg_database WHERE datname LIKE '{dbPrefix}%'";
 
             using var reader = cmd.ExecuteReader();
             while (reader.Read())
             {
                 var dbName = (string)reader[0];
-                
+
                 if (ignoreDbs.Any(dbName.StartsWith))
                     continue;
 
                 if (dryRun)
                     Console.Out.WriteLine($"[DryRun] Would drop {dbName}");
-                
+
                 else
                 {
                     Console.Out.WriteLine($"Dropping {dbName}");
@@ -71,7 +67,7 @@ namespace Fusonic.Extensions.UnitTests.Adapters.PostgreSql
         public static void DropDb(string connectionString, string dbName)
         {
             EnsureNotPostgres(dbName);
-            
+
             using var connection = CreatePostgresDbConnection(connectionString);
             connection.Open();
             connection.Execute($"ALTER DATABASE \"{dbName}\" CONNECTION LIMIT 0");
@@ -175,7 +171,7 @@ namespace Fusonic.Extensions.UnitTests.Adapters.PostgreSql
         }
 
         /// <summary> Creates a connection using the given connection string, but replacing the database with postgres. </summary>
-        public static NpgsqlConnection CreatePostgresDbConnection(string connectionString) 
+        public static NpgsqlConnection CreatePostgresDbConnection(string connectionString)
             => new NpgsqlConnection(ReplaceDb(connectionString, "postgres"));
 
         /// <summary> Replaces the database in a connection string with another one. </summary>
@@ -194,6 +190,9 @@ namespace Fusonic.Extensions.UnitTests.Adapters.PostgreSql
 
         private static void EnsureNotPostgres(string dbName)
         {
+            if (string.IsNullOrWhiteSpace(dbName))
+                throw new ArgumentException("DB Name is empty.", nameof(dbName));
+
             if ("postgres".Equals(dbName?.ToLower().Trim()))
                 throw new ArgumentException("You can't do this on the postgres database.");
         }

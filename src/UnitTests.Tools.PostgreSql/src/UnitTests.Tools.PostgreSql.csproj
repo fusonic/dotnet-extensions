@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.2</TargetFramework>
-    <Version>1.0.3</Version>
+    <Version>1.0.4</Version>
     <LangVersion>8.0</LangVersion>
     <Nullable>enable</Nullable>
     <PackageProjectUrl>https://gitlab.com/fusonic/devops/dotnet/extensions</PackageProjectUrl>

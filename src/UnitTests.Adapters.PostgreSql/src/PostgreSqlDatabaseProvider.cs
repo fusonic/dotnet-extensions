@@ -5,7 +5,6 @@ using Fusonic.Extensions.UnitTests.Logging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Logging;
-using Npgsql;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure;
 
 namespace Fusonic.Extensions.UnitTests.Adapters.PostgreSql
@@ -33,13 +32,11 @@ namespace Fusonic.Extensions.UnitTests.Adapters.PostgreSql
             this.templateDb = templateDb;
             this.seed = seed;
 
-            //The max identifier length of postgres is 63 chars. Minus the 22 we're using from the base64-guid + "|" the prefix must be max 40 chars.
-            //In order not not come into the way of some cleanup scripts, the caller should take care of that length limitation.
-            if (dbNamePrefix.Length > 40)
-                throw new ArgumentException("The max. allowed length of the dbNamePrefix is 40 characters.");
+            //The max identifier length of postgres is 63 chars. Minus the 22 we're using from the base64-guid the prefix must be max 41 chars.
+            if (dbNamePrefix.Length > 41)
+                throw new ArgumentException("The max. allowed length of the dbNamePrefix is 41 characters.");
 
-            //the unique identifier always has 22 chars. The dbNamePrefix is never longer than 40 chars (ctor-check). Limit of 63 chars should never be hit.
-            dbName = dbNamePrefix + "|" + Convert.ToBase64String(Guid.NewGuid().ToByteArray()).TrimEnd('=');
+            dbName = dbNamePrefix + Convert.ToBase64String(Guid.NewGuid().ToByteArray()).TrimEnd('=');
             string testDbConnectionString = PostgreSqlUtil.ReplaceDb(connectionString, dbName);
 
             var builder = new DbContextOptionsBuilder<TDbContext>()
