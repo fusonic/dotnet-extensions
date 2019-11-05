@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Reflection;
 using CommandLine;
 using Fusonic.Extensions.UnitTests.Adapters.EntityFrameworkCore;
 using Fusonic.Extensions.UnitTests.Adapters.PostgreSql;
@@ -50,8 +48,8 @@ namespace Fusonic.Extensions.UnitTests.Tools.PostgreSql
 
         private static int Template(TemplateOptions templateOptions)
         {
-            var fullPath = Path.GetFullPath(templateOptions.AssemblyPath);
-            var assembly = Assembly.LoadFrom(fullPath);
+            var loadContext = new LoadContext(templateOptions.AssemblyPath!);
+            var assembly = loadContext.EntryAssembly;
 
             Type? creatorType;
             if (!string.IsNullOrWhiteSpace(templateOptions.CreatorTypeName))
