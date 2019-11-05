@@ -3,7 +3,7 @@
 namespace Fusonic.Extensions.Abstractions
 {
     /// <summary>
-    /// Marks a query object. A query does not change data and is idempotent.
+    /// Marks a query object. A query only responds with data. It never changes state and is consequently idempotent.
     /// </summary>
     /// <typeparam name="TResponse">The response object of the query.</typeparam>
     public interface IQuery<TResponse> : IRequest<TResponse>

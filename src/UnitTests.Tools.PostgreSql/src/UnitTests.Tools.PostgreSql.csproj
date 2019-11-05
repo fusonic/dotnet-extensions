@@ -12,7 +12,8 @@
     <Description>Tools for creating template DBs and cleaning them up using PostgreSql.</Description>
     <AssemblyName>Fusonic.Extensions.UnitTests.Tools.PostgreSql</AssemblyName>
     <RootNamespace>Fusonic.Extensions.UnitTests.Tools.PostgreSql</RootNamespace>
-
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    <NoWarn>1701;1702;1591</NoWarn>
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>pgtestutil</ToolCommandName>
 

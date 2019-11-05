@@ -11,6 +11,8 @@
     <Version>1.0.3</Version>
     <Company>Fusonic GmbH</Company>
     <Authors>Fusonic</Authors>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    <NoWarn>1701;1702;1591</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="MediatR" Version="7.0.0" />

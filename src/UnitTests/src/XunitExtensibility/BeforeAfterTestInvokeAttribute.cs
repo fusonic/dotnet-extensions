@@ -23,7 +23,6 @@ namespace Fusonic.Extensions.UnitTests.XunitExtensibility
         /// This method is called after the test method is executed.
         /// </summary>
         /// <param name="methodUnderTest">The method under test</param>
-        /// <param name="runSummary">The result of the test run</param>
         public virtual void After(MethodInfo methodUnderTest)
         { }
     }
