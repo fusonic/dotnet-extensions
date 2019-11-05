@@ -71,6 +71,7 @@ namespace Fusonic.Extensions.UnitTests.Adapters.PostgreSql
             using var connection = CreatePostgresDbConnection(connectionString);
             connection.Open();
             connection.Execute($"ALTER DATABASE \"{dbName}\" CONNECTION LIMIT 0");
+            connection.Execute($"ALTER DATABASE \"{dbName}\" IS_TEMPLATE false");
             TerminateUsers(dbName, connection);
             connection.Execute($"DROP DATABASE \"{dbName}\"");
         }
@@ -126,7 +127,6 @@ namespace Fusonic.Extensions.UnitTests.Adapters.PostgreSql
             if (connection.ExecuteScalar<bool>($"SELECT EXISTS(SELECT * FROM pg_catalog.pg_database WHERE datname='{dbName}')"))
             {
                 Console.WriteLine("Dropping database " + dbName);
-                connection.Execute($"ALTER DATABASE \"{dbName}\" IS_TEMPLATE false");
                 DropDb(connectionString, dbName);
             }
 
