@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Fusonic.Extensions.UnitTests.Adapters.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace Fusonic.Extensions.UnitTests.Adapters.InMemoryDatabase
 {
@@ -22,6 +23,7 @@ namespace Fusonic.Extensions.UnitTests.Adapters.InMemoryDatabase
         {
             return new DbContextOptionsBuilder<TDbContext>()
                   .UseInMemoryDatabase(dbName)
+                  .ConfigureWarnings(b => b.Ignore(InMemoryEventId.TransactionIgnoredWarning))
                   .Options;
         }
 
