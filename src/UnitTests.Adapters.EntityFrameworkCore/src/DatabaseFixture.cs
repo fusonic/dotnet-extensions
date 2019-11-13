@@ -71,7 +71,7 @@ namespace Fusonic.Extensions.UnitTests.Adapters.EntityFrameworkCore
             //Suppress warnings for the TDbContext registrations that now appear with the Func<TDbContext> registration
             producer.Registration.SuppressDiagnosticWarning(DiagnosticType.DisposableTransientComponent, "Caller of the func is responsible for disposing the DbContext");
             producer.Registration.SuppressDiagnosticWarning(DiagnosticType.AmbiguousLifestyles, "Concrete type and factory have different lifestyles.");
-            container.GetRegistration(typeof(TDbContext)).Registration.SuppressDiagnosticWarning(DiagnosticType.AmbiguousLifestyles, "Concrete type and factory have different lifestyles.");
+            container.GetRegistration(typeof(TDbContext))!.Registration.SuppressDiagnosticWarning(DiagnosticType.AmbiguousLifestyles, "Concrete type and factory have different lifestyles.");
         }
     }
 }

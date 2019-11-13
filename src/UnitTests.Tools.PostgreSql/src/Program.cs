@@ -58,7 +58,8 @@ namespace Fusonic.Extensions.UnitTests.Tools.PostgreSql
             }
             else
             {
-                var types = assembly.GetTypes().Where(t => typeof(ITestDbTemplateCreator).IsAssignableFrom(t) && t.IsClass && !t.IsAbstract).ToList();
+                var interfaceName = typeof(ITestDbTemplateCreator).FullName;
+                var types = assembly.GetTypes().Where(t => t.IsClass && !t.IsAbstract && t.GetInterface(interfaceName) != null).ToList();
 
                 if (types.Count == 0)
                 {
@@ -79,8 +80,14 @@ namespace Fusonic.Extensions.UnitTests.Tools.PostgreSql
             if (!string.IsNullOrWhiteSpace(templateOptions.Database))
                 connectionString = PostgreSqlUtil.ReplaceDb(connectionString, templateOptions.Database!);
 
-            var templateCreator = (ITestDbTemplateCreator)Activator.CreateInstance(creatorType);
-            templateCreator.Create(connectionString);
+            var templateCreator = Activator.CreateInstance(creatorType);
+            var createMethod = creatorType.GetMethod(nameof(ITestDbTemplateCreator.Create));
+            if (createMethod == null)
+            {
+                Console.Error.WriteLine($"Could not find method {nameof(ITestDbTemplateCreator.Create)} on matched {nameof(ITestDbTemplateCreator)}-type '{creatorType.Name}'");
+                return 1;
+            }
+            createMethod.Invoke(templateCreator, new object[] { connectionString });
 
             return 0;
         }
