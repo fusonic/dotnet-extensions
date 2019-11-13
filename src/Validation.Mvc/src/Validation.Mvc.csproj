@@ -11,6 +11,8 @@
     <Version>2.0.1</Version>
     <Authors>Fusonic</Authors>
     <Company>Fusonic Gmbh</Company>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    <NoWarn>1701;1702;1591</NoWarn>
     <LangVersion>8.0</LangVersion>
     <Nullable>enable</Nullable>
   </PropertyGroup>

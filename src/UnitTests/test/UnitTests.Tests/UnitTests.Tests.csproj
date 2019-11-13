@@ -1,12 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
-    <IsPackable>false</IsPackable>
-    <AssemblyName>Fusonic.Extensions.Hangfire.Tests</AssemblyName>
-    <RootNamespace>Fusonic.Extensions.Hangfire.Tests</RootNamespace>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <AssemblyName>Fusonic.Extensions.UnitTests.Tests</AssemblyName>
+    <RootNamespace>Fusonic.Extensions.UnitTests.Tests</RootNamespace>
     <LangVersion>8.0</LangVersion>
     <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningsAsErrors />
   </PropertyGroup>
 
   <ItemGroup>
@@ -18,23 +23,12 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="MediatR" Version="7.0.0" />
-    <PackageReference Include="Hangfire" Version="1.7.3" />
     <PackageReference Include="Microsoft.CSharp" Version="4.5.0" />
     <PackageReference Include="SimpleInjector" Version="4.7.1" />
   </ItemGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <WarningsAsErrors />
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <WarningsAsErrors />
-  </PropertyGroup>
-
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Hangfire.csproj" />
+    <ProjectReference Include="..\..\src\UnitTests.csproj" />
   </ItemGroup>
 
 </Project>

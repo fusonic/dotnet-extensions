@@ -1,0 +1,12 @@
+﻿using System;
+using Fusonic.Extensions.UnitTests.Adapters.EntityFrameworkCore;
+
+namespace Fusonic.Extensions.UnitTests.Adapters.PostgreSql
+{
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
+    public class PostgreSqlTestAttribute : DatabaseProviderAttribute
+    {
+        /// <summary> If set to true all entity framework output will be logged to the test output. </summary>
+        public bool EnableLogging { get; set; }
+    }
+}

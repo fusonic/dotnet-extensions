@@ -12,6 +12,8 @@
     <Authors>Fusonic</Authors>
     <AssemblyName>Fusonic.Extensions.AspNetCore.Http</AssemblyName>
     <RootNamespace>Fusonic.Extensions.AspNetCore.Http</RootNamespace>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    <NoWarn>1701;1702;1591</NoWarn>
     <LangVersion>8.0</LangVersion>
     <Nullable>enable</Nullable>
   </PropertyGroup>

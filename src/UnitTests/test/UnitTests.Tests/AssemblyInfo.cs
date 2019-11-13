@@ -1,0 +1,1 @@
+﻿[assembly: Fusonic.Extensions.UnitTests.XunitExtensibility.FusonicTestFramework]
