@@ -3,6 +3,7 @@ using Fusonic.Extensions.UnitTests.SimpleInjector;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using SimpleInjector;
+using SimpleInjector.Diagnostics;
 
 namespace Fusonic.Extensions.UnitTests.Adapters.EntityFrameworkCore
 {
@@ -60,13 +61,17 @@ namespace Fusonic.Extensions.UnitTests.Adapters.EntityFrameworkCore
                 return provider.GetContextOptions();
             });
 
-            //The context factory running the seed
-            container.RegisterInstance<Func<TDbContext>>(() => container.GetInstance<IServiceScope>()
-                                                                        .ServiceProvider.CreateScope()
-                                                                        .ServiceProvider.GetRequiredService<TDbContext>());
-
             //The db context
             container.Register<TDbContext>(Lifestyle.Scoped);
+
+            //The context factory to return a transient DbContext
+            var producer = Lifestyle.Transient.CreateProducer<TDbContext, TDbContext>(container);
+            container.RegisterInstance<Func<TDbContext>>(producer.GetInstance);
+
+            //Suppress warnings for the TDbContext registrations that now appear with the Func<TDbContext> registration
+            producer.Registration.SuppressDiagnosticWarning(DiagnosticType.DisposableTransientComponent, "Caller of the func is responsible for disposing the DbContext");
+            producer.Registration.SuppressDiagnosticWarning(DiagnosticType.AmbiguousLifestyles, "Concrete type and factory have different lifestyles.");
+            container.GetRegistration(typeof(TDbContext)).Registration.SuppressDiagnosticWarning(DiagnosticType.AmbiguousLifestyles, "Concrete type and factory have different lifestyles.");
         }
     }
 }
