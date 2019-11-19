@@ -1,9 +1,7 @@
-﻿using System;
+using System;
 using Fusonic.Extensions.UnitTests.SimpleInjector;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using SimpleInjector;
-using SimpleInjector.Diagnostics;
 
 namespace Fusonic.Extensions.UnitTests.Adapters.EntityFrameworkCore
 {
@@ -36,6 +34,9 @@ namespace Fusonic.Extensions.UnitTests.Adapters.EntityFrameworkCore
                 if (providerAttribute == null)
                     throw new InvalidOperationException("Could not determine database provider. No DatabaseProviderAttribute is set on the class or the method. No default attribute is configured.");
 
+                if (configuration.ReplaceProvider != null)
+                    providerAttribute = configuration.ReplaceProvider(providerAttribute);
+
                 return providerAttribute;
             });
 
@@ -63,15 +64,6 @@ namespace Fusonic.Extensions.UnitTests.Adapters.EntityFrameworkCore
 
             //The db context
             container.Register<TDbContext>(Lifestyle.Scoped);
-
-            //The context factory to return a transient DbContext
-            var producer = Lifestyle.Transient.CreateProducer<TDbContext, TDbContext>(container);
-            container.RegisterInstance<Func<TDbContext>>(producer.GetInstance);
-
-            //Suppress warnings for the TDbContext registrations that now appear with the Func<TDbContext> registration
-            producer.Registration.SuppressDiagnosticWarning(DiagnosticType.DisposableTransientComponent, "Caller of the func is responsible for disposing the DbContext");
-            producer.Registration.SuppressDiagnosticWarning(DiagnosticType.AmbiguousLifestyles, "Concrete type and factory have different lifestyles.");
-            container.GetRegistration(typeof(TDbContext))!.Registration.SuppressDiagnosticWarning(DiagnosticType.AmbiguousLifestyles, "Concrete type and factory have different lifestyles.");
         }
     }
 }

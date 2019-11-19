@@ -193,7 +193,7 @@ namespace Fusonic.Extensions.UnitTests.Adapters.PostgreSql
             if (string.IsNullOrWhiteSpace(dbName))
                 throw new ArgumentException("DB Name is empty.", nameof(dbName));
 
-            if ("postgres".Equals(dbName?.ToLower().Trim()))
+            if ("postgres".Equals(dbName.ToLower().Trim()))
                 throw new ArgumentException("You can't do this on the postgres database.");
         }
     }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,8 +7,9 @@ namespace Fusonic.Extensions.UnitTests.Adapters.EntityFrameworkCore
     public class DatabaseFixtureConfiguration<TDbContext>
         where TDbContext : DbContext
     {
-        public Dictionary<Type, Func<DatabaseProviderAttribute, ITestDatabaseProvider<TDbContext>>> ProviderFactories { get; } = new Dictionary<Type, Func<DatabaseProviderAttribute, ITestDatabaseProvider<TDbContext>>>();
-        public DatabaseProviderAttribute? DefaultProviderAttribute { get; private set; }
+        internal Dictionary<Type, Func<DatabaseProviderAttribute, ITestDatabaseProvider<TDbContext>>> ProviderFactories { get; } = new Dictionary<Type, Func<DatabaseProviderAttribute, ITestDatabaseProvider<TDbContext>>>();
+        internal DatabaseProviderAttribute? DefaultProviderAttribute { get; private set; }
+        internal Func<DatabaseProviderAttribute, DatabaseProviderAttribute>? ReplaceProvider { get; private set; }
 
         public DatabaseFixtureConfiguration()
         {
@@ -32,6 +33,13 @@ namespace Fusonic.Extensions.UnitTests.Adapters.EntityFrameworkCore
         public DatabaseFixtureConfiguration<TDbContext> UseDefaultProviderAttribute(DatabaseProviderAttribute attribute)
         {
             DefaultProviderAttribute = attribute;
+            return this;
+        }
+
+        /// <summary> Can return another attribute (and thus DB provider) than detected. Use this for example to replace an InMemory-Provider with a DB-Provider during nightly runs. </summary>
+        public DatabaseFixtureConfiguration<TDbContext> UseProviderAttributeReplacer(Func<DatabaseProviderAttribute, DatabaseProviderAttribute> replaceProvider)
+        {
+            ReplaceProvider = replaceProvider;
             return this;
         }
     }

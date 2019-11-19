@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using CommandLine;
@@ -50,7 +50,7 @@ namespace Fusonic.Extensions.UnitTests.Tools.PostgreSql
         {
             var loadContext = new LoadContext(templateOptions.AssemblyPath!);
             var assembly = loadContext.EntryAssembly;
-
+            
             Type? creatorType;
             if (!string.IsNullOrWhiteSpace(templateOptions.CreatorTypeName))
             {
@@ -58,7 +58,7 @@ namespace Fusonic.Extensions.UnitTests.Tools.PostgreSql
             }
             else
             {
-                var interfaceName = typeof(ITestDbTemplateCreator).FullName;
+                var interfaceName = typeof(ITestDbTemplateCreator).FullName!;
                 var types = assembly.GetTypes().Where(t => t.IsClass && !t.IsAbstract && t.GetInterface(interfaceName) != null).ToList();
 
                 if (types.Count == 0)
@@ -80,8 +80,8 @@ namespace Fusonic.Extensions.UnitTests.Tools.PostgreSql
             if (!string.IsNullOrWhiteSpace(templateOptions.Database))
                 connectionString = PostgreSqlUtil.ReplaceDb(connectionString, templateOptions.Database!);
 
-            var templateCreator = Activator.CreateInstance(creatorType);
-            var createMethod = creatorType.GetMethod(nameof(ITestDbTemplateCreator.Create));
+            var templateCreator = Activator.CreateInstance(creatorType!);
+            var createMethod = creatorType!.GetMethod(nameof(ITestDbTemplateCreator.Create));
             if (createMethod == null)
             {
                 Console.Error.WriteLine($"Could not find method {nameof(ITestDbTemplateCreator.Create)} on matched {nameof(ITestDbTemplateCreator)}-type '{creatorType.Name}'");

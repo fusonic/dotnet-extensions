@@ -1,9 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>1.0.3</Version>
-    <LangVersion>8.0</LangVersion>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <Version>2.0.0</Version>
     <AssemblyName>Fusonic.Extensions.UnitTests.Adapters.InMemoryDatabase</AssemblyName>
     <RootNamespace>Fusonic.Extensions.UnitTests.Adapters.InMemoryDatabase</RootNamespace>
     <Nullable>enable</Nullable>
@@ -21,7 +20,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="2.2.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="3.0.0" />
   </ItemGroup>
 
   <ItemGroup>

@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Fusonic.Extensions.UnitTests.Adapters.EntityFrameworkCore;
 using Fusonic.Extensions.UnitTests.Logging;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Logging;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure;
 
@@ -39,9 +38,7 @@ namespace Fusonic.Extensions.UnitTests.Adapters.PostgreSql
             dbName = dbNamePrefix + Convert.ToBase64String(Guid.NewGuid().ToByteArray()).TrimEnd('=');
             string testDbConnectionString = PostgreSqlUtil.ReplaceDb(connectionString, dbName);
 
-            var builder = new DbContextOptionsBuilder<TDbContext>()
-                         .UseNpgsql(testDbConnectionString, optionsBuilder)
-                         .ConfigureWarnings(b => b.Throw(RelationalEventId.QueryClientEvaluationWarning));
+            var builder = new DbContextOptionsBuilder<TDbContext>().UseNpgsql(testDbConnectionString, optionsBuilder);
 
             if (enableLogging)
                 builder.UseLoggerFactory(new LoggerFactory(new[] { new XunitLoggerProvider() }));
@@ -82,14 +79,7 @@ namespace Fusonic.Extensions.UnitTests.Adapters.PostgreSql
                 dbContext.Database.Migrate();
 
             //if a seed was set, run it
-            
-            //TODO: Recheck after NpgSql/XUnit update
-            //For some weird reason any async access to the dbContext causes some kind of task deadlock. The cause for it is the AsyncTestSyncContext from XUint.
-            //It causes .Wait() to lock indefinitely. It doesn't relate to the connection or the migrate above.
-            //Seems somehow connected to dbContext.SaveChangesAsync() when called in the seed. (at least in my tests).
-            //Running the seed with an extra Task.Run() around works...
-
-            Task.Run(() => seed?.Invoke(dbContext).Wait()).Wait();
+            seed?.Invoke(dbContext).Wait();
         }
 
         public DbContextOptions<TDbContext> GetContextOptions() => options;

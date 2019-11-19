@@ -151,6 +151,9 @@ public class TestFixture : DatabaseFixture<YourDbContext>
         configuration.UseInMemoryDatabase(seed: ctx => new TestDataSeed(ctx).Seed())
                      .UsePostgreSqlDatabase(connectionString: "...", dbNamePrefix: "YourProjectTest", templateDb: "YourProjectTest_Template")
                      .UseDefaultProviderAttribute(new InMemoryTestAttribute());
+
+        if (bool.TryParse(Environment.GetEnvironmentVariable("NIGHTLY"), out bool isNightly) && isNightly)
+            configuration.UseProviderAttributeReplacer(_ => new PostgreSqlTestAttribute());
     }
 
     protected override void RegisterDependencies(Container container)
@@ -173,6 +176,7 @@ In the example above `ConfigureDatabaseProviders` does configure the following:
 - We support InMemory-Database tests. They are marked with `[InMemoryTest]`. The `TestDataSeed` gets executed for each one of these tests.
 - We support database tests against an PostgreSql-Database. They are marked with `[PostgreSqlTest]`. The database gets created from an already seeded database template, thus the seed must not be run again. You can find the parameter descriptions in [PostgreSql](#postgresql).
 - If no attribute is defined on the method or the class, use an InMemory-database
+- If a nightly build is currently running, execute all tests as `PostgreSql` tests.
 
   When a db context is requested, `YourDbContext` gets resolved, so you can inject other dependencies into your context. The `DbContextOptions` provided depend on the current test (InMemoryOptions vs PostgreSqlOptions vs WhateverOptions).
 
