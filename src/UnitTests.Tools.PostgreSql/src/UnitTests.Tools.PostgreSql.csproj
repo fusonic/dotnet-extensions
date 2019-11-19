@@ -14,6 +14,7 @@
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <NoWarn>1701;1702;1591</NoWarn>
     <PackAsTool>true</PackAsTool>
+    <IsPackable>true</IsPackable>
     <ToolCommandName>pgtestutil</ToolCommandName>
   </PropertyGroup>
 
