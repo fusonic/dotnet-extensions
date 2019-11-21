@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "UnitTests.Tools.PostgreSql": {
-      "commandName": "Project",
-      "launchBrowser": false
-    }
-  }
-}

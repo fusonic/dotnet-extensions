@@ -78,8 +78,11 @@ namespace Fusonic.Extensions.UnitTests.Adapters.PostgreSql
             if (templateDb == null)
                 dbContext.Database.Migrate();
 
-            //if a seed was set, run it
-            seed?.Invoke(dbContext).Wait();
+            //For some weird reason any async access to the dbContext causes some kind of task deadlock. The cause for it is the AsyncTestSyncContext from XUnit.
+            //It causes .Wait() to lock indefinitely. It doesn't relate to the connection or the migrate above.
+            //Seems somehow connected to dbContext.SaveChangesAsync() when called in the seed. (at least in my tests).
+            //Running the seed with an extra Task.Run() around works...
+            Task.Run(() => seed?.Invoke(dbContext).Wait()).Wait();
         }
 
         public DbContextOptions<TDbContext> GetContextOptions() => options;
