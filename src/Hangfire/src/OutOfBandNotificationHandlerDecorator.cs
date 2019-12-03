@@ -28,13 +28,13 @@ namespace Fusonic.Extensions.Hangfire
 
         private void EnqueueHangfireJob(Type handler, object notification)
         {
-            var job = new HangfireJob(notification, handler.AssemblyQualifiedName!)
+            var context = new MediatorHandlerContext(notification, handler.AssemblyQualifiedName!)
             {
                 Culture = CultureInfo.CurrentCulture,
                 UiCulture = CultureInfo.CurrentUICulture
             };
 
-            client.Enqueue<TProcessor>(c => c.ProcessAsync(job));
+            client.Enqueue<TProcessor>(c => c.ProcessAsync(context, null!)); // PerformContext will be substituted by Hangfire when the job gets exected.
         }
     }
 }

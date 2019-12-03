@@ -2,9 +2,9 @@
 
 namespace Fusonic.Extensions.Hangfire
 {
-    public class HangfireJob
+    public class MediatorHandlerContext
     {
-        public HangfireJob(object message, string handlerType)
+        public MediatorHandlerContext(object message, string handlerType)
         {
             Message = message;
             HandlerType = handlerType;

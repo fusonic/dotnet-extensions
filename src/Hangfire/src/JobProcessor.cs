@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
+using Hangfire.Server;
 using MediatR;
 using SimpleInjector;
 
@@ -14,17 +15,17 @@ namespace Fusonic.Extensions.Hangfire
         public JobProcessor(Container container)
             => this.container = container;
 
-        public virtual Task ProcessAsync(HangfireJob job)
+        public virtual Task ProcessAsync(MediatorHandlerContext context, PerformContext performContext)
         {
-            if (job.Culture != null)
-                CultureInfo.CurrentCulture = job.Culture;
+            if (context.Culture != null)
+                CultureInfo.CurrentCulture = context.Culture;
 
-            if (job.UiCulture != null)
-                CultureInfo.CurrentUICulture = job.UiCulture;
+            if (context.UiCulture != null)
+                CultureInfo.CurrentUICulture = context.UiCulture;
 
-            var handlerType = Type.GetType(job.HandlerType, true);
+            var handlerType = Type.GetType(context.HandlerType, true);
             var handler = container.GetInstance(handlerType!);
-            var message = job.Message;
+            var message = context.Message;
 
             return InvokeAsync((dynamic)handler, (dynamic)message);
         }

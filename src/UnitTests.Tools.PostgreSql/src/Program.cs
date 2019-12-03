@@ -1,8 +1,8 @@
 namespace Fusonic.Extensions.UnitTests.Tools.PostgreSql
 {
-    class Program
+    public static class Program
     {
-        static int Main(string[] args)
+        public static int Main(string[] args)
         {
             if (args.Length > 0 && args[0] == TemplateCreator.Verb)
                 return TemplateCreator.Run(args);

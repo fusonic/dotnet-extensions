@@ -1,7 +1,12 @@
+using System;
 using System.Globalization;
 using System.Threading.Tasks;
+using Hangfire;
+using Hangfire.Server;
+using Hangfire.Storage;
 using SimpleInjector;
 using Xunit;
+using NSubstitute;
 
 namespace Fusonic.Extensions.Hangfire.Tests
 {
@@ -18,31 +23,31 @@ namespace Fusonic.Extensions.Hangfire.Tests
         [Fact]
         public async Task CanProcessCommand()
         {
-            await GetInstance<JobProcessor>().ProcessAsync(new HangfireJob(new Command(), typeof(CommandHandler).AssemblyQualifiedName!));
+            await GetInstance<JobProcessor>().ProcessAsync(new MediatorHandlerContext(new Command(), typeof(CommandHandler).AssemblyQualifiedName!), CreatePerformContext());
         }
 
         [Fact]
         public async Task CanProcessNotification()
         {
-            await GetInstance<JobProcessor>().ProcessAsync(new HangfireJob(new Notification(), typeof(NotificationHandler).AssemblyQualifiedName!));
+            await GetInstance<JobProcessor>().ProcessAsync(new MediatorHandlerContext(new Notification(), typeof(NotificationHandler).AssemblyQualifiedName!), CreatePerformContext());
         }
 
         [Fact]
         public async Task CanProcessNotificationSync()
         {
-            await GetInstance<JobProcessor>().ProcessAsync(new HangfireJob(new Notification(), typeof(SyncNotificationHandler).AssemblyQualifiedName!));
+            await GetInstance<JobProcessor>().ProcessAsync(new MediatorHandlerContext(new Notification(), typeof(SyncNotificationHandler).AssemblyQualifiedName!), CreatePerformContext());
         }
 
         [Fact]
         public async Task CanProcessRequest()
         {
-            await GetInstance<JobProcessor>().ProcessAsync(new HangfireJob(new Request(), typeof(RequestHandler).AssemblyQualifiedName!));
+            await GetInstance<JobProcessor>().ProcessAsync(new MediatorHandlerContext(new Request(), typeof(RequestHandler).AssemblyQualifiedName!), CreatePerformContext());
         }
 
         [Fact]
         public async Task CanProcessRequestSync()
         {
-            await GetInstance<JobProcessor>().ProcessAsync(new HangfireJob(new SyncRequest(), typeof(SyncRequestHandler).AssemblyQualifiedName!));
+            await GetInstance<JobProcessor>().ProcessAsync(new MediatorHandlerContext(new SyncRequest(), typeof(SyncRequestHandler).AssemblyQualifiedName!), CreatePerformContext());
         }
 
         [Fact]
@@ -63,7 +68,15 @@ namespace Fusonic.Extensions.Hangfire.Tests
             CultureInfo.CurrentCulture = specific;
             CultureInfo.CurrentUICulture = specificUI;
 
-            await GetInstance<JobProcessor>().ProcessAsync(new HangfireJob(new CommandWithCulture(), typeof(CommandHandlerWithCulture).AssemblyQualifiedName!));
+            await GetInstance<JobProcessor>().ProcessAsync(new MediatorHandlerContext(new CommandWithCulture(), typeof(CommandHandlerWithCulture).AssemblyQualifiedName!), CreatePerformContext());
+        }
+
+        private static PerformContext CreatePerformContext()
+        {
+            return new PerformContext(Substitute.For<JobStorage>(),
+                    Substitute.For<IStorageConnection>(),
+                    new BackgroundJob(Guid.NewGuid().ToString(), new JobData().Job, DateTime.UtcNow),
+                    Substitute.For<IJobCancellationToken>());
         }
     }
 }
