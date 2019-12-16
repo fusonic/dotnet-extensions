@@ -40,22 +40,27 @@ namespace Fusonic.Extensions.UnitTests.Adapters.PostgreSql
 
             cmd.CommandText = $"SELECT datname FROM pg_database WHERE datname LIKE '{dbPrefix}%'";
 
-            using var reader = cmd.ExecuteReader();
-            while (reader.Read())
+            var databases = new List<string>();
+            using (var reader = cmd.ExecuteReader())
             {
-                var dbName = (string)reader[0];
+                while (reader.Read())
+                {
+                    var dbName = (string)reader[0];
+                    if (!ignoreDbs.Any(dbName.StartsWith))
+                        databases.Add(dbName);
+                }
+            }
 
-                if (ignoreDbs.Any(dbName.StartsWith))
-                    continue;
+            if (dryRun)
+                Console.Out.WriteLine($"[DryRun] Would drop {Environment.NewLine + string.Join(Environment.NewLine, databases)}");
 
-                if (dryRun)
-                    Console.Out.WriteLine($"[DryRun] Would drop {dbName}");
-
-                else
+            else
+            {
+                Parallel.ForEach(databases, dbName =>
                 {
                     Console.Out.WriteLine($"Dropping {dbName}");
                     DropDb(connectionString, dbName);
-                }
+                });
             }
         }
 
