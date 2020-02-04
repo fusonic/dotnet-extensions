@@ -7,6 +7,8 @@
     <RootNamespace>Fusonic.Extensions.UnitTests.Adapters.InMemoryDatabase</RootNamespace>
     <Nullable>enable</Nullable>
     <PackageProjectUrl>https://gitlab.com/fusonic/devops/dotnet/extensions</PackageProjectUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <Authors>Fusonic</Authors>
     <Company>Fusonic GmbH</Company>
     <Description>Adds support for database tests using the InMemoryDatabase for EF Core.</Description>

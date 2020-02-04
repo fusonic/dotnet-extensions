@@ -6,6 +6,8 @@
     <AssemblyName>Fusonic.Extensions.UnitTests</AssemblyName>
     <RootNamespace>Fusonic.Extensions.UnitTests</RootNamespace>
     <PackageProjectUrl>https://gitlab.com/fusonic/devops/dotnet/extensions</PackageProjectUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <Authors>Fusonic</Authors>
     <Company>Fusonic GmbH</Company>
     <Description>Xunit-based testing base classes. Supports DI with SimpleInjector, MediatR-event-recordings, Lifetime-Scoped calls, a test context and so on.</Description>

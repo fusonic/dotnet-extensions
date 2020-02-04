@@ -7,6 +7,8 @@
     <RootNamespace>Fusonic.Extensions.UnitTests.Adapters.EntityFrameworkCore</RootNamespace>
     <Nullable>enable</Nullable>
     <PackageProjectUrl>https://gitlab.com/fusonic/devops/dotnet/extensions</PackageProjectUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <Authors>Fusonic</Authors>
     <Company>Fusonic GmbH</Company>
     <Description>Adds basic database support using EF Core to the unit tests. Does not ship any database providers. Additional adapters are required. </Description>

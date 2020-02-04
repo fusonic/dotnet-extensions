@@ -6,6 +6,8 @@
     <Version>2.1.1</Version>
     <Nullable>enable</Nullable>
     <PackageProjectUrl>https://gitlab.com/fusonic/devops/dotnet/extensions</PackageProjectUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <Authors>Fusonic</Authors>
     <Company>Fusonic GmbH</Company>
     <Description>Tools for creating template DBs and cleaning them up using PostgreSql.</Description>
