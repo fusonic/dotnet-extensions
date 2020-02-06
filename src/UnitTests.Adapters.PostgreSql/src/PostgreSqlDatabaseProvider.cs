@@ -24,8 +24,9 @@ namespace Fusonic.Extensions.UnitTests.Adapters.PostgreSql
             string dbNamePrefix,
             string? templateDb,
             bool enableLogging,
-            Action<NpgsqlDbContextOptionsBuilder>? optionsBuilder,
-            Func<TDbContext, Task>? seed)
+            Func<TDbContext, Task>? seed,
+            Action<NpgsqlDbContextOptionsBuilder>? npgsqlOptions,
+            Action<DbContextOptionsBuilder<TDbContext>>? dbContextOptions)
         {
             this.connectionString = connectionString;
             this.templateDb = templateDb;
@@ -38,7 +39,8 @@ namespace Fusonic.Extensions.UnitTests.Adapters.PostgreSql
             dbName = dbNamePrefix + Convert.ToBase64String(Guid.NewGuid().ToByteArray()).TrimEnd('=');
             string testDbConnectionString = PostgreSqlUtil.ReplaceDb(connectionString, dbName);
 
-            var builder = new DbContextOptionsBuilder<TDbContext>().UseNpgsql(testDbConnectionString, optionsBuilder);
+            var builder = new DbContextOptionsBuilder<TDbContext>().UseNpgsql(testDbConnectionString, npgsqlOptions);
+            dbContextOptions?.Invoke(builder);
 
             if (enableLogging)
                 builder.UseLoggerFactory(new LoggerFactory(new[] { new XunitLoggerProvider() }));

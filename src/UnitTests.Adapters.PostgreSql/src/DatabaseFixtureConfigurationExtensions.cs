@@ -16,22 +16,24 @@ namespace Fusonic.Extensions.UnitTests.Adapters.PostgreSql
         /// <param name="dbNamePrefix">All test databases are created with the prefix (ie. `YourProjectTest`). Use the branch name or sth. like that when running in a CI pipeline.</param>
         /// <param name="templateDb">When a template is defined, the test database will initially be copied from it (ie. `YourProjectTest_Template`). When a template is set, migrations won't be executed.
         /// The template is expected to be up to date. Use <see cref="PostgreSqlUtil" /> for template creation support.</param>
-        /// <param name="optionsBuilder">The options builder for Npgsql if the context requires one. Gets used in DbContextOptionsBuilder{TDbContext}().UseNpgsql(). Example: o => o.UseNodaTime().</param>
         /// <param name="seed">The seed that should be executed when this provider is used.</param>
+        /// <param name="npgsqlOptions">The options builder for Npgsql if the context requires one. Gets used in DbContextOptionsBuilder{TDbContext}().UseNpgsql(). Example: o => o.UseNodaTime(). Note: UseNpgSql has been already called on this builder.</param>
+        /// <param name="dbContextOptions">The <see cref="DbContextOptionsBuilder{TDbContext}"/> which can be used for further configration. Example: o => o.AddInterceptors(...).</param>
         public static DatabaseFixtureConfiguration<TDbContext> UsePostgreSqlDatabase<TDbContext>(
             this DatabaseFixtureConfiguration<TDbContext> configuration,
             string connectionString,
             string dbNamePrefix,
             string? templateDb = null,
-            Action<NpgsqlDbContextOptionsBuilder>? optionsBuilder = null,
-            Func<TDbContext, Task>? seed = null)
+            Func<TDbContext, Task>? seed = null,
+            Action<NpgsqlDbContextOptionsBuilder>? npgsqlOptions = null,
+            Action<DbContextOptionsBuilder<TDbContext>>? dbContextOptions = null)
             where TDbContext : DbContext
         {
             configuration.RegisterProvider(typeof(PostgreSqlTestAttribute),
                 attr =>
                 {
                     var attribute = (PostgreSqlTestAttribute)attr;
-                    return new PostgreSqlDatabaseProvider<TDbContext>(connectionString, dbNamePrefix, templateDb, attribute.EnableLogging, optionsBuilder, seed);
+                    return new PostgreSqlDatabaseProvider<TDbContext>(connectionString, dbNamePrefix, templateDb, attribute.EnableLogging, seed, npgsqlOptions, dbContextOptions);
                 });
             return configuration;
         }
