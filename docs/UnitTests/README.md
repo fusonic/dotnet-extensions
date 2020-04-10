@@ -67,7 +67,7 @@ The test class is also abstract and requires a fixture as type parameter. Create
 public abstract class TestBase<TFixture> : UnitTest<TFixture>
     where TFixture : TestFixture
 {
-    protected TestBase(TestFixture fixture) : base(fixture)
+    protected TestBase(TFixture fixture) : base(fixture)
     { }
 }
 
