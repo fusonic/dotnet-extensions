@@ -146,6 +146,8 @@ As mentioned above, for database support you don't create your own class. Just i
 ```cs
 public class TestFixture : DatabaseFixture<YourDbContext>
 {
+    private IServiceProvider? serviceProvider { get; set; }
+
     protected override void ConfigureDatabaseProviderss(DatabaseFixtureConfiguration<YourDbContext> configuration)
     {
         configuration.UseInMemoryDatabase(seed: ctx => new TestDataSeed(ctx).Seed())
@@ -159,6 +161,15 @@ public class TestFixture : DatabaseFixture<YourDbContext>
     protected override void RegisterDependencies(Container container)
     {
         //Your dependencies here
+        
+        // Enable cross wiring with Microsoft.Extensions.DependencyInjection: (MED)
+        var services = new ServiceCollection();
+        services.AddSimpleInjector(container, setup => setup.AutoCrossWireFrameworkComponents = true);
+        
+        // Optional: Cross-Wire DbContext into MED (If MED registered component requires YourDbContext as a dependency)
+        services.AddScoped(_ => container.GetInstance<YourDbContext>());
+        
+        serviceProvider = services.BuildServiceProvider(validateScopes: true).UseSimpleInjector(container);
     }
 }
 ```
