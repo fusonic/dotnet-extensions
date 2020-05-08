@@ -75,10 +75,18 @@ namespace Fusonic.Extensions.UnitTests.Adapters.PostgreSql
 
             using var connection = CreatePostgresDbConnection(connectionString);
             connection.Open();
-            connection.Execute($"ALTER DATABASE \"{dbName}\" CONNECTION LIMIT 0");
-            connection.Execute($"ALTER DATABASE \"{dbName}\" IS_TEMPLATE false");
-            TerminateUsers(dbName, connection);
-            connection.Execute($"DROP DATABASE \"{dbName}\"");
+            var exists = connection.ExecuteScalar<bool?>($"SELECT true FROM pg_database WHERE datname='{dbName}'");
+            if (exists == true)
+            {
+                connection.Execute($"ALTER DATABASE \"{dbName}\" CONNECTION LIMIT 0");
+                connection.Execute($"ALTER DATABASE \"{dbName}\" IS_TEMPLATE false");
+                TerminateUsers(dbName, connection);
+                connection.Execute($"DROP DATABASE \"{dbName}\"");
+            }
+            else
+            {
+                Console.WriteLine($"DropDb: Database does not exist ({dbName}).");
+            }
         }
 
         /// <summary>
