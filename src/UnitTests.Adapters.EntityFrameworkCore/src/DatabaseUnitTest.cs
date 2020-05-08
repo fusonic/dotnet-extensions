@@ -39,7 +39,7 @@ namespace Fusonic.Extensions.UnitTests.Adapters.EntityFrameworkCore
 
             return Scoped(() =>
             {
-                using var dbContext = GetDbContext();
+                using var dbContext = GetInstance<TDbContext>();
                 return query(dbContext);
             });
         }
@@ -61,14 +61,11 @@ namespace Fusonic.Extensions.UnitTests.Adapters.EntityFrameworkCore
         {
             return ScopedAsync(async () =>
             {
-                using var dbContext = GetDbContext();
+                await using var dbContext = GetInstance<TDbContext>();
                 return await query(dbContext);
             });
         }
-
-        /// <summary> Returns an instance of the DbContext. </summary>
-        public TDbContext GetDbContext() => GetInstance<TDbContext>();
-
+        
         public override void Dispose()
         {
             Query(dbContext =>
