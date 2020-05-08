@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
@@ -9,12 +10,14 @@ namespace Fusonic.Extensions.Validation
     public static class DataAnnotationsValidator
     {
         public static ModelValidationResult Validate(object instance)
-            => ValidateNode(instance, string.Empty, new ModelValidationResult());
+            => ValidateNode(instance, string.Empty, new ModelValidationResult(), new HashSet<object>());
 
-        private static ModelValidationResult ValidateNode(object instance, string path, ModelValidationResult result)
+        private static ModelValidationResult ValidateNode(object instance, string path, ModelValidationResult result, HashSet<object> visited)
         {
-            if (instance is null || !IsComplex(instance.GetType()))
+            if (instance is null || !IsComplex(instance.GetType()) || visited.Contains(instance))
                 return result;
+
+            visited.Add(instance);
 
             foreach (var property in instance.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance))
             {
@@ -31,11 +34,11 @@ namespace Fusonic.Extensions.Validation
 
                 if (IsComplex(property.PropertyType) && typeof(IEnumerable).IsAssignableFrom(property.PropertyType))
                 {
-                    ValidateCollection((IEnumerable)value, propertyPath, result);
+                    ValidateCollection((IEnumerable)value, propertyPath, result, visited);
                 }
                 else
                 {
-                    ValidateNode(value, propertyPath, result);
+                    ValidateNode(value, propertyPath, result, visited);
                 }
             }
 
@@ -69,7 +72,7 @@ namespace Fusonic.Extensions.Validation
             return string.Concat(path, ".", property);
         }
 
-        private static void ValidateCollection(IEnumerable collection, string path, ModelValidationResult result)
+        private static void ValidateCollection(IEnumerable collection, string path, ModelValidationResult result, HashSet<object> visited)
         {
             if (collection is null)
                 return;
@@ -77,7 +80,7 @@ namespace Fusonic.Extensions.Validation
             var i = 0;
             foreach (var item in collection)
             {
-                ValidateNode(item, string.Concat(path, "[", i++, "]"), result);
+                ValidateNode(item, string.Concat(path, "[", i++, "]"), result, visited);
             }
         }
 

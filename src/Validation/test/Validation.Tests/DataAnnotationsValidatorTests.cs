@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using FluentAssertions;
 using Xunit;
 
 namespace Fusonic.Extensions.Validation.Tests
@@ -111,15 +112,16 @@ namespace Fusonic.Extensions.Validation.Tests
         }
 
         [Fact]
-        public void PreventsRecursion()
+        public void CircularReference_NoStackOverflow()
         {
-            var model = new RecursiveTestObject
+            var model = new SelfReferencingTestObject
             {
-                Test = new RecursiveTestObject()
+                Test = new SelfReferencingTestObject()
             };
-
+            model.Test.Test = model;
+            
             var result = DataAnnotationsValidator.Validate(model);
-            Assert.False(result.IsValid);
+            result.IsValid.Should().BeTrue();
         }
 
         [Fact]

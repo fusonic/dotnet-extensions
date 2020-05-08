@@ -44,9 +44,9 @@ namespace Fusonic.Extensions.Validation.Tests
         }
     }
 
-    public class RecursiveTestObject
+    public class SelfReferencingTestObject
     {
         [Required]
-        public RecursiveTestObject? Test { get; set; }
+        public SelfReferencingTestObject? Test { get; set; }
     }
 }
