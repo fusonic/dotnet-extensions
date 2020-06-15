@@ -12,22 +12,22 @@ Packages
 ===============
 
 Fusonic Extensions consists of several thoughtfully designed class librariers which are split into logical areas, to allow great reusability in projects.
-Some packages are general purpose libs which can be used by any kind of .net project (console, web, rich client). Other packages may be best suited for Asp.net core development.
+Some packages are general purpose libs which can be used by any kind of .net project (console, web, rich client). Other packages may be best suited for ASP<span>.</span>NET Core development.
 
-[![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.Abstractions.svg?label=Fusonic.Extensions.Abstractions&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.Abstractions/)
-Provides high level abstractions which should not be tied to a specific implementation. (E.x. Attributes, Interfaces).
+[![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.AspNetCore.svg?label=Fusonic.Extensions.AspNetCore&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.AspNetCore/)
+Provides ASP<span>.</span>NET Core extensions (Middelwares, Utilities ...). See the [documentation](docs/AspNetCore/README.md) for more details.
+
+[![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.Common.svg?label=Fusonic.Extensions.Common&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.Common/)
+Adds serval small helpers and common abstractions. See the [documentation](docs/Common/README.md) for more details.
+
+[![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.Email.svg?label=Fusonic.Extensions.Email&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.Email/)
+Adds support for sending emails. See the [documentation](docs/Email/README.md) for more details.
+
+[![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.EntityFrameworkCore.svg?label=Fusonic.Extensions.EntityFrameworkCore&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.EntityFrameworkCore/)
+Extensions for EF Core.
 
 [![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.Hangfire.svg?label=Fusonic.Extensions.Hangfire&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.Hangfire/)
-Provides Hangfire extensions, especially suited for CQRS developement. (Out of band processing).
-
-[![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.AspnetCore.Http.svg?label=Fusonic.Extensions.AspnetCore.Http&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.AspnetCore.Http/)
-Provides aspnet core http extensions (Middelwares, Utilities ...)
-
-[![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.Validation.svg?label=Fusonic.Extensions.Validation&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.Validation/)
-Provides validation pipeline and recursive DataAnnotations annotation
-
-[![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.Validation.Mvc.svg?label=Fusonic.Extensions.Validation.Mvc&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.Validation.Mvc/)
-Provides an integration for validation to aspnetcore mvc
+Provides Hangfire extensions, especially suited for CQRS developement. (Out of band processing). See the [documentation](docs/Hangfire/README.md) for more details.
 
 [![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.UnitTests.svg?label=Fusonic.Extensions.UnitTests&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.UnitTests/)
 Xunit-based testing base classes. Supports DI with SimpleInjector, MediatR-event-recordings, Lifetime-Scoped calls, a test context and so on. See the [unit test documentation](docs/UnitTests/README.md) for more details.
@@ -40,6 +40,15 @@ Adds support for database tests using the InMemoryDatabase for EF Core. See the 
 
 [![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.UnitTests.Adapters.PostgreSql.svg?label=Fusonic.Extensions.UnitTests.Adapters.PostgreSql&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.UnitTests.Adapters.PostgreSql/)
 Adds support for database tests using PostgreSql for EF Core. See the [unit test documentation](docs/UnitTests/README.md) for more details.
+
+[![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.UnitTests.Tools.PostgreSql.svg?label=Fusonic.Extensions.UnitTests.Tools.PostgreSql&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.UnitTests.Tools.PostgreSql/)
+Command line tools for several standard operations related to testing on PostgreSql-Databases. See the [unit test documentation](docs/UnitTests/README.md) for more details.
+
+[![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.Validation.svg?label=Fusonic.Extensions.Validation&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.Validation/)
+Provides validation pipeline and recursive DataAnnotations annotation
+
+[![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.Validation.Mvc.svg?label=Fusonic.Extensions.Validation.Mvc&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.Validation.Mvc/)
+Provides an integration for validation to ASP<span>.</span>NET Core MVC.
 
 Important information
 ===============

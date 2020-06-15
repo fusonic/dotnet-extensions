@@ -1,0 +1,11 @@
+<Project>
+  <PropertyGroup>
+    <Authors>Fusonic</Authors>
+    <Company>Fusonic GmbH</Company>
+    <Copyright>Fusonic Gmbh</Copyright>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningsAsErrors />
+    <NoWarn>1701;1702;1591</NoWarn>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+</Project>

@@ -1,0 +1,16 @@
+﻿@model Fusonic.Extensions.Email.Tests.Models.CultureTestEmailViewModel
+
+@{
+    Layout = null;
+}
+
+<html>
+<head>
+    <meta charset="UTF-8" />
+</head>
+<body>
+<p>@($"{Model.Date:d}")</p>
+<p>@($"{Model.Date:MMMM}")</p>
+<p>@($"{Model.Number:N}")</p>
+</body>
+</html>

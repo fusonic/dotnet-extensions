@@ -30,7 +30,8 @@ namespace Fusonic.Extensions.Hangfire
             return InvokeAsync((dynamic)handler, (dynamic)message);
         }
 
-        private Task InvokeAsync<TRequest, Unit>(IRequestHandler<TRequest, Unit> handler, TRequest request) where TRequest : IRequest<Unit>
+        private Task InvokeAsync<TRequest>(IRequestHandler<TRequest, Unit> handler, TRequest request)
+            where TRequest : IRequest<Unit>
             => handler.Handle(request, CancellationToken.None);
 
         private Task InvokeAsync<TRequest>(INotificationHandler<TRequest> handler, TRequest request) where TRequest : INotification

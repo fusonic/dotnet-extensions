@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Reflection;
-using Fusonic.Extensions.Abstractions;
+using Fusonic.Extensions.Common.MediatR;
 using MediatR;
 using SimpleInjector;
 
