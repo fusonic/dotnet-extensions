@@ -4,50 +4,45 @@ using System.Threading.Tasks;
 using Hangfire;
 using Hangfire.Server;
 using Hangfire.Storage;
+using MediatR;
+using NSubstitute;
 using SimpleInjector;
 using Xunit;
-using NSubstitute;
 
 namespace Fusonic.Extensions.Hangfire.Tests
 {
-    public class HangfireJobProcessorTests
+    public class HangfireJobProcessorTests : TestBase
     {
-        private Container Container { get; } = new Container();
-
-        protected T GetInstance<T>()
-            where T : class
-        {
-            return Container.GetInstance<T>();
-        }
+        protected JobProcessor GetInstance() => Container.GetInstance<JobProcessor>();
 
         [Fact]
         public async Task CanProcessCommand()
         {
-            await GetInstance<JobProcessor>().ProcessAsync(new MediatorHandlerContext(new Command(), typeof(CommandHandler).AssemblyQualifiedName!), CreatePerformContext());
+            await GetInstance().ProcessAsync(new MediatorHandlerContext(new Command(), typeof(CommandHandler).AssemblyQualifiedName!), CreatePerformContext());
         }
 
         [Fact]
         public async Task CanProcessNotification()
         {
-            await GetInstance<JobProcessor>().ProcessAsync(new MediatorHandlerContext(new Notification(), typeof(NotificationHandler).AssemblyQualifiedName!), CreatePerformContext());
+            await GetInstance().ProcessAsync(new MediatorHandlerContext(new Notification(), typeof(NotificationHandler).AssemblyQualifiedName!), CreatePerformContext());
         }
 
         [Fact]
         public async Task CanProcessNotificationSync()
         {
-            await GetInstance<JobProcessor>().ProcessAsync(new MediatorHandlerContext(new Notification(), typeof(SyncNotificationHandler).AssemblyQualifiedName!), CreatePerformContext());
+            await GetInstance().ProcessAsync(new MediatorHandlerContext(new Notification(), typeof(SyncNotificationHandler).AssemblyQualifiedName!), CreatePerformContext());
         }
 
         [Fact]
         public async Task CanProcessRequest()
         {
-            await GetInstance<JobProcessor>().ProcessAsync(new MediatorHandlerContext(new Request(), typeof(RequestHandler).AssemblyQualifiedName!), CreatePerformContext());
+            await GetInstance().ProcessAsync(new MediatorHandlerContext(new Request(), typeof(RequestHandler).AssemblyQualifiedName!), CreatePerformContext());
         }
 
         [Fact]
         public async Task CanProcessRequestSync()
         {
-            await GetInstance<JobProcessor>().ProcessAsync(new MediatorHandlerContext(new SyncRequest(), typeof(SyncRequestHandler).AssemblyQualifiedName!), CreatePerformContext());
+            await GetInstance().ProcessAsync(new MediatorHandlerContext(new SyncRequest(), typeof(SyncRequestHandler).AssemblyQualifiedName!), CreatePerformContext());
         }
 
         [Fact]
@@ -59,7 +54,7 @@ namespace Fusonic.Extensions.Hangfire.Tests
             var specific = CultureInfo.CreateSpecificCulture("en-us");
             var specificUI = CultureInfo.CreateSpecificCulture("de-at");
 
-            Container.Register(() => new CommandHandlerWithCulture(() =>
+            Container.Register<IRequestHandler<CommandWithCulture, Unit>>(() => new CommandHandlerWithCulture(() =>
             {
                 Assert.Equal(specific, CultureInfo.CurrentCulture);
                 Assert.Equal(specificUI, CultureInfo.CurrentUICulture);
@@ -68,7 +63,39 @@ namespace Fusonic.Extensions.Hangfire.Tests
             CultureInfo.CurrentCulture = specific;
             CultureInfo.CurrentUICulture = specificUI;
 
-            await GetInstance<JobProcessor>().ProcessAsync(new MediatorHandlerContext(new CommandWithCulture(), typeof(CommandHandlerWithCulture).AssemblyQualifiedName!), CreatePerformContext());
+            await GetInstance().ProcessAsync(new MediatorHandlerContext(new CommandWithCulture(), typeof(CommandHandlerWithCulture).AssemblyQualifiedName!), CreatePerformContext());
+        }
+
+        [Fact]
+        public async Task OutOfBandCommand_NoRecursion()
+        {
+            var handled = false;
+            OutOfBandCommandHandler.Handled += (_, __) =>
+            {
+                handled = true;
+                Assert.False(Container.GetInstance<RuntimeOptions>().SkipOutOfBandDecorators);
+            };
+
+            await GetInstance().ProcessAsync(new MediatorHandlerContext(new OutOfBandCommand(), typeof(OutOfBandCommandHandler).AssemblyQualifiedName!), CreatePerformContext());
+
+            JobClient.DidNotReceiveWithAnyArgs().Enqueue<JobProcessor>(x => x.ProcessAsync(null!, null!));
+            Assert.True(handled);
+        }
+
+        [Fact]
+        public async Task OutOfBandNotification_NoRecursion()
+        {
+            var handled = false;
+            OutOfBandNotificationHandler.Handled += (_, __) =>
+            {
+                handled = true;
+                Assert.False(Container.GetInstance<RuntimeOptions>().SkipOutOfBandDecorators);
+            };
+
+            await GetInstance().ProcessAsync(new MediatorHandlerContext(new OutOfBandNotification(), typeof(OutOfBandNotificationHandler).AssemblyQualifiedName!), CreatePerformContext());
+
+            JobClient.DidNotReceiveWithAnyArgs().Enqueue<JobProcessor>(x => x.ProcessAsync(null!, null!));
+            Assert.True(handled);
         }
 
         private static PerformContext CreatePerformContext()

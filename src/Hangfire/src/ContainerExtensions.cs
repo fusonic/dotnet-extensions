@@ -14,14 +14,16 @@ namespace Fusonic.Extensions.Hangfire
             configure?.Invoke(options);
             var jobProcessorType = options.JobProcessorType;
 
-            container.Register(jobProcessorType);
+            container.Register(jobProcessorType, jobProcessorType, Lifestyle.Scoped);
+            container.Register<RuntimeOptions>(Lifestyle.Scoped);
+            container.Register(typeof(NotificationDispatcher<>), typeof(NotificationDispatcher<>), Lifestyle.Singleton);
 
             var requestHandlerDecoratorType = CreatePartiallyClosedGenericType(typeof(OutOfBandRequestHandlerDecorator<,>));
-            container.RegisterDecorator(typeof(IRequestHandler<,>), requestHandlerDecoratorType,
+            container.RegisterDecorator(typeof(IRequestHandler<,>), requestHandlerDecoratorType, Lifestyle.Scoped,
                 c => c.ImplementationType.GetCustomAttribute<OutOfBandAttribute>() != null);
 
             var notificationHandlerGenericType = CreatePartiallyClosedGenericType(typeof(OutOfBandNotificationHandlerDecorator<,>));
-            container.RegisterDecorator(typeof(INotificationHandler<>), notificationHandlerGenericType,
+            container.RegisterDecorator(typeof(INotificationHandler<>), notificationHandlerGenericType, Lifestyle.Scoped,
                 c => c.ImplementationType.GetCustomAttribute<OutOfBandAttribute>() != null);
 
             Type CreatePartiallyClosedGenericType(Type openGenericDecorator)

@@ -11,8 +11,13 @@ namespace Fusonic.Extensions.Hangfire.Tests
     [OutOfBand]
     public class OutOfBandCommandHandler : IRequestHandler<OutOfBandCommand>
     {
+        public static event EventHandler<OutOfBandCommand>? Handled;
+
         public Task<Unit> Handle(OutOfBandCommand request, CancellationToken cancellationToken)
-            => Unit.Task;
+        {
+            Handled?.Invoke(this, request);
+            return Unit.Task;
+        }
     }
 
     public class Command : ICommand { }
@@ -52,8 +57,24 @@ namespace Fusonic.Extensions.Hangfire.Tests
     [OutOfBand]
     public class OutOfBandNotificationHandler : INotificationHandler<OutOfBandNotification>
     {
+        public static event EventHandler<OutOfBandNotification>? Handled;
+
         public Task Handle(OutOfBandNotification notification, CancellationToken cancellationToken)
-            => Task.CompletedTask;
+        {
+            Handled?.Invoke(this, notification);
+            return Task.CompletedTask;
+        }
+    }
+
+    public class OutOfBandNotificationHandlerWithoutAttribute : INotificationHandler<OutOfBandNotification>
+    {
+        public static event EventHandler<OutOfBandNotification>? Handled;
+
+        public Task Handle(OutOfBandNotification notification, CancellationToken cancellationToken)
+        {
+            Handled?.Invoke(this, notification);
+            return Task.CompletedTask;
+        }
     }
 
     public class SyncNotificationHandler : NotificationHandler<Notification>

@@ -23,18 +23,36 @@ namespace Fusonic.Extensions.Hangfire
             if (context.UiCulture != null)
                 CultureInfo.CurrentUICulture = context.UiCulture;
 
-            var handlerType = Type.GetType(context.HandlerType, true);
-            var handler = container.GetInstance(handlerType!);
             var message = context.Message;
+            var messageType = message.GetType();
 
-            return InvokeAsync((dynamic)handler, (dynamic)message);
+            // Skip out of band decorators to avoid recursion (RuntimeOptions is registered as scoped, so OutOfBandDecorators get the same instance).
+            var runtimeOptions = container.GetInstance<RuntimeOptions>();
+            runtimeOptions.SkipOutOfBandDecorators = true;
+
+            if (message is INotification)
+            {
+                var dispatcherType = typeof(NotificationDispatcher<>).MakeGenericType(messageType);
+                var dispatcher = container.GetInstance(dispatcherType);
+                var handlerType = Type.GetType(context.HandlerType, true);
+                return InvokeAsync((dynamic)dispatcher, handlerType, (dynamic)message);
+            }
+            else if (message is IRequest<Unit>)
+            {
+                var handlerType = typeof(IRequestHandler<,>).MakeGenericType(new[] { messageType, typeof(Unit) });
+                var handler = container.GetInstance(handlerType);
+                return InvokeAsync((dynamic)handler, (dynamic)message);
+            }
+            else
+            {
+                throw new InvalidOperationException($"Could not process message. Message instance must implement `{nameof(INotification)}` or `{nameof(IRequest<Unit>)}`.");
+            }
         }
 
-        private Task InvokeAsync<TRequest>(IRequestHandler<TRequest, Unit> handler, TRequest request)
-            where TRequest : IRequest<Unit>
+        private Task InvokeAsync<TRequest>(IRequestHandler<TRequest, Unit> handler, TRequest request) where TRequest : IRequest<Unit>
             => handler.Handle(request, CancellationToken.None);
 
-        private Task InvokeAsync<TRequest>(INotificationHandler<TRequest> handler, TRequest request) where TRequest : INotification
-            => handler.Handle(request, CancellationToken.None);
+        private Task InvokeAsync<TRequest>(NotificationDispatcher<TRequest> dispatcher, Type handlerType, TRequest request) where TRequest : INotification
+            => dispatcher.Dispatch(request, handlerType, CancellationToken.None);
     }
 }

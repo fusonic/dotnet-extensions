@@ -13,17 +13,29 @@ namespace Fusonic.Extensions.Hangfire
     {
         private readonly INotificationHandler<TNotification> inner;
         private readonly IBackgroundJobClient client;
+        private readonly RuntimeOptions runtimeOptions;
 
-        public OutOfBandNotificationHandlerDecorator(INotificationHandler<TNotification> inner, IBackgroundJobClient client)
+        public OutOfBandNotificationHandlerDecorator(INotificationHandler<TNotification> inner, IBackgroundJobClient client, RuntimeOptions runtimeOptions)
         {
             this.inner = inner;
             this.client = client;
+            this.runtimeOptions = runtimeOptions;
         }
 
         public Task Handle(TNotification notification, CancellationToken cancellationToken)
         {
-            EnqueueHangfireJob(inner.GetType(), notification);
-            return Task.CompletedTask;
+            if (runtimeOptions.SkipOutOfBandDecorators)
+            {
+                // Skipping is only important for current handler and must be disabled before invoking the handler
+                // because the handler might invoke additional inner handlers which might be marked as out-of-band.
+                runtimeOptions.SkipOutOfBandDecorators = false;
+                return inner.Handle(notification, cancellationToken);
+            }
+            else
+            {
+                EnqueueHangfireJob(inner.GetType(), notification);
+                return Task.CompletedTask;
+            }
         }
 
         private void EnqueueHangfireJob(Type handler, object notification)
@@ -34,7 +46,7 @@ namespace Fusonic.Extensions.Hangfire
                 UiCulture = CultureInfo.CurrentUICulture
             };
 
-            client.Enqueue<TProcessor>(c => c.ProcessAsync(context, null!)); // PerformContext will be substituted by Hangfire when the job gets exected.
+            client.Enqueue<TProcessor>(c => c.ProcessAsync(context, null!)); // PerformContext will be substituted by Hangfire when the job gets executed.
         }
     }
 }

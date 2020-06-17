@@ -1,21 +1,27 @@
-﻿using Hangfire;
+﻿using System;
+using Hangfire;
 using MediatR;
 using NSubstitute;
 using SimpleInjector;
+using SimpleInjector.Lifestyles;
 using Xunit;
 
 namespace Fusonic.Extensions.Hangfire.Tests
 {
-    public class ContainerExtensionsTests
+    public class ContainerExtensionsTests : IDisposable
     {
+        private readonly Scope Scope;
         private Container Container { get; } = new Container();
 
         public ContainerExtensionsTests()
         {
+            Container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
             Container.Register(typeof(IRequestHandler<,>), new[] { typeof(OutOfBandCommandHandler), typeof(CommandHandler) });
             Container.Register(typeof(INotificationHandler<>), new[] { typeof(OutOfBandNotificationHandler), typeof(NotificationHandler) });
             Container.RegisterInstance(Substitute.For<IBackgroundJobClient>());
             Container.Options.ResolveUnregisteredConcreteTypes = false;
+
+            Scope = AsyncScopedLifestyle.BeginScope(Container);
         }
 
         [Fact]
@@ -70,5 +76,7 @@ namespace Fusonic.Extensions.Hangfire.Tests
             public CustomJobProcessor(Container container) : base(container)
             { }
         }
+
+        public void Dispose() => Scope.Dispose();
     }
 }

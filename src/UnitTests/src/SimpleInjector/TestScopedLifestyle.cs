@@ -70,7 +70,7 @@ namespace Fusonic.Extensions.UnitTests.SimpleInjector
             using var masterScope = new Scope(scopes[0].Container!);
             foreach (var scope in scopes)
             {
-                masterScope.RegisterForDisposal(scope);
+                masterScope.RegisterForDisposal((IAsyncDisposable)scope);
             }
         }
     }

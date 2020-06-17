@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
-    <Version>2.1.0</Version>
+    <Version>3.0.0</Version>
     <AssemblyName>Fusonic.Extensions.UnitTests</AssemblyName>
     <RootNamespace>Fusonic.Extensions.UnitTests</RootNamespace>
     <PackageProjectUrl>https://gitlab.com/fusonic/devops/dotnet/extensions</PackageProjectUrl>
@@ -22,7 +22,7 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="3.1.4" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.4" />
     <PackageReference Include="NSubstitute" Version="4.2.1" />
-    <PackageReference Include="SimpleInjector" Version="4.10.2" />
+    <PackageReference Include="SimpleInjector" Version="5.0.1" />
     <PackageReference Include="xunit" Version="2.4.1" />
   </ItemGroup>
 

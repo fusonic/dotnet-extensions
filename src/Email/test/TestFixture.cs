@@ -17,7 +17,7 @@ namespace Fusonic.Extensions.Email.Tests
     {
         protected override void RegisterCoreDependencies(Container container)
         {
-            base.RegisterCoreDependencies(container);   
+            base.RegisterCoreDependencies(container);
 
             container.RegisterEmail(o =>
             {
@@ -29,8 +29,10 @@ namespace Fusonic.Extensions.Email.Tests
                 o.StoreInDirectory = path;
             });
 
+            container.Register<RazorEmailRenderingService>();
+
             container.RegisterInstance<Func<IViewLocalizer>>(() => Substitute.For<IViewLocalizer>());
-            
+
             var mediatorAssemblies = new[] { typeof(IMediator).Assembly, typeof(SendEmail).Assembly };
             container.Register(() => new ServiceFactory(container.GetInstance), Lifestyle.Singleton);
             container.RegisterSingleton<IMediator, Mediator>();
@@ -56,9 +58,9 @@ namespace Fusonic.Extensions.Email.Tests
 
             services.AddRazorPages()
                     .ConfigureApplicationPartManager(apm => apm.ApplicationParts.Add(new CompiledRazorAssemblyPart(viewsAssembly)));
-            
+
             services.AddLogging();
-            
+
             var listener = new DiagnosticListener("Microsoft.AspNetCore");
             services.AddSingleton(listener);
             services.AddSingleton<DiagnosticSource>(listener);

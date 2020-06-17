@@ -11,13 +11,13 @@ namespace Fusonic.Extensions.Common.MediatR
     /// Configuration with SimpleInjector:
     /// Container.RegisterDecorator(typeof(IRequestHandler{,}), typeof(TransactionCommandHandlerDecorator{,}));
     /// </summary>
-    public class TransactionCommandHandlerDecorator<TCommand, TResult> : IRequestHandler<TCommand, TResult>
+    public class TransactionalCommandHandlerDecorator<TCommand, TResult> : IRequestHandler<TCommand, TResult>
         where TCommand : IRequest<TResult>
     {
         private readonly IRequestHandler<TCommand, TResult> requestHandler;
         private readonly ITransactionScopeHandler transactionScopeHandler;
 
-        public TransactionCommandHandlerDecorator(IRequestHandler<TCommand, TResult> requestHandler, ITransactionScopeHandler transactionScopeHandler)
+        public TransactionalCommandHandlerDecorator(IRequestHandler<TCommand, TResult> requestHandler, ITransactionScopeHandler transactionScopeHandler)
         {
             this.requestHandler = requestHandler;
             this.transactionScopeHandler = transactionScopeHandler;
