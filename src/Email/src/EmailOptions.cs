@@ -50,7 +50,7 @@ namespace Fusonic.Extensions.Email
         /// Path to the CSS files used to render the emails. Defaults to "[assemblyLocation]/wwwroot/assets/emails/email.css". Set to null if you don't want to use any CSS.
         /// Note: This is currently expected to be a file, not an embedded resource.
         /// </summary>
-        public string? CssPath { get; set; } = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!, "/wwwroot/assets/emails/email.css");
+        public string? CssPath { get; set; } = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!, "wwwroot/assets/emails/email.css");
 
         internal void Validate()
         {
