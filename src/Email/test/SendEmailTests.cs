@@ -34,7 +34,7 @@ namespace Fusonic.Extensions.Email.Tests
 
             email.FromAddress.Address.Should().Be("test@fusonic.net");
             email.Headers.AllKeys.Should().Contain("Subject");
-            email.Headers["Subject"].Should().Be("The subject");
+            email.Headers["Subject"].Should().Be("Subject");
 
             email.MessageParts.Should().HaveCount(1);
             email.MessageParts[0].BodyData.Should().Be(
