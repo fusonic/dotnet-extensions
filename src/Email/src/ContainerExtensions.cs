@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Reflection;
+using MediatR;
 using Microsoft.AspNetCore.Mvc.Localization;
 using SimpleInjector;
 
@@ -29,6 +31,7 @@ namespace Fusonic.Extensions.Email
             container.Register<IEmailRenderingService, RazorEmailRenderingService>();
             container.Register<ISmtpClient, SmtpClient>();
             container.RegisterInstance<Func<IViewLocalizer>>(container.GetInstance<IViewLocalizer>);
+            container.Register(typeof(IRequestHandler<,>), Assembly.GetExecutingAssembly());
         }
     }
 }
