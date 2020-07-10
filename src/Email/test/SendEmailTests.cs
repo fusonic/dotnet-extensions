@@ -34,7 +34,7 @@ namespace Fusonic.Extensions.Email.Tests
 
             email.FromAddress.Address.Should().Be("test@fusonic.net");
             email.Headers.AllKeys.Should().Contain("Subject");
-            email.Headers["Subject"].Should().Be("Subject");
+            email.Headers["Subject"].Should().Be("The subject");
 
             email.MessageParts.Should().HaveCount(1);
             email.MessageParts[0].BodyData.Should().Be(
@@ -53,7 +53,7 @@ namespace Fusonic.Extensions.Email.Tests
 
                 var localizer = Substitute.For<IViewLocalizer>();
                 localizer.GetString(Arg.Any<string>()).ReturnsForAnyArgs(_ => new LocalizedString("Subject", "The subject"));
-                container.RegisterInstance<Func<IViewLocalizer>>(() => localizer);
+                container.RegisterInstance(localizer);
 
                 SmtpServer = SimpleSmtpServer.Start();
 

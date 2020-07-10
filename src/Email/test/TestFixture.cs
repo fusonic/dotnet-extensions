@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Reflection;
 using Fusonic.Extensions.UnitTests;
@@ -10,7 +8,6 @@ using MediatR.Pipeline;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.Mvc.Localization;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Localization;
 using NSubstitute;
 using SimpleInjector;
 
@@ -51,10 +48,6 @@ namespace Fusonic.Extensions.Email.Tests
 
             container.Collection.Register(typeof(IRequestPreProcessor<>), mediatorAssemblies);
             container.Collection.Register(typeof(IRequestPostProcessor<,>), mediatorAssemblies);
-
-            var viewLocalizer = Substitute.For<IViewLocalizer>();
-            viewLocalizer.GetString(null).ReturnsForAnyArgs(ci => new LocalizedString(ci.Arg<string>(), ci.Arg<string>()));
-            container.RegisterInstance(viewLocalizer);
 
             var services = new ServiceCollection();
 
