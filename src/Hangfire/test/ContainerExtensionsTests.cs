@@ -1,4 +1,5 @@
 ﻿using System;
+using Fusonic.Extensions.Common.Security;
 using Hangfire;
 using MediatR;
 using NSubstitute;
@@ -19,6 +20,7 @@ namespace Fusonic.Extensions.Hangfire.Tests
             Container.Register(typeof(IRequestHandler<,>), new[] { typeof(OutOfBandCommandHandler), typeof(CommandHandler) });
             Container.Register(typeof(INotificationHandler<>), new[] { typeof(OutOfBandNotificationHandler), typeof(NotificationHandler) });
             Container.RegisterInstance(Substitute.For<IBackgroundJobClient>());
+            Container.RegisterInstance(Substitute.For<IUserAccessor>());
             Container.Options.ResolveUnregisteredConcreteTypes = false;
 
             Scope = AsyncScopedLifestyle.BeginScope(Container);
@@ -69,6 +71,13 @@ namespace Fusonic.Extensions.Hangfire.Tests
 
             var handler = Container.GetInstance<INotificationHandler<Notification>>();
             Assert.Equal(typeof(NotificationHandler), handler.GetType());
+        }
+
+        [Fact]
+        public void UserAccessorDecoratorShouldBeApplied()
+        {
+            Container.RegisterOutOfBandDecorators();
+            Assert.IsType<HangfireUserAccessorDecorator>(Container.GetInstance<IUserAccessor>());
         }
 
         private class CustomJobProcessor : JobProcessor

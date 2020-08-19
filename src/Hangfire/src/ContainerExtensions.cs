@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using Fusonic.Extensions.Common.MediatR;
+using Fusonic.Extensions.Common.Security;
 using MediatR;
 using SimpleInjector;
 
@@ -25,6 +26,8 @@ namespace Fusonic.Extensions.Hangfire
             var notificationHandlerGenericType = CreatePartiallyClosedGenericType(typeof(OutOfBandNotificationHandlerDecorator<,>));
             container.RegisterDecorator(typeof(INotificationHandler<>), notificationHandlerGenericType, Lifestyle.Scoped,
                 c => c.ImplementationType.GetCustomAttribute<OutOfBandAttribute>() != null);
+
+            container.RegisterDecorator<IUserAccessor, HangfireUserAccessorDecorator>(Lifestyle.Scoped);
 
             Type CreatePartiallyClosedGenericType(Type openGenericDecorator)
             {

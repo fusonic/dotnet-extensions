@@ -1,4 +1,5 @@
 ﻿using System;
+using Fusonic.Extensions.Common.Security;
 using Hangfire;
 using MediatR;
 using NSubstitute;
@@ -11,6 +12,7 @@ namespace Fusonic.Extensions.Hangfire.Tests
     {
         private Scope Scope { get; }
         protected IBackgroundJobClient JobClient { get; }
+        protected IUserAccessor UserAccessor { get; }
         protected Container Container { get; } = new Container();
 
         protected TestBase()
@@ -24,6 +26,8 @@ namespace Fusonic.Extensions.Hangfire.Tests
 
             JobClient = Substitute.For<IBackgroundJobClient>();
             Container.RegisterInstance(JobClient);
+            UserAccessor = Substitute.For<IUserAccessor>();
+            Container.RegisterInstance(UserAccessor);
 
             Scope = AsyncScopedLifestyle.BeginScope(Container);
         }

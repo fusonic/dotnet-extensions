@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
+using Fusonic.Extensions.Common.Security;
 using Hangfire.Server;
 using MediatR;
 using SimpleInjector;
@@ -13,7 +14,9 @@ namespace Fusonic.Extensions.Hangfire
         private readonly Container container;
 
         public JobProcessor(Container container)
-            => this.container = container;
+        {
+            this.container = container;
+        }
 
         public virtual Task ProcessAsync(MediatorHandlerContext context, PerformContext performContext)
         {
@@ -22,6 +25,10 @@ namespace Fusonic.Extensions.Hangfire
 
             if (context.UiCulture != null)
                 CultureInfo.CurrentUICulture = context.UiCulture;
+
+            var userAccessor = container.GetInstance<IUserAccessor>();
+            if (context.User != null && userAccessor is HangfireUserAccessorDecorator decorator)
+                decorator.SetCurrentUser(context.User.ToClaimsPrincipal());
 
             var message = context.Message;
             var messageType = message.GetType();

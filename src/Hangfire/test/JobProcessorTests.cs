@@ -1,6 +1,9 @@
 using System;
 using System.Globalization;
+using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Fusonic.Extensions.Common.Security;
 using Hangfire;
 using Hangfire.Server;
 using Hangfire.Storage;
@@ -60,10 +63,31 @@ namespace Fusonic.Extensions.Hangfire.Tests
                 Assert.Equal(specificUI, CultureInfo.CurrentUICulture);
             }));
 
-            CultureInfo.CurrentCulture = specific;
-            CultureInfo.CurrentUICulture = specificUI;
+            await GetInstance().ProcessAsync(new MediatorHandlerContext(new CommandWithCulture(), typeof(CommandHandlerWithCulture).AssemblyQualifiedName!)
+            {
+                Culture = specific,
+                UiCulture = specificUI
+            }, CreatePerformContext());
+        }
 
-            await GetInstance().ProcessAsync(new MediatorHandlerContext(new CommandWithCulture(), typeof(CommandHandlerWithCulture).AssemblyQualifiedName!), CreatePerformContext());
+        [Fact]
+        public async Task RestoresUser()
+        {
+            var principal = new ClaimsPrincipal(new ClaimsIdentity(new[]
+            {
+                new Claim("test", "test")
+            }));
+
+            Container.Register<IRequestHandler<CommandWithUser, Unit>>(() => new CommandHandlerWithUser((user) =>
+            {
+                Assert.NotSame(user, principal);
+                Assert.Equal(user.Claims.Select(x => (x.Type, x.Value)), principal.Claims.Select(x => (x.Type, x.Value)));
+            }, Container.GetInstance<IUserAccessor>()));
+
+            await GetInstance().ProcessAsync(new MediatorHandlerContext(new CommandWithUser(), typeof(CommandHandlerWithUser).AssemblyQualifiedName!)
+            {
+                User = HangfireUser.FromClaimsPrincipal(principal)
+            }, CreatePerformContext());
         }
 
         [Fact]

@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Fusonic.Extensions.Common.MediatR;
+using Fusonic.Extensions.Common.Security;
 using MediatR;
 
 namespace Fusonic.Extensions.Hangfire.Tests
@@ -40,6 +42,26 @@ namespace Fusonic.Extensions.Hangfire.Tests
         public Task<Unit> Handle(CommandWithCulture request, CancellationToken cancellationToken)
         {
             callback();
+            return Unit.Task;
+        }
+    }
+
+    public class CommandWithUser : ICommand { }
+
+    public class CommandHandlerWithUser : IRequestHandler<CommandWithUser>
+    {
+        private readonly Action<ClaimsPrincipal> callback;
+        private readonly IUserAccessor userAccessor;
+
+        public CommandHandlerWithUser(Action<ClaimsPrincipal> callback, IUserAccessor userAccessor)
+        {
+            this.callback = callback;
+            this.userAccessor = userAccessor;
+        }
+
+        public Task<Unit> Handle(CommandWithUser request, CancellationToken cancellationToken)
+        {
+            callback(userAccessor.User);
             return Unit.Task;
         }
     }
