@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
-    <Version>3.0.1</Version>
+    <Version>3.0.2</Version>
     <AssemblyName>Fusonic.Extensions.UnitTests</AssemblyName>
     <RootNamespace>Fusonic.Extensions.UnitTests</RootNamespace>
     <PackageProjectUrl>https://gitlab.com/fusonic/devops/dotnet/extensions</PackageProjectUrl>
