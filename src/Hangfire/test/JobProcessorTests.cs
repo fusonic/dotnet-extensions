@@ -86,7 +86,7 @@ namespace Fusonic.Extensions.Hangfire.Tests
 
             await GetInstance().ProcessAsync(new MediatorHandlerContext(new CommandWithUser(), typeof(CommandHandlerWithUser).AssemblyQualifiedName!)
             {
-                User = HangfireUser.FromClaimsPrincipal(principal)
+                User = MediatorHandlerContext.HangfireUser.FromClaimsPrincipal(principal)
             }, CreatePerformContext());
         }
 

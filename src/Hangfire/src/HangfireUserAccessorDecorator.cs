@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Security.Claims;
 using Fusonic.Extensions.Common.Security;
 
 namespace Fusonic.Extensions.Hangfire
@@ -9,12 +10,25 @@ namespace Fusonic.Extensions.Hangfire
         private ClaimsPrincipal? user;
 
         public HangfireUserAccessorDecorator(IUserAccessor userAccessor)
+            => this.userAccessor = userAccessor;
+
+        public ClaimsPrincipal User
         {
-            this.userAccessor = userAccessor;
+            get => user ?? userAccessor.User;
+            set => user = value;
         }
 
-        public ClaimsPrincipal User => user ?? userAccessor.User;
-
-        public void SetCurrentUser(ClaimsPrincipal user) => this.user = user;
+        public bool TryGetUser([MaybeNullWhen(false)] out ClaimsPrincipal user)
+        {
+            user = this.user;
+            if (user == null)
+            {
+                return userAccessor.TryGetUser(out user);
+            }
+            else
+            {
+                return true;
+            }
+        }
     }
 }

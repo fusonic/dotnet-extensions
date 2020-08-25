@@ -47,8 +47,11 @@ namespace Fusonic.Extensions.Hangfire
             {
                 Culture = CultureInfo.CurrentCulture,
                 UiCulture = CultureInfo.CurrentUICulture,
-                User = MediatorHandlerContext.HangfireUser.FromClaimsPrincipal(userAccessor.User)
             };
+            if (userAccessor.TryGetUser(out var user))
+            {
+                context.User = MediatorHandlerContext.HangfireUser.FromClaimsPrincipal(user);
+            }
 
             client.Enqueue<TProcessor>(c => c.ProcessAsync(context, null!)); // PerformContext will be substituted by Hangfire when the job gets executed.
         }

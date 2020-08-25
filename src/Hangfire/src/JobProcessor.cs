@@ -28,7 +28,7 @@ namespace Fusonic.Extensions.Hangfire
 
             var userAccessor = container.GetInstance<IUserAccessor>();
             if (context.User != null && userAccessor is HangfireUserAccessorDecorator decorator)
-                decorator.SetCurrentUser(context.User.ToClaimsPrincipal());
+                decorator.User = context.User.ToClaimsPrincipal();
 
             var message = context.Message;
             var messageType = message.GetType();
