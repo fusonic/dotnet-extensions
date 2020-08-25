@@ -9,6 +9,8 @@
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <Version>4.2.0</Version>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    <Description>
+Provides Hangfire extensions, especially suited for CQRS developement. (Out of band processing).</Description>
   </PropertyGroup>
 
   <ItemGroup>

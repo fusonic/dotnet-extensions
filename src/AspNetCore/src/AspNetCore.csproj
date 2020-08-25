@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>    
-    <Description>A set of ASP.NET Core extensions.</Description>
+    <Description>Provides ASP.NET Core extensions (Middelwares, Utilities ...)</Description>
     <AssemblyName>Fusonic.Extensions.AspNetCore</AssemblyName>
     <RootNamespace>Fusonic.Extensions.AspNetCore</RootNamespace>
     <PackageProjectUrl>https://gitlab.com/fusonic/devops/dotnet/extensions</PackageProjectUrl>

@@ -9,6 +9,7 @@
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <Version>3.0.2</Version>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    <Description>Provides validation pipeline and recursive DataAnnotations annotation</Description>
   </PropertyGroup>
 
   <ItemGroup>

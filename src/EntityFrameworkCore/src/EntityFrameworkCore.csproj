@@ -9,6 +9,7 @@
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <Version>1.0.1</Version>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    <Description>Provides EF Core extensions (Utilities, helpers ...)</Description>
   </PropertyGroup>
 
   <ItemGroup>

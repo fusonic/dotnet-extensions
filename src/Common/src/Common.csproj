@@ -9,6 +9,7 @@
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <Version>2.1.0</Version>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    <Description>This project contains general, framework independent utilities and abstractions.</Description>
   </PropertyGroup>
 
   <ItemGroup>

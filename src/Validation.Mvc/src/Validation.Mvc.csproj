@@ -9,6 +9,7 @@
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <Version>2.1.1</Version>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    <Description>Provides an integration for validation to ASP.NET Core MVC.</Description>
   </PropertyGroup>
 
   <ItemGroup>
