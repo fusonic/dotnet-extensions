@@ -18,38 +18,37 @@ namespace Fusonic.Extensions.Hangfire
         public CultureInfo? Culture { get; set; }
         public CultureInfo? UiCulture { get; set; }
         public HangfireUser? User { get; set; }
-    }
 
-    public class HangfireUser
-    {
-        public HangfireUser(List<HangfireUserClaim> claims)
+        public class HangfireUser
         {
-            Claims = claims;
+            public HangfireUser(List<HangfireUserClaim> claims)
+                => Claims = claims;
+
+            public List<HangfireUserClaim> Claims { get; }
+
+            public static HangfireUser FromClaimsPrincipal(ClaimsPrincipal principal) =>
+                new HangfireUser(principal.Claims.Select(x => new HangfireUserClaim(x.Type, x.Value, x.ValueType, x.Issuer, x.OriginalIssuer)).ToList());
+
+            public ClaimsPrincipal ToClaimsPrincipal()
+                => new ClaimsPrincipal(new ClaimsIdentity(Claims.Select(x => new Claim(x.Type, x.Value, x.ValueType, x.Issuer, x.OriginalIssuer))));
+
+            public class HangfireUserClaim
+            {
+                public HangfireUserClaim(string type, string value, string valueType, string issuer, string originalIssuer)
+                {
+                    Type = type;
+                    Value = value;
+                    ValueType = valueType;
+                    Issuer = issuer;
+                    OriginalIssuer = originalIssuer;
+                }
+
+                public string Type { get; }
+                public string Value { get; }
+                public string ValueType { get; }
+                public string Issuer { get; }
+                public string OriginalIssuer { get; }
+            }
         }
-
-        public List<HangfireUserClaim> Claims { get; }
-
-        public static HangfireUser FromClaimsPrincipal(ClaimsPrincipal principal) =>
-            new HangfireUser(principal.Claims.Select(x => new HangfireUserClaim(x.Type, x.Value, x.ValueType, x.Issuer, x.OriginalIssuer)).ToList());
-
-        public ClaimsPrincipal ToClaimsPrincipal() => new ClaimsPrincipal(new ClaimsIdentity(Claims.Select(x => new Claim(x.Type, x.Value, x.ValueType, x.Issuer, x.OriginalIssuer))));
-    }
-
-    public class HangfireUserClaim
-    {
-        public HangfireUserClaim(string type, string value, string valueType, string issuer, string originalIssuer)
-        {
-            Type = type;
-            Value = value;
-            ValueType = valueType;
-            Issuer = issuer;
-            OriginalIssuer = originalIssuer;
-        }
-
-        public string Type { get; }
-        public string Value { get; }
-        public string ValueType { get; }
-        public string Issuer { get; }
-        public string OriginalIssuer { get; }
     }
 }

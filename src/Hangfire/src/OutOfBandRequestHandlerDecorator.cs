@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Globalization;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Fusonic.Extensions.Common.Security;
@@ -48,7 +47,7 @@ namespace Fusonic.Extensions.Hangfire
             {
                 Culture = CultureInfo.CurrentCulture,
                 UiCulture = CultureInfo.CurrentUICulture,
-                User = HangfireUser.FromClaimsPrincipal(userAccessor.User)
+                User = MediatorHandlerContext.HangfireUser.FromClaimsPrincipal(userAccessor.User)
             };
 
             client.Enqueue<TProcessor>(c => c.ProcessAsync(context, null!)); // PerformContext will be substituted by Hangfire when the job gets executed.
