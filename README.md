@@ -1,4 +1,5 @@
-# Fusonic Extensions
+# Fusonic Extensions 
+[![Pipeline](https://gitlab.com/fusonic/devops/dotnet/extensions/badges/master/pipeline.svg)](https://gitlab.com/fusonic/devops/dotnet/extensions/-/pipelines?page=1&scope=all&ref=master)
 
 The goal of **Fusonic Extensions** is to provide .NET application developers with reusable librariers that promotes best practice to steer developers towards the pit of success.
 Only well tested and proven code lands in Fusonic Extensions.
