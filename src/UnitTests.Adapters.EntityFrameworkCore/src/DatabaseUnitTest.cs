@@ -34,7 +34,10 @@ namespace Fusonic.Extensions.UnitTests.Adapters.EntityFrameworkCore
         protected TResult Query<TResult>(Func<TDbContext, TResult> query)
         {
             var resultType = typeof(TResult);
-            if (resultType == typeof(Task) || resultType.IsGenericType && resultType.GetGenericTypeDefinition() == typeof(Task<>))
+            if (resultType.IsGenericType)
+                resultType = resultType.GetGenericTypeDefinition();
+
+            if (resultType == typeof(Task) || resultType == typeof(Task<>) || resultType == typeof(ValueTask) || resultType == typeof(ValueTask<>))
                 throw new ArgumentException("This is the wrong method for async queries. Use QueryAsync() instead.");
 
             return Scoped(() =>
