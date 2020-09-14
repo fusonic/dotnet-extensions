@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using Fusonic.Extensions.UnitTests.XunitExtensibility;
 using Microsoft.Extensions.Configuration;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;
@@ -36,6 +37,9 @@ namespace Fusonic.Extensions.UnitTests
 
         private void ConfigureContainer()
         {
+            if (GetType().Assembly.GetCustomAttribute<FusonicTestFrameworkAttribute>() == null)
+                throw new InvalidOperationException($"{nameof(FusonicTestFrameworkAttribute)} must be set in test assembly '{GetType().Assembly.FullName}'.");
+
             container.Options.DefaultLifestyle = Lifestyle.Scoped;
             container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
             container.Options.AllowOverridingRegistrations = true;
