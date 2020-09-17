@@ -23,6 +23,11 @@ If you want all your background jobs to run within a transaction (which is usual
 
 Configuration with SimpleInjector:
 ```cs
-Container.RegisterOutOfBandDecorators(c => c.UseJobProcessor<TransactionalJobProcessor>());
 Container.RegisterSingleton<ITransactionScopeHandler, TransactionScopeHandler>();
+
+// Transaction scope for all request handlers:
+Container.RegisterDecorator(typeof(IRequestHandler<,>), typeof(TransactionCommandHandlerDecorator<,>));
+
+// Transaction scope for all notification handlers:
+Container.RegisterDecorator(typeof(INotificationHandler<>), typeof(TransactionalNotificationHandlerDecorator<,>));
 ```
