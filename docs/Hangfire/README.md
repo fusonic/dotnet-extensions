@@ -26,8 +26,8 @@ Configuration with SimpleInjector:
 Container.RegisterSingleton<ITransactionScopeHandler, TransactionScopeHandler>();
 
 // Transaction scope for all request handlers:
-Container.RegisterDecorator(typeof(IRequestHandler<,>), typeof(TransactionCommandHandlerDecorator<,>));
+Container.RegisterDecorator(typeof(IRequestHandler<,>), typeof(TransactionalCommandHandlerDecorator<,>));
 
 // Transaction scope for all notification handlers:
-Container.RegisterDecorator(typeof(INotificationHandler<>), typeof(TransactionalNotificationHandlerDecorator<,>));
+Container.RegisterDecorator(typeof(INotificationHandler<>), typeof(TransactionalNotificationHandlerDecorator<>));
 ```
