@@ -2,8 +2,8 @@
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
-using Fusonic.Extensions.Common.MediatR;
 using Fusonic.Extensions.Common.Security;
+using Fusonic.Extensions.MediatR;
 using MediatR;
 
 namespace Fusonic.Extensions.Hangfire.Tests

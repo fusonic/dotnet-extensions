@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace Fusonic.Extensions.Common.MediatR
+namespace Fusonic.Extensions.MediatR
 {
     /// <summary>
     /// Marks a query object. A query only responds with data. It never changes state and is consequently idempotent.

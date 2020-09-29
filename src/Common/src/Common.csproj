@@ -12,8 +12,4 @@
     <Description>This project contains general, framework independent utilities and abstractions.</Description>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="MediatR" Version="8.0.2" />
-  </ItemGroup>
-
 </Project>

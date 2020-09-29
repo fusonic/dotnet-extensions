@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
-using Fusonic.Extensions.Common.MediatR;
+using Fusonic.Extensions.MediatR;
 using MediatR;
 using MimeKit;
 using MimeKit.Text;

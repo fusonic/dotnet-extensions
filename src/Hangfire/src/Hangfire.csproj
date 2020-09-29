@@ -14,12 +14,12 @@ Provides Hangfire extensions, especially suited for CQRS developement. (Out of b
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MediatR" Version="8.0.2" />
     <PackageReference Include="Hangfire.Core" Version="1.7.11" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="SimpleInjector" Version="5.0.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Common\src\Common.csproj" />
+    <ProjectReference Include="..\..\MediatR\src\MediatR.csproj" />
   </ItemGroup>
 </Project>

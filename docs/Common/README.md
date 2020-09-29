@@ -3,7 +3,6 @@
 - [Common](#common)
   - [PropertyUtil](#propertyutil)
   - [PathUtil](#pathutil)
-  - [MediatR](#mediatr)
   - [Transactions](#transactions)
 
 This project contains general, framework independent utilities and abstractions.
@@ -13,6 +12,7 @@ This project contains general, framework independent utilities and abstractions.
 Utility to get the names and types from property expressions.
 
 Example:
+
 ```cs
 public class RandomClass
 {
@@ -32,18 +32,6 @@ PropertyUtil.GetName<RandomClass>(c => c.GetType()) //Throws ArgumentException -
 Utility for paths. Does not try to replicate `System.IO.Path`, but adds some helpers that `Path` doesn't.
 
 Currently this only has methods for removing invalid chars from paths and filenames, as `Path.GetInvalidFileNameChars()` returns different values based on the OS, while `PathUtil` uses a fixed set. This may be for example required when generating a filename for a download.
-
-## MediatR
-
-`ICommand`, `IQuery`: Use those instead of directly using the `IRequest` interfaces to clearly distinguish between commands and queries.
-`OutOfBandAttribute`: You can put this on your `Handler`-class. When used together with the [Hangfire-Decoratory](../Hangfire/README.md), the execution of the handler will be queued as a background job automatically.
-`TransactionalDecoratory`: Those decorators spawn a transaction over all command-, query- and notification-handlers. You can register them like follows:
-
-```cs
-Container.RegisterDecorator(typeof(IRequestHandler<,>), typeof(TransactionCommandHandlerDecorator<,>));
-Container.RegisterDecorator(typeof(INotificationHandler<>), typeof(TransactionNotificationHandlerDecorator<>));
-Container.RegisterSingleton<ITransactionScopeHandler, TransactionScopeHandler>();
-```
 
 ## Transactions
 

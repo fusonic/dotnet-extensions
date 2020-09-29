@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace Fusonic.Extensions.Common.MediatR
+namespace Fusonic.Extensions.MediatR
 {
     /// <summary>
     /// Marks a command without a response. A command executes state changes.

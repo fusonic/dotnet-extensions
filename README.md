@@ -30,6 +30,9 @@ Extensions for EF Core.
 [![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.Hangfire.svg?label=Fusonic.Extensions.Hangfire&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.Hangfire/)
 Provides Hangfire extensions, especially suited for CQRS developement. (Out of band processing). See the [documentation](docs/Hangfire/README.md) for more details.
 
+[![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.MediatR.svg?label=Fusonic.Extensions.MediatR&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.MediatR/)
+Provides abstractions for MediatR. See the [documentation](docs/MediatR/README.md) for more details.
+
 [![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.UnitTests.svg?label=Fusonic.Extensions.UnitTests&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.UnitTests/)
 Xunit-based testing base classes. Supports DI with SimpleInjector, MediatR-event-recordings, Lifetime-Scoped calls, a test context and so on. See the [unit test documentation](docs/UnitTests/README.md) for more details.
 

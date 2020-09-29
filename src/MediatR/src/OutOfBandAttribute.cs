@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Fusonic.Extensions.Common.MediatR
+namespace Fusonic.Extensions.MediatR
 {
     /// <summary>
     /// Indicates that the decorated class can run out-of-band of the current flow.

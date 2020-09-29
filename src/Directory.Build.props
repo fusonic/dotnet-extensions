@@ -1,5 +1,10 @@
 <Project>
   <PropertyGroup>
+    <UnitTestVersion>3.1.0</UnitTestVersion>
+    <ValidationVersion>3.1.0</ValidationVersion>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <Authors>Fusonic</Authors>
     <Company>Fusonic GmbH</Company>
     <Copyright>Fusonic Gmbh</Copyright>

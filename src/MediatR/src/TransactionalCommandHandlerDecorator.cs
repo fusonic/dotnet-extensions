@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Fusonic.Extensions.Common.Transactions;
 using MediatR;
 
-namespace Fusonic.Extensions.Common.MediatR
+namespace Fusonic.Extensions.MediatR
 {
     /// <summary>
     /// Runs commands (MediatR requests) within a transaction.
