@@ -31,7 +31,8 @@ namespace Fusonic.Extensions.Email.Tests
 
             container.Register<RazorEmailRenderingService>();
 
-            container.RegisterInstance<Func<IViewLocalizer>>(() => Substitute.For<IViewLocalizer>());
+            var viewLocalizer = Substitute.For<IViewLocalizer>();
+            container.RegisterInstance<Func<IViewLocalizer>>(() => viewLocalizer);
 
             var mediatorAssemblies = new[] { typeof(IMediator).Assembly, typeof(SendEmail).Assembly };
             container.Register(() => new ServiceFactory(container.GetInstance), Lifestyle.Singleton);

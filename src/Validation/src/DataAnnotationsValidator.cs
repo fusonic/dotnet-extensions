@@ -12,7 +12,7 @@ namespace Fusonic.Extensions.Validation
         public static ModelValidationResult Validate(object instance)
             => ValidateNode(instance, string.Empty, new ModelValidationResult(), new HashSet<object>());
 
-        private static ModelValidationResult ValidateNode(object instance, string path, ModelValidationResult result, HashSet<object> visited)
+        private static ModelValidationResult ValidateNode(object? instance, string path, ModelValidationResult result, HashSet<object> visited)
         {
             if (instance is null || !IsComplex(instance.GetType()) || visited.Contains(instance))
                 return result;
@@ -32,9 +32,9 @@ namespace Fusonic.Extensions.Validation
                     }
                 }
 
-                if (IsComplex(property.PropertyType) && typeof(IEnumerable).IsAssignableFrom(property.PropertyType))
+                if (value is IEnumerable enumerable && IsComplex(property.PropertyType) && typeof(IEnumerable).IsAssignableFrom(property.PropertyType))
                 {
-                    ValidateCollection((IEnumerable)value, propertyPath, result, visited);
+                    ValidateCollection(enumerable, propertyPath, result, visited);
                 }
                 else
                 {
@@ -51,12 +51,12 @@ namespace Fusonic.Extensions.Validation
                     {
                         foreach (var member in validationResult.MemberNames)
                         {
-                            result.AddError(AppendProperty(path, member), validationResult.ErrorMessage);
+                            result.AddError(AppendProperty(path, member), validationResult.ErrorMessage ?? string.Empty);
                         }
                     }
                     else
                     {
-                        result.AddError(path, validationResult.ErrorMessage);
+                        result.AddError(path, validationResult.ErrorMessage ?? string.Empty);
                     }
                 }
             }

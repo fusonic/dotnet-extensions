@@ -31,7 +31,7 @@ namespace Fusonic.Extensions.Validation.Mvc
             }
 
             // set all unvalidated entries to valid
-            foreach (var (key, entry) in actionContext.ModelState)
+            foreach (var (_, entry) in actionContext.ModelState)
             {
                 if (entry.ValidationState == ModelValidationState.Unvalidated)
                     entry.ValidationState = ModelValidationState.Valid;

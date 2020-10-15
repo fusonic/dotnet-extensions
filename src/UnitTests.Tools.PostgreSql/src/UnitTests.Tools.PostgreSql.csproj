@@ -1,28 +1,26 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    <Version>$(UnitTestVersion)</Version>
-    <PackageProjectUrl>https://gitlab.com/fusonic/devops/dotnet/extensions</PackageProjectUrl>
-    <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <Description>Tools for creating template DBs and cleaning them up using PostgreSql.</Description>
-    <AssemblyName>Fusonic.Extensions.UnitTests.Tools.PostgreSql</AssemblyName>
-    <RootNamespace>Fusonic.Extensions.UnitTests.Tools.PostgreSql</RootNamespace>
-    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
-    <PackAsTool>true</PackAsTool>
-    <IsPackable>true</IsPackable>
-    <ToolCommandName>pgtestutil</ToolCommandName>
-  </PropertyGroup>
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <PackageProjectUrl>https://gitlab.com/fusonic/devops/dotnet/extensions</PackageProjectUrl>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <Description>Tools for creating template DBs and cleaning them up using PostgreSql.</Description>
+        <AssemblyName>Fusonic.Extensions.UnitTests.Tools.PostgreSql</AssemblyName>
+        <RootNamespace>Fusonic.Extensions.UnitTests.Tools.PostgreSql</RootNamespace>
+        <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+        <PackAsTool>true</PackAsTool>
+        <IsPackable>true</IsPackable>
+        <ToolCommandName>pgtestutil</ToolCommandName>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="CommandLineParser" Version="2.8.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="3.1.6" />
-  </ItemGroup>
+    <ItemGroup>
+      <PackageReference Include="CommandLineParser" Version="2.8.0" />
+        <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="5.0.0-rc.2.20475.5" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\UnitTests.Adapters.PostgreSql\src\UnitTests.Adapters.PostgreSql.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\..\UnitTests.Adapters.PostgreSql\src\UnitTests.Adapters.PostgreSql.csproj" />
+    </ItemGroup>
 
 </Project>

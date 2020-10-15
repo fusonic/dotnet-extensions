@@ -17,9 +17,7 @@ namespace Fusonic.Extensions.UnitTests.SimpleInjector
 
         internal static void CleanupTestScopes()
         {
-            var scopes = (List<Scope>)TestContext.Items[scopeKey];
-
-            if (!(scopes is null))
+            if (TestContext.Items[scopeKey] is List<Scope> scopes)
                 DisposeScopes(scopes);
         }
 
@@ -32,8 +30,7 @@ namespace Fusonic.Extensions.UnitTests.SimpleInjector
             if (context is null)
                 return null;
 
-            var scopes = (List<Scope>)context.Items[scopeKey];
-            if (scopes is null)
+            if (context.Items[scopeKey] is not List<Scope> scopes)
                 context.Items[scopeKey] = scopes = new List<Scope>(capacity: 2);
 
             var scope = FindScopeForContainer(scopes, container);

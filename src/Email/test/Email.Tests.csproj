@@ -1,39 +1,36 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+    <PropertyGroup>
+        <IsPackable>false</IsPackable>
+        <AssemblyName>Fusonic.Extensions.Email.Tests</AssemblyName>
+        <RootNamespace>Fusonic.Extensions.Email.Tests</RootNamespace>
+        <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
+    </PropertyGroup>
 
-  <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    <IsPackable>false</IsPackable>
-    <AssemblyName>Fusonic.Extensions.Email.Tests</AssemblyName>
-    <RootNamespace>Fusonic.Extensions.Email.Tests</RootNamespace>
-    <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
-  </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="FluentAssertions" Version="5.10.3" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.7.1" />
+        <PackageReference Include="netDumbster" Version="2.0.0.7" />
+        <PackageReference Include="NSubstitute" Version="4.2.2" />
+        <PackageReference Include="xunit" Version="2.4.1" />
+        <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="MediatR" Version="9.0.0" />
+        <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+        <PackageReference Include="SimpleInjector" Version="5.0.3" />
+        <PackageReference Include="SimpleInjector.Integration.AspNetCore" Version="5.1.0" />
+        <PackageReference Include="SimpleInjector.Integration.AspNetCore.Mvc.Core" Version="5.0.0" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="FluentAssertions" Version="5.10.3" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.7.1" />
-    <PackageReference Include="netDumbster" Version="2.0.0.7" />
-    <PackageReference Include="NSubstitute" Version="4.2.2" />
-    <PackageReference Include="xunit" Version="2.4.1" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="MediatR" Version="8.2.0" />
-    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="SimpleInjector" Version="5.0.3" />
-    <PackageReference Include="SimpleInjector.Integration.AspNetCore" Version="5.1.0" />
-    <PackageReference Include="SimpleInjector.Integration.AspNetCore.Mvc.Core" Version="5.0.0" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\..\UnitTests\src\UnitTests.csproj" />
+        <ProjectReference Include="..\src\Email.csproj" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\UnitTests\src\UnitTests.csproj" />
-    <ProjectReference Include="..\src\Email.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="email.css">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
+    <ItemGroup>
+        <None Update="email.css">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
 </Project>

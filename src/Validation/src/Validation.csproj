@@ -1,21 +1,18 @@
 <Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <AssemblyName>Fusonic.Extensions.Validation</AssemblyName>
+        <RootNamespace>Fusonic.Extensions.Validation</RootNamespace>
+        <PackageProjectUrl>https://gitlab.com/fusonic/devops/dotnet/extensions</PackageProjectUrl>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+        <Description>Provides validation pipeline and recursive DataAnnotations annotation</Description>
+    </PropertyGroup>
 
-  <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
-    <AssemblyName>Fusonic.Extensions.Validation</AssemblyName>
-    <RootNamespace>Fusonic.Extensions.Validation</RootNamespace>
-    <PackageProjectUrl>https://gitlab.com/fusonic/devops/dotnet/extensions</PackageProjectUrl>
-    <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <Version>$(ValidationVersion)</Version>
-    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
-    <Description>Provides validation pipeline and recursive DataAnnotations annotation</Description>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="MediatR" Version="8.2.0" />
-    <PackageReference Include="SimpleInjector" Version="5.0.3" />
-    <PackageReference Include="System.ComponentModel.Annotations" Version="4.7.0" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="MediatR" Version="9.0.0" />
+        <PackageReference Include="SimpleInjector" Version="5.0.3" />
+        <PackageReference Include="System.ComponentModel.Annotations" Version="4.7.0" />
+    </ItemGroup>
 
 </Project>

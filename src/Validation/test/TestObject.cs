@@ -35,12 +35,11 @@ namespace Fusonic.Extensions.Validation.Tests
 
         public string? Test2 { get; set; }
 
-        public IEnumerable<DataAnnotationsValidationResult?> Validate(ValidationContext validationContext)
+        public IEnumerable<DataAnnotationsValidationResult> Validate(ValidationContext validationContext)
         {
             yield return new DataAnnotationsValidationResult("Error without member");
             yield return new DataAnnotationsValidationResult("Error with member", new[] { nameof(Test) });
             yield return new DataAnnotationsValidationResult("Error with multiple members", new[] { nameof(Test), nameof(Test2) });
-            yield return null;
         }
     }
 

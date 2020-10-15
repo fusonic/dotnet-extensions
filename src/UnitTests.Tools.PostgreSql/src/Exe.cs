@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 
@@ -20,8 +21,10 @@ namespace Fusonic.Extensions.UnitTests.Tools.PostgreSql
             };
 
             var process = Process.Start(startInfo);
-            process.WaitForExit();
+            if (process == null)
+                throw new InvalidOperationException($"Process '{executable}' did not start.");
 
+            process.WaitForExit();
             return process.ExitCode;
         }
 
@@ -32,17 +35,17 @@ namespace Fusonic.Extensions.UnitTests.Tools.PostgreSql
             {
                 if (i != 0)
                 {
-                    builder.Append(" ");
+                    builder.Append(' ');
                 }
 
-                if (args[i].IndexOf(' ') == -1)
+                if (!args[i].Contains(' '))
                 {
                     builder.Append(args[i]);
 
                     continue;
                 }
 
-                builder.Append("\"");
+                builder.Append('"');
 
                 var pendingBackslashes = 0;
                 for (var j = 0; j < args[i].Length; j++)
@@ -67,7 +70,7 @@ namespace Fusonic.Extensions.UnitTests.Tools.PostgreSql
                             {
                                 if (pendingBackslashes == 1)
                                 {
-                                    builder.Append("\\");
+                                    builder.Append('\\');
                                 }
                                 else
                                 {
@@ -87,7 +90,7 @@ namespace Fusonic.Extensions.UnitTests.Tools.PostgreSql
                     builder.Append('\\', pendingBackslashes * 2);
                 }
 
-                builder.Append("\"");
+                builder.Append('"');
             }
 
             return builder.ToString();

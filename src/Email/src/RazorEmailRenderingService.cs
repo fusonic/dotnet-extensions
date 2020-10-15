@@ -47,8 +47,9 @@ namespace Fusonic.Extensions.Email
             if (emailViewAttribute == null)
                 throw new ArgumentNullException($"The Model {modelType.Name} is missing an EmailViewAttribute.");
 
-            string subject = null!;
-            var body = await RenderAsync(model, culture, FindView, GetSubject);
+            subjectKey ??= emailViewAttribute.SubjectKey;
+            var subject = subjectKey;
+            var body = await RenderAsync(model, culture, FindView, SetSubject);
 
             return (subject, body);
 
@@ -61,7 +62,7 @@ namespace Fusonic.Extensions.Email
                 return viewResult.View;
             }
 
-            void GetSubject(ViewContext viewContext)
+            void SetSubject(ViewContext viewContext)
             {
                 beforeRender?.Invoke(viewContext);
 
@@ -70,7 +71,8 @@ namespace Fusonic.Extensions.Email
                 //When coming from the tests it isn't, but the mocked localizer doesn't need the resources.
                 var viewLocalizer = viewLocalizerFactory();
                 (viewLocalizer as IViewContextAware)?.Contextualize(viewContext);
-                subject = viewLocalizer.GetString(subjectKey ?? emailViewAttribute!.SubjectKey);
+                
+                subject = viewLocalizer.GetString(subjectKey) ?? subjectKey;
             }
         }
 

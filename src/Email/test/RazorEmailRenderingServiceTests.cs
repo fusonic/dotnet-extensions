@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 using System.Web;
 using FluentAssertions;
 using Fusonic.Extensions.Email.Tests.Models;
+using Microsoft.AspNetCore.Mvc.Localization;
+using Microsoft.Extensions.Localization;
+using NSubstitute;
 using Xunit;
 
 namespace Fusonic.Extensions.Email.Tests
@@ -43,9 +46,24 @@ namespace Fusonic.Extensions.Email.Tests
         [Fact]
         public async Task ValidView_ReturnRenderedResults()
         {
-            var (_, body) = await emailRenderingService.RenderAsync(new CultureTestEmailViewModel(), culture, subjectKey: null);
+            var (subject, body) = await emailRenderingService.RenderAsync(new CultureTestEmailViewModel(), culture, subjectKey: null);
+            subject.Should().Be("Subject");
             body.Should()
                 .Contain("body style=\"color: red\"");
+        }
+
+        [Fact]
+        public async Task ReturnsSubjectFromResource_OrCustomSubjectAsFallback()
+        {
+            const string subjectKey = "CustomSubjectKey";
+            var (subject, _) = await emailRenderingService.RenderAsync(new CultureTestEmailViewModel(), culture, subjectKey: subjectKey);
+            subject.Should().Be(subjectKey);
+
+            var localizer = Container.GetInstance<Func<IViewLocalizer>>()();
+            localizer.GetString(subjectKey).Returns(new LocalizedString(subjectKey, "My fancy subject localized"));
+
+            (subject, _) = await emailRenderingService.RenderAsync(new CultureTestEmailViewModel(), culture, subjectKey: subjectKey);
+            subject.Should().Be("My fancy subject localized");
         }
 
         [Theory]
@@ -61,9 +79,9 @@ namespace Fusonic.Extensions.Email.Tests
             var emailRenderingService = GetInstance<RazorEmailRenderingService>();
             var viewModel = new CultureTestEmailViewModel();
 
-            string expectedDate = ToString($"{viewModel.Date:d}");
-            string expectedMonth = ToString($"{viewModel.Date:MMMM}");
-            string expectedNumber = ToString($"{viewModel.Number:n}");
+            var expectedDate = ToString($"{viewModel.Date:d}");
+            var expectedMonth = ToString($"{viewModel.Date:MMMM}");
+            var expectedNumber = ToString($"{viewModel.Number:n}");
 
             var (_, body) = await emailRenderingService.RenderAsync(viewModel, cultureInfo, subjectKey: null);
 

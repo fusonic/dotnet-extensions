@@ -1,25 +1,23 @@
 <Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <AssemblyName>Fusonic.Extensions.Hangfire</AssemblyName>
+        <RootNamespace>Fusonic.Extensions.Hangfire</RootNamespace>
+        <PackageProjectUrl>https://gitlab.com/fusonic/devops/dotnet/extensions</PackageProjectUrl>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+        <Description>
+            Provides Hangfire extensions, especially suited for CQRS developement. (Out of band processing).
+        </Description>
+    </PropertyGroup>
 
-  <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    <AssemblyName>Fusonic.Extensions.Hangfire</AssemblyName>
-    <RootNamespace>Fusonic.Extensions.Hangfire</RootNamespace>
-    <PackageProjectUrl>https://gitlab.com/fusonic/devops/dotnet/extensions</PackageProjectUrl>
-    <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <Version>4.2.1</Version>
-    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
-    <Description>
-Provides Hangfire extensions, especially suited for CQRS developement. (Out of band processing).</Description>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Hangfire.Core" Version="1.7.15" />
-    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="SimpleInjector" Version="5.0.3" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Common\src\Common.csproj" />
-    <ProjectReference Include="..\..\MediatR\src\MediatR.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Hangfire.Core" Version="1.7.15" />
+        <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+        <PackageReference Include="SimpleInjector" Version="5.0.3" />
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\..\Common\src\Common.csproj" />
+        <ProjectReference Include="..\..\MediatR\src\MediatR.csproj" />
+    </ItemGroup>
 </Project>

@@ -1,27 +1,23 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <AssemblyName>Fusonic.Extensions.Email</AssemblyName>
+        <RootNamespace>Fusonic.Extensions.Email</RootNamespace>
+        <PackageProjectUrl>https://gitlab.com/fusonic/devops/dotnet/extensions</PackageProjectUrl>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+        <Description>Contains common functionality for rendering email templates using razor engine and sending emails via MailKit.</Description>
+    </PropertyGroup>
 
-  <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    <AssemblyName>Fusonic.Extensions.Email</AssemblyName>
-    <RootNamespace>Fusonic.Extensions.Email</RootNamespace>
-    <PackageProjectUrl>https://gitlab.com/fusonic/devops/dotnet/extensions</PackageProjectUrl>
-    <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <Version>2.0.6</Version>
-    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
-    <Description>Contains common functionality for rendering email templates using razor engine and sending emails via MailKit.</Description>
-  </PropertyGroup>
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.AspNetCore.App" Version="3.1.1" />
+        <ProjectReference Include="..\..\Common\src\Common.csproj" />
+        <ProjectReference Include="..\..\MediatR\src\MediatR.csproj" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <FrameworkReference Include="Microsoft.AspNetCore.App" Version="3.1.1" />
-    <ProjectReference Include="..\..\Common\src\Common.csproj" />
-    <ProjectReference Include="..\..\MediatR\src\MediatR.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="MailKit" Version="2.9.0" />
-    <PackageReference Include="PreMailer.Net" Version="2.2.0" />
-    <PackageReference Include="SimpleInjector" Version="5.0.3" />
-  </ItemGroup>
-
+    <ItemGroup>
+        <PackageReference Include="MailKit" Version="2.9.0" />
+        <PackageReference Include="PreMailer.Net" Version="2.2.0" />
+        <PackageReference Include="SimpleInjector" Version="5.0.3" />
+    </ItemGroup>
 </Project>
