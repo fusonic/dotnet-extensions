@@ -1,10 +1,20 @@
 # Fusonic Extensions 
 [![Pipeline](https://gitlab.com/fusonic/devops/dotnet/extensions/badges/master/pipeline.svg)](https://gitlab.com/fusonic/devops/dotnet/extensions/-/pipelines?page=1&scope=all&ref=master)
 
-The goal of **Fusonic Extensions** is to provide .NET application developers with reusable librariers that promotes best practice to steer developers towards the pit of success.
-Only well tested and proven code lands in Fusonic Extensions.
 
-The following platforms are supported:
+<a href="https://www.nuget.org/packages?q=Fusonic.Extensions"><img src="https://img.shields.io/badge/fusonic%20extensions-5.0.0-blue"></a>
+
+ The **Fusonic Extensions** project aggregates several thoughtfully designed, reusable class libraries, which can be used in modern .NET application development. Fusonic successfully uses these libraries in its own individual projects. Some packages are general purpose libs which can be used by any kind of .net project (console, web, rich client). Other packages may be best suited for ASP<span>.</span>NET Core development. Because we believe that they can be useful for the broader community, we open source it under a permissive license.
+
+Currently primary development takes place at a private repository at Gitlab.com.
+The project on Github.com is updated on a daily basis, but does not include any issues managed at Gitlab. However, we are happily accepting issues and pull requests on Github as well! Feel free to open an issue or merge request.
+If we see broader community engagement in the future, we may consider switching our primary development to Github.
+
+Latest Fusonic extensions supports the platforms:
+
+* .NET 5.0 and up.
+
+We do have a maintenance-only branch though, where the following platforms are supported until 11/2021:
 
 * .NET Standard 2.1
 * .NET Core 3.1
@@ -12,8 +22,7 @@ The following platforms are supported:
 Packages
 ===============
 
-Fusonic Extensions consists of several thoughtfully designed class librariers which are split into logical areas, to allow great reusability in projects.
-Some packages are general purpose libs which can be used by any kind of .net project (console, web, rich client). Other packages may be best suited for ASP<span>.</span>NET Core development.
+Fusonic Extensions consists of several thoughtfully designed class libraries which are split into logical areas. Documentation is provided per package. In order to increase versioning and deployment complexity, all packages share a common semantic versioning scheme.
 
 [![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.AspNetCore.svg?label=Fusonic.Extensions.AspNetCore&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.AspNetCore/)
 Provides ASP<span>.</span>NET Core extensions (Middelwares, Utilities ...). See the [documentation](docs/AspNetCore/README.md) for more details.
@@ -70,9 +79,7 @@ Non-Goals
 --------------------
 
 - We do not implement **framework-code** but focus on **re-usable class libraries**
-- No DI abstractions necessary (SimpleInjector or Mediatr are committed core librarires used in Fusonic Extensions)
-- Open-Source: At the moment it is not planned to run the project as open-source. We will focus on the use cases and needs of Fusonic customer projects and will develop on Gitlab.
-
+- No DI abstractions necessary (SimpleInjector or MediatR are committed core libraries used in Fusonic Extensions)
 
 
 Naming
@@ -80,27 +87,28 @@ Naming
 
 Fusonic.Extensions.* (Ex. Fusonic.Extensions.Abstractions)
 
-"AspnetCore" specific extensions land in "AspnetCore" "namespace".
+"AspNetCore" specific extensions land in "AspNetCore" "namespace".
 
 
 What code can be added to Fusonic Extensions?
 --------------------
 
-- Generic logic  which are generally valid and meaningful.
-- Stability: Logic should not be very volatile and, at best, tested. It should change as little as possible to the public API.
+- Reusable abstract logic which is generally valid and meaningful.
+- Stability: Code should not be very volatile and, at best, tested. It should change as little as possible to the public API.
 - Extensible: Logic should, if reasonably practicable, be extensible and flexible (eg virtual methods)
 
 
 Standards (QA/Versioning, Unit-Tests)
 --------------------
 
-- All code  must be unit-tested
-- We do not introduce any breaking changes. We use semantic versioning: https://semver.org/
+- All code must be unit-tested
+- Breaking changes shall be avoided. We use semantic versioning: https://semver.org/
+- Major releases are aligned with the yearly [.NET release schedule](https://github.com/dotnet/core/blob/master/roadmap.md).
 
 
 Allowed base dependencies
 --------------------
-If possible, only .NET standard references should be added. Especially with abstract code. We try to reference as few dependencies as possible.
+If possible, only .NET BCL libraries should be referenced. Especially with abstract code. We try to reference as few dependencies as possible.
 However, we agree on the following core technologies, if absolutely necessary for the meaningfulness of the package:
 
 * SimpleInjector
@@ -110,9 +118,9 @@ However, we agree on the following core technologies, if absolutely necessary fo
 
 Integration Workflow
 --------------------
-1. Create a proposal on gitlab
+1. Create a proposal on Gitlab.com (fusonic developers) or Github.com (external developers)
 2. Detailed description of the use cases and API (also with MR request)
-3. Notify Fusonic Extensions "Design member board" (Droth, JHartmann, LBickel)
+3. Notify Fusonic Extensions "Design member board" (David Roth, Johannes Hartmann)
 4. Discussion in GL Issue or Mr Request or Design Meeting
 5. New APIs require the approval of at least one board member
 6. New APIs should be communicated (announcement)
