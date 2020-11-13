@@ -1,8 +1,6 @@
 # Fusonic Extensions 
-[![Pipeline](https://gitlab.com/fusonic/devops/dotnet/extensions/badges/master/pipeline.svg)](https://gitlab.com/fusonic/devops/dotnet/extensions/-/pipelines?page=1&scope=all&ref=master)
+[![Pipeline](https://gitlab.com/fusonic/devops/dotnet/extensions/badges/master/pipeline.svg)](https://gitlab.com/fusonic/devops/dotnet/extensions/-/pipelines?page=1&scope=all&ref=master) <a href="https://www.nuget.org/packages?q=Fusonic.Extensions"><img src="https://img.shields.io/badge/fusonic%20extensions-5.0.0-blue"></a>
 
-
-<a href="https://www.nuget.org/packages?q=Fusonic.Extensions"><img src="https://img.shields.io/badge/fusonic%20extensions-5.0.0-blue"></a>
 
  The **Fusonic Extensions** project aggregates several thoughtfully designed, reusable class libraries, which can be used in modern .NET application development. Fusonic successfully uses these libraries in its own individual projects. Some packages are general purpose libs which can be used by any kind of .net project (console, web, rich client). Other packages may be best suited for ASP<span>.</span>NET Core development. Because we believe that they can be useful for the broader community, we open source it under a permissive license.
 
@@ -10,7 +8,7 @@ Currently primary development takes place at a private repository at Gitlab.com.
 The project on Github.com is updated on a daily basis, but does not include any issues managed at Gitlab. However, we are happily accepting issues and pull requests on Github as well! Feel free to open an issue or merge request.
 If we see broader community engagement in the future, we may consider switching our primary development to Github.
 
-Latest Fusonic extensions supports the platforms:
+Latest Fusonic Extensions supports the platforms:
 
 * .NET 5.0 and up.
 
