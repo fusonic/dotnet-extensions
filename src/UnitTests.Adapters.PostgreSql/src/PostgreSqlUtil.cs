@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright (c) Fusonic GmbH. All rights reserved.
+// Licensed under the MIT License. See LICENSE file in the project root for license information.
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -180,7 +183,7 @@ namespace Fusonic.Extensions.UnitTests.Adapters.PostgreSql
         {
             using var cmd = connection.CreateCommand();
             cmd.CommandText = sql;
-            return (T)cmd.ExecuteScalar();
+            return (T)cmd.ExecuteScalar()!;
         }
 
         /// <summary> Creates a connection using the given connection string, but replacing the database with postgres. </summary>

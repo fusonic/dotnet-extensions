@@ -8,7 +8,7 @@
 
     <ItemGroup>
         <PackageReference Include="FluentAssertions" Version="5.10.3" />
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.7.1" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.0" />
         <PackageReference Include="netDumbster" Version="2.0.0.7" />
         <PackageReference Include="NSubstitute" Version="4.2.2" />
         <PackageReference Include="xunit" Version="2.4.1" />
@@ -18,7 +18,7 @@
         </PackageReference>
         <PackageReference Include="MediatR" Version="9.0.0" />
         <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-        <PackageReference Include="SimpleInjector" Version="5.0.3" />
+        <PackageReference Include="SimpleInjector" Version="5.1.0" />
         <PackageReference Include="SimpleInjector.Integration.AspNetCore" Version="5.1.0" />
         <PackageReference Include="SimpleInjector.Integration.AspNetCore.Mvc.Core" Version="5.0.0" />
     </ItemGroup>

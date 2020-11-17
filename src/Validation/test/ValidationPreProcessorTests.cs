@@ -1,4 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿// Copyright (c) Fusonic GmbH. All rights reserved.
+// Licensed under the MIT License. See LICENSE file in the project root for license information.
+
+using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;

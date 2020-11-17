@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿// Copyright (c) Fusonic GmbH. All rights reserved.
+// Licensed under the MIT License. See LICENSE file in the project root for license information.
+
+using System.Collections.Generic;
 using System.Reflection;
 using MediatR.Pipeline;
 using SimpleInjector;

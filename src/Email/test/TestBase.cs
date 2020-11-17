@@ -1,4 +1,7 @@
-﻿using Fusonic.Extensions.UnitTests;
+﻿// Copyright (c) Fusonic GmbH. All rights reserved.
+// Licensed under the MIT License. See LICENSE file in the project root for license information.
+
+using Fusonic.Extensions.UnitTests;
 
 namespace Fusonic.Extensions.Email.Tests
 {
