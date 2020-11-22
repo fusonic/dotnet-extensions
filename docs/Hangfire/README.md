@@ -31,3 +31,14 @@ Container.RegisterDecorator(typeof(IRequestHandler<,>), typeof(TransactionalComm
 // Transaction scope for all notification handlers:
 Container.RegisterDecorator(typeof(INotificationHandler<>), typeof(TransactionalNotificationHandlerDecorator<>));
 ```
+
+## Using DisplayNameFunc.DisplayNameFunc
+
+OutOfBand jobs are processed via `IJobProcessor.ProcessAsync`. As a consequence, each jobs name in hangfires dashboard will be listed as "JobProcessor.ProcessAsync".  
+Fortunately there is an easy way to enable meaningful job display names:
+
+```cs
+dashboardOptions.DisplayNameFunc = DashboardHelpers.FormatJobDisplayName;
+```
+
+Once enabled, request handlers type name (without assembly information) will be used as the job display name.
