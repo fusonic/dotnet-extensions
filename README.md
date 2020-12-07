@@ -37,6 +37,9 @@ Extensions for EF Core.
 [![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.Hangfire.svg?label=Fusonic.Extensions.Hangfire&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.Hangfire/)
 Provides Hangfire extensions, especially suited for CQRS developement. (Out of band processing). See the [documentation](docs/Hangfire/README.md) for more details.
 
+[![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.Hosting.svg?label=Fusonic.Extensions.Hosting&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.Hosting/)
+Provides services and extensions for hosting. See the [documentation](docs/Hosting/README.md) for more details.
+
 [![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.MediatR.svg?label=Fusonic.Extensions.MediatR&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.MediatR/)
 Provides abstractions for MediatR. See the [documentation](docs/MediatR/README.md) for more details.
 

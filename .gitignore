@@ -270,3 +270,5 @@ __pycache__/
 src/frontend/bundleSizeReport\.html
 
 src/backend/NeoVac\.Home\.Api/tempkey\.rsa
+
+msbuild.binlog

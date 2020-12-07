@@ -376,6 +376,8 @@ resharper_suggest_var_or_type_built_in_types_highlighting=hint
 resharper_suggest_var_or_type_elsewhere_highlighting=hint
 resharper_suggest_var_or_type_simple_types_highlighting=hint
 
-# Roslynator severities
+# VS inspection severities
+dotnet_diagnostic.IDE0073.severity = warning # IDE0073: The file header is missing or not located at the top of the file
 
+# Roslynator inspection severities
 dotnet_diagnostic.RCS1090.severity = none # RCS1090: Add call to 'ConfigureAwait' (or vice versa).
