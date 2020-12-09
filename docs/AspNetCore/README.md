@@ -1,20 +1,9 @@
 # ASP .Net Core Extensions
 
 - [ASP .Net Core Extensions](#asp-net-core-extensions)
-  - [MediatR transaction handling](#mediatr-transaction-handling)
   - [ServiceCollection extensions](#servicecollection-extensions)
   - [CultureUtil](#cultureutil)
   - [Ignore paths Middleware](#ignore-paths-middleware)
-
-## MediatR transaction handling
-
-There are decorators to run all MediatR-requests and notifications within a transaction.
-
-To enable this feature use the following SimpleInjector-Configuration:
-```cs
-Container.RegisterDecorator(typeof(IRequestHandler<,>), typeof(TransactionCommandHandlerDecorator<,>));
-Container.RegisterDecorator(typeof(INotificationHandler<>), typeof(TransactionNotificationHandlerDecorator<>));
-```
 
 ## ServiceCollection extensions
 
