@@ -11,7 +11,7 @@
 
     <ItemGroup>
         <PackageReference Include="MediatR" Version="9.0.0" />
-        <PackageReference Include="SimpleInjector" Version="5.1.0" />
+        <PackageReference Include="SimpleInjector" Version="5.2.0" />
         <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
     </ItemGroup>
 

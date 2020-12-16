@@ -18,9 +18,9 @@
         </PackageReference>
         <PackageReference Include="MediatR" Version="9.0.0" />
         <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-        <PackageReference Include="SimpleInjector" Version="5.1.0" />
-        <PackageReference Include="SimpleInjector.Integration.AspNetCore" Version="5.1.0" />
-        <PackageReference Include="SimpleInjector.Integration.AspNetCore.Mvc.Core" Version="5.0.0" />
+        <PackageReference Include="SimpleInjector" Version="5.2.0" />
+        <PackageReference Include="SimpleInjector.Integration.AspNetCore" Version="5.2.0" />
+        <PackageReference Include="SimpleInjector.Integration.AspNetCore.Mvc.Core" Version="5.2.0" />
     </ItemGroup>
 
     <ItemGroup>

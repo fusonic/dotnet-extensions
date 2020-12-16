@@ -18,6 +18,6 @@
     <ItemGroup>
         <PackageReference Include="MailKit" Version="2.9.0" />
         <PackageReference Include="PreMailer.Net" Version="2.2.0" />
-        <PackageReference Include="SimpleInjector" Version="5.1.0" />
+        <PackageReference Include="SimpleInjector" Version="5.2.0" />
     </ItemGroup>
 </Project>
