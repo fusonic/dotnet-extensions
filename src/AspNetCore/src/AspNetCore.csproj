@@ -1,10 +1,10 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
         <Description>Provides ASP.NET Core extensions (Middelwares, Utilities ...)</Description>
         <AssemblyName>Fusonic.Extensions.AspNetCore</AssemblyName>
         <RootNamespace>Fusonic.Extensions.AspNetCore</RootNamespace>
-        <PackageProjectUrl>https://gitlab.com/fusonic/devops/dotnet/extensions</PackageProjectUrl>
+        <PackageProjectUrl>https://github.com/fusonic/dotnet-extensions</PackageProjectUrl>
         <IncludeSymbols>true</IncludeSymbols>
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
         <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>

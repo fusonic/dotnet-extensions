@@ -3,7 +3,7 @@
   <PropertyGroup>
     <AssemblyName>Fusonic.Extensions.Hosting</AssemblyName>
     <RootNamespace>Fusonic.Extensions.Hosting</RootNamespace>
-    <PackageProjectUrl>https://gitlab.com/fusonic/devops/dotnet/extensions</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/fusonic/dotnet-extensions</PackageProjectUrl>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
