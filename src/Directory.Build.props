@@ -23,7 +23,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitLab" Version="1.0.0" PrivateAssets="All"/>
+    <PackageReference Include="Microsoft.SourceLink.Github" Version="1.0.0" PrivateAssets="All"/>
     <None Include="..\..\..\icon.png">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
