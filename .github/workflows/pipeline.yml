@@ -9,7 +9,8 @@ on:
 jobs:
   build:
 
-    runs-on: mcr.microsoft.com/dotnet/sdk:5.0
+    runs-on: ubuntu-latest
+    container: mcr.microsoft.com/dotnet/sdk:5.0
 
     steps:
     - uses: actions/checkout@v2
