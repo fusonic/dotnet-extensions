@@ -1,6 +1,6 @@
 <Project>
   <PropertyGroup>
-    <Version>5.1.1</Version>
+    <Version>5.1.1-alpha.1</Version>
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
@@ -16,6 +16,7 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <RepositoryUrl>https://github.com/fusonic/dotnet-extensions.git</RepositoryUrl>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(GITLAB_CI)' == 'true'">
