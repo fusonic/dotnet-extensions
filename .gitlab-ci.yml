@@ -7,11 +7,14 @@ stages:
 test:
     stage: test
     script:
-        - dotnet test Extensions.sln
+         - dotnet test Extensions.sln
 
 build:
     stage: build
-    script: 
+    before_script:
+        # Workaround for SourceLink: See: https://github.com/dotnet/sourcelink/issues/689
+        - git config url."https://github.com/fusonic/dotnet-extensions".insteadOf https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.com/fusonic/devops/dotnet/extensions
+    script:
         - dotnet pack -c Release
     artifacts:
         when: on_success
