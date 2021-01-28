@@ -7,7 +7,7 @@
 ## Out-Of-Band Processing of CQRS Command and Event-Handlers
 
 When applying CQRS, it allows us to easily decorate handlers with generic decorators.
-By applying the "[Fusonic.Extensions.Common.OutOfBand]" attribute, you can decorate handlers which are allowed to run outside of the current flow. Whenever this handler gets called, the execution pipeline looks for the attribute on the handler. If the attribute is available, the handler is scheduled for async execution, meaning it runs “out of band” of the current logical flow.
+By applying the `Fusonic.Extensions.Common.OutOfBandAttribute`, you can decorate handlers which are allowed to run outside of the current flow. Whenever this handler gets called, the execution pipeline looks for the attribute on the handler. If the attribute is available, the handler is scheduled for async execution, meaning it runs “out of band” of the current logical flow.
 That means that the message will be stored in the outbox as part of the current ACID transaction and so it gets scheduled for async background processing as soon as the current transaction completes.
 
 This way we you can atomically perform your business operation including scheduling commands/events which must be executed afterwards, so that we get into an consistent state.
