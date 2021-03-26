@@ -1,4 +1,4 @@
-﻿// Copyright (c) Fusonic GmbH. All rights reserved.
+// Copyright (c) Fusonic GmbH. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
 using System;
@@ -76,29 +76,7 @@ namespace Fusonic.Extensions.UnitTests.Adapters.PostgreSql
                 if (templateDb != null)
                     cmd.CommandText += $" TEMPLATE \"{templateDb}\"";
 
-                int retry = 0;
-                while (!dbCreated)
-                {
-                    try
-                    {
-                        cmd.ExecuteNonQuery();
-                        dbCreated = true;
-                    }
-                    catch (PostgresException e)
-                    {
-                        retry++;
-                        //Exception: Npgsql.PostgresException : 55006: source database "xyz" is being accessed by other users
-                        //Usually an error, as "xyz" should be a template and templates can't be accessed by other users (except postgres)
-                        //However, timescale tends to launch a background worker connection on the template when restoring from it, which blocks us from creating the template.
-                        //The background worker usually stops pretty fast again and a retry the succeeds.
-                        //There is an open ticket for it.
-                        //TODO: Remove retry logic once https://github.com/timescale/timescaledb/issues/1593 is resolved
-                        if (retry >= 5 || e.SqlState != "55006")
-                            throw;
-                        
-                        Task.Delay(500).Wait();
-                    }
-                }
+                cmd.ExecuteNonQuery();
             }
 
             //if no template database was given, run the migrations
