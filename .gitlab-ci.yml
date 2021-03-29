@@ -1,34 +1,73 @@
 image: mcr.microsoft.com/dotnet/sdk:5.0
 stages:
-    - test
-    - build
-    - publish
+  - build
+  - test
+  - publish
 
-test:
-    stage: test
-    script:
-         - dotnet test Extensions.sln
+default:
+  interruptible: true
 
 build:
-    stage: build
-    before_script:
-        # Workaround for SourceLink: See: https://github.com/dotnet/sourcelink/issues/689
-        - git config url."https://github.com/fusonic/dotnet-extensions".insteadOf https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.com/fusonic/devops/dotnet/extensions
-    script:
-        - dotnet pack -c Release
-    artifacts:
-        when: on_success
-        paths:
-            - ./src/*/src/bin/Release/*.nupkg
-            - ./src/*/src/bin/Release/*.snupkg
+  stage: build
+  before_script:
+    # Workaround for SourceLink: See: https://github.com/dotnet/sourcelink/issues/689
+    - git config url."https://github.com/fusonic/dotnet-extensions".insteadOf https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.com/fusonic/devops/dotnet/extensions
+  script:
+    - dotnet pack -c Release
+  artifacts:
+    when: on_success
+    paths:
+      - ./src/*/src/bin/Release/*.nupkg
+      - ./src/*/src/bin/Release/*.snupkg
+
+test:
+  stage: test
+  needs: []
+  script:
+    - set +e
+    - dotnet test -l 'trx;LogFileName=TestOutput.trx' -l 'console;verbosity=detailed' --collect:"XPlat Code Coverage" Extensions.sln
+    - export DOTNET_TEST_EXIT_CODE=$?
+    - set -e
+    # Install tools required for reports
+    - export PATH="$PATH:/root/.dotnet/tools"
+    - dotnet tool install -g dotnet-reportgenerator-globaltool
+    - dotnet tool install -g trx2junit
+    # Generate code coverage report
+    - reportgenerator "-reports:src/**/TestResults/*/coverage.cobertura.xml" "-targetdir:reports/dotnetcoverage"
+    - cat reports/dotnetcoverage/index.htm | grep "Line coverage" | head -1
+    # Convert trx to the JUnit format. This is used for the test results in the MR.
+    - mkdir testresults
+    - find . -iname "TestOutput*.trx" -exec sh -c 'echo ${} | rev | cut -d / -f3 | rev | sed -e s/$/.trx/ | { read OUTPUT; echo "{} -> $OUTPUT"; mv {} testresults/$OUTPUT; } ' \;
+    - cd testresults
+    - trx2junit *.trx
+    - exit $DOTNET_TEST_EXIT_CODE
+  artifacts:
+    when: always
+    paths:
+      - reports/dotnetcoverage
+    reports:
+      junit: testresults/*.xml
+      cobertura: src/**/TestResults/*/coverage.cobertura.xml
+  coverage: /.*Line coverage.*?(\d{1,3}\.?\d*)%.*/
+
+pages:
+  stage: publish
+  needs: [ test ]
+  script:
+    - mv reports/dotnetcoverage public
+  artifacts:
+    paths:
+      - public
+  only:
+    - master
 
 publish:
-    variables:
-        GIT_STRATEGY: none
-    stage: publish
-    script:
-        - dotnet nuget push "src/**/src/bin/Release/*.nupkg" -k $Nuget_Key -s https://api.nuget.org/v3/index.json --skip-duplicate
-    when: manual
-    only: 
-        - /^release\/.*$/
-        - master
+  variables:
+    GIT_STRATEGY: none
+  stage: publish
+  script:
+    - dotnet nuget push "src/**/src/bin/Release/*.nupkg" -k $Nuget_Key -s https://api.nuget.org/v3/index.json --skip-duplicate
+  when: manual
+  only:
+    - /^release\/.*$/
+    - master
