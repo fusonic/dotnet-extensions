@@ -88,6 +88,8 @@ namespace Fusonic.Extensions.UnitTests.Adapters.PostgreSql
             //Seems somehow connected to dbContext.SaveChangesAsync() when called in the seed. (at least in my tests).
             //Running the seed with an extra Task.Run() around works...
             Task.Run(() => seed?.Invoke(dbContext).Wait()).Wait();
+
+            dbCreated = true;
         }
 
         public DbContextOptions<TDbContext> GetContextOptions() => options;
