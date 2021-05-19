@@ -150,9 +150,12 @@ public class TestFixture : DatabaseFixture<YourDbContext>
 
     protected override void ConfigureDatabaseProviderss(DatabaseFixtureConfiguration<YourDbContext> configuration)
     {
+        var maxDbTestConcurrency = int.TryParse(Environment.GetEnvironmentVariable("MAX_TEST_CONCURRENCY"), out var c) ? c : 0; // 0 = Processor count
+
         configuration.UseInMemoryDatabase(seed: ctx => new TestDataSeed(ctx).Seed())
                      .UsePostgreSqlDatabase(connectionString: "...", dbNamePrefix: "YourProjectTest", templateDb: "YourProjectTest_Template")
-                     .UseDefaultProviderAttribute(new InMemoryTestAttribute());
+                     .UseDefaultProviderAttribute(new InMemoryTestAttribute())
+                     .SetMaxTestConcurrency(maxDbTestConcurrency);
 
         if (bool.TryParse(Environment.GetEnvironmentVariable("NIGHTLY"), out bool isNightly) && isNightly)
             configuration.UseProviderAttributeReplacer(_ => new PostgreSqlTestAttribute());
@@ -187,9 +190,26 @@ In the example above `ConfigureDatabaseProviders` does configure the following:
 - We support InMemory-Database tests. They are marked with `[InMemoryTest]`. The `TestDataSeed` gets executed for each one of these tests.
 - We support database tests against an PostgreSql-Database. They are marked with `[PostgreSqlTest]`. The database gets created from an already seeded database template, thus the seed must not be run again. You can find the parameter descriptions in [PostgreSql](#postgresql).
 - If no attribute is defined on the method or the class, use an InMemory-database
+- The maximum concurrent number of executed database tests is set to the number of processors, unless this is overwritten in an environment variable. Details can be found [here](#database-test-concurrency)
 - If a nightly build is currently running, execute all tests as `PostgreSql` tests.
 
   When a db context is requested, `YourDbContext` gets resolved, so you can inject other dependencies into your context. The `DbContextOptions` provided depend on the current test (InMemoryOptions vs PostgreSqlOptions vs WhateverOptions).
+
+### Database test concurrency
+
+XUnit limits the number the maximum _active_ tests executing, but it does not the limit of maximum parallel tests.  
+Simplified, as soon as a test awaits a task somewhere, the thread is returned to the pool and another test gets started. This is intended by design.  
+
+This behavior can cause issues when running integration tests against a database, especially when lots of tests are started. Connection limits can be exhausted quickly and other issues, like timeouts due to overload, may occur.
+
+By using `SetMaxTestConcurrency` in the provider configuration, you can steer the maximum concurrent database tests that can be started. The default limit is the virtual processor count on the machine.  
+
+Note that this setting is not affecting the connection limit of entity framework or any other connection limits. Entity framework or this unit testing framework could still have more open connections than the maxConcurrency setting, but it still can be leveraged to drastically reduce the chance of connection limit exhaustion and timeouts due to a too high load.
+
+The following values are supported:
+* `maxConcurrency < 0` disables the limits completly. Tests get executed as XUnit intends to.
+* `maxConcurrency = 0` sets the limit to the virtual processor count of the machine. This is the default.
+* `maxConcurrency > 0` sets the limit to the given number.
 
 ### Test base
 

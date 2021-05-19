@@ -10,7 +10,7 @@ namespace Fusonic.Extensions.UnitTests.Adapters.EntityFrameworkCore
     public class DatabaseFixtureConfiguration<TDbContext>
         where TDbContext : DbContext
     {
-        internal Dictionary<Type, Func<DatabaseProviderAttribute, ITestDatabaseProvider<TDbContext>>> ProviderFactories { get; } = new Dictionary<Type, Func<DatabaseProviderAttribute, ITestDatabaseProvider<TDbContext>>>();
+        internal Dictionary<Type, Func<DatabaseProviderAttribute, ITestDatabaseProvider<TDbContext>>> ProviderFactories { get; } = new();
         internal DatabaseProviderAttribute? DefaultProviderAttribute { get; private set; }
         internal Func<DatabaseProviderAttribute, DatabaseProviderAttribute>? ReplaceProvider { get; private set; }
 
@@ -43,6 +43,27 @@ namespace Fusonic.Extensions.UnitTests.Adapters.EntityFrameworkCore
         public DatabaseFixtureConfiguration<TDbContext> UseProviderAttributeReplacer(Func<DatabaseProviderAttribute, DatabaseProviderAttribute> replaceProvider)
         {
             ReplaceProvider = replaceProvider;
+            return this;
+        }
+
+        /// <summary>
+        /// XUnit limits the number of maximum <i>active</i> tests executing, but it does not the limit of maximum parallel tests started.
+        /// As soon as a test awaits a task somewhere, the thread is returned to the pool and another test gets started. This is intended by design.<br/>
+        /// This behavior can cause issues when running integration tests against a database, especially when lots of tests are started.
+        /// Connection limits can be exhausted quickly and other issues, like timeouts due to overload, may occur.<br/>
+        /// This setting limits maximum concurrent database tests that can be started.<br/>
+        /// Note that this setting is not affecting the connection limit of entity framework or any other connection limits.
+        /// Entity framework or this unit testing framework could still have more open connections than the maxConcurrency setting, but it still can be
+        /// leveraged to drastically reduce the chance of connection limit exhaustion and timeouts due to a too high load. <b/>
+        /// </summary>
+        /// <param name="maxConcurrency">
+        /// &lt; 0: Disable limits<br/>
+        /// 0: Use number of virtual CPUs available (default)<br/>
+        /// &gt; 0: Use the given value as limit
+        /// </param>
+        public DatabaseFixtureConfiguration<TDbContext> SetMaxTestConcurrency(int maxConcurrency)
+        {
+            LimitTestConcurrencyAttribute.MaxConcurrency = maxConcurrency;
             return this;
         }
     }

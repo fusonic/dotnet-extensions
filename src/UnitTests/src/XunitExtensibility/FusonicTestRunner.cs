@@ -1,4 +1,4 @@
-﻿// Copyright (c) Fusonic GmbH. All rights reserved.
+// Copyright (c) Fusonic GmbH. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
 using System;
@@ -17,16 +17,29 @@ namespace Fusonic.Extensions.UnitTests.XunitExtensibility
     /// </summary>
     public class FusonicTestRunner : XunitTestRunner
     {
-        private readonly List<BeforeAfterTestInvokeAttribute> beforeAfterInvokeAttributes = new List<BeforeAfterTestInvokeAttribute>();
+        private readonly List<BeforeAfterTestInvokeAttribute> beforeAfterInvokeAttributes = new();
+        private readonly List<BeforeAfterTestInvokeAsyncAttribute> beforeAfterInvokeAsyncAttributes = new();
         private readonly ITestOutputHelper? testOutputHelper;
 
-        public FusonicTestRunner(ITest test, IMessageBus messageBus, Type testClass, object[] constructorArguments, MethodInfo testMethod, object[] testMethodArguments, string skipReason, IReadOnlyList<BeforeAfterTestAttribute> beforeAfterAttributes,
-                                 ExceptionAggregator aggregator, CancellationTokenSource cancellationTokenSource) 
+        public FusonicTestRunner(
+            ITest test,
+            IMessageBus messageBus,
+            Type testClass,
+            object[] constructorArguments,
+            MethodInfo testMethod,
+            object[] testMethodArguments,
+            string skipReason,
+            IReadOnlyList<BeforeAfterTestAttribute> beforeAfterAttributes,
+            ExceptionAggregator aggregator,
+            CancellationTokenSource cancellationTokenSource)
             : base(test, messageBus, testClass, constructorArguments, testMethod, testMethodArguments, skipReason, beforeAfterAttributes, aggregator, cancellationTokenSource)
         {
             //First get the attributes on the class, then on the method. Method attributes should get executed after the class attributes.
             beforeAfterInvokeAttributes.AddRange(testClass.GetCustomAttributes<BeforeAfterTestInvokeAttribute>(inherit: true));
             beforeAfterInvokeAttributes.AddRange(testMethod.GetCustomAttributes<BeforeAfterTestInvokeAttribute>());
+
+            beforeAfterInvokeAsyncAttributes.AddRange(testClass.GetCustomAttributes<BeforeAfterTestInvokeAsyncAttribute>(inherit: true));
+            beforeAfterInvokeAsyncAttributes.AddRange(testMethod.GetCustomAttributes<BeforeAfterTestInvokeAsyncAttribute>());
 
             //If there's a ITestOutputHelper in the ctor, we use that one instead of creating an own.
             testOutputHelper = constructorArguments.OfType<ITestOutputHelper>().FirstOrDefault();
@@ -41,11 +54,15 @@ namespace Fusonic.Extensions.UnitTests.XunitExtensibility
                 ownOutputHelper = new TestOutputHelper();
                 ownOutputHelper.Initialize(MessageBus, Test);
             }
-            
+
             using (TestContext.Create(testOutputHelper ?? ownOutputHelper!, TestMethod, TestClass))
             {
                 BeforeTestCaseInvoked();
+                await BeforeTestCaseInvokedAsync();
+
                 var result = await base.InvokeTestAsync(aggregator);
+
+                await AfterTestCaseInvokedAsync();
                 AfterTestCaseInvoked();
 
                 //if we own the output helper, set the output in the result
@@ -72,6 +89,22 @@ namespace Fusonic.Extensions.UnitTests.XunitExtensibility
             foreach (var attribute in beforeAfterInvokeAttributes)
             {
                 attribute.After(TestMethod);
+            }
+        }
+
+        private async Task BeforeTestCaseInvokedAsync()
+        {
+            foreach (var attribute in beforeAfterInvokeAsyncAttributes)
+            {
+                await attribute.BeforeAsync(TestMethod);
+            }
+        }
+
+        private async Task AfterTestCaseInvokedAsync()
+        {
+            foreach (var attribute in beforeAfterInvokeAsyncAttributes)
+            {
+                await attribute.AfterAsync(TestMethod);
             }
         }
     }

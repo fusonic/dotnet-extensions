@@ -7,7 +7,6 @@ using Fusonic.Extensions.UnitTests.Adapters.EntityFrameworkCore;
 using Fusonic.Extensions.UnitTests.Logging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Npgsql;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure;
 
 namespace Fusonic.Extensions.UnitTests.Adapters.PostgreSql
@@ -59,9 +58,7 @@ namespace Fusonic.Extensions.UnitTests.Adapters.PostgreSql
 
             dbCreated = false;
 
-            //dropping can be done in the background
-            var testDbName = dbName!;
-            Task.Run(() => PostgreSqlUtil.DropDb(connectionString, testDbName));
+            PostgreSqlUtil.DropDb(connectionString, dbName!);
         }
 
         public void SeedDb(TDbContext dbContext)

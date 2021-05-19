@@ -1,4 +1,4 @@
-﻿// Copyright (c) Fusonic GmbH. All rights reserved.
+// Copyright (c) Fusonic GmbH. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
 using System;
@@ -10,7 +10,7 @@ namespace Fusonic.Extensions.UnitTests.XunitExtensibility
     /// Base attribute which indicates a test method interception. This allows code to be run before and after the test is run.
     ///
     /// The difference to the Xunit.Sdk.BeforeAfterTestAttribute is, that the xunit version executes the 'Before' after the test class is created and the constructor ran.
-    /// Our version runs before the test class is created, allowing to create sth. like a test context before the constructor gets called.
+    /// This version runs before the test class is created, allowing to create sth. like a test context before the constructor gets called.
     /// </summary>
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class, AllowMultiple = true)]
     public abstract class BeforeAfterTestInvokeAttribute : Attribute

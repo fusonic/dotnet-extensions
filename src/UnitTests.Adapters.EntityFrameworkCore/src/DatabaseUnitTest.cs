@@ -1,4 +1,4 @@
-﻿// Copyright (c) Fusonic GmbH. All rights reserved.
+// Copyright (c) Fusonic GmbH. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
 using System;
@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Fusonic.Extensions.UnitTests.Adapters.EntityFrameworkCore
 {
+    [LimitTestConcurrency]
     public abstract class DatabaseUnitTest<TDbContext, TFixture> : UnitTest<TFixture>
         where TDbContext : DbContext
         where TFixture : DatabaseFixture<TDbContext>
@@ -71,7 +72,7 @@ namespace Fusonic.Extensions.UnitTests.Adapters.EntityFrameworkCore
                 return await query(dbContext);
             });
         }
-        
+
         public override void Dispose()
         {
             Query(dbContext =>
@@ -79,6 +80,7 @@ namespace Fusonic.Extensions.UnitTests.Adapters.EntityFrameworkCore
                 var provider = GetInstance<ITestDatabaseProvider<TDbContext>>();
                 provider.DropDb(dbContext);
             });
+
             base.Dispose();
         }
     }
