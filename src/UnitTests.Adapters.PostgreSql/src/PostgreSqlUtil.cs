@@ -59,10 +59,11 @@ namespace Fusonic.Extensions.UnitTests.Adapters.PostgreSql
 
             else
             {
+                var version = GetVersion(connectionString);
                 Parallel.ForEach(databases, dbName =>
                 {
                     Console.Out.WriteLine($"Dropping {dbName}");
-                    DropDb(connectionString, dbName);
+                    DropDb(connectionString, dbName, version);
                 });
             }
         }
@@ -72,7 +73,9 @@ namespace Fusonic.Extensions.UnitTests.Adapters.PostgreSql
         /// </summary>
         /// <param name="connectionString">Connection string to the postgres database.</param>
         /// <param name="dbName">Database that should be dropped.</param>
-        public static void DropDb(string connectionString, string dbName)
+        /// <param name="version">Version of the PostgreSQL server if known. If this is not set, the version will be queried.
+        /// Starting with PG13, FORCE will be used when dropping a database.</param>
+        public static void DropDb(string connectionString, string dbName, Version? version = null)
         {
             EnsureNotPostgres(dbName);
 
@@ -88,7 +91,7 @@ namespace Fusonic.Extensions.UnitTests.Adapters.PostgreSql
 
             connection.Execute($@"ALTER DATABASE ""{dbName}"" IS_TEMPLATE false");
 
-            var version = GetVersion(connection);
+            version ??= GetVersion(connection);
             if (version.Major >= 13)
             {
                 connection.Execute($@"DROP DATABASE ""{dbName}"" WITH (FORCE)");
@@ -224,7 +227,6 @@ namespace Fusonic.Extensions.UnitTests.Adapters.PostgreSql
         {
             var serverVersion = connection.ExecuteScalar<string>("SHOW server_version");
             return Version.TryParse(serverVersion, out var version) ? version : new Version();
-
         }
 
         private static void EnsureNotPostgres(string dbName)
