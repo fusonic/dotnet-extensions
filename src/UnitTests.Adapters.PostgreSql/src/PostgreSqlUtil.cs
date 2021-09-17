@@ -78,17 +78,26 @@ namespace Fusonic.Extensions.UnitTests.Adapters.PostgreSql
 
             using var connection = CreatePostgresDbConnection(connectionString);
             connection.Open();
+
             var exists = connection.ExecuteScalar<bool?>($"SELECT true FROM pg_database WHERE datname='{dbName}'");
-            if (exists == true)
+            if (exists != true)
             {
-                connection.Execute($"ALTER DATABASE \"{dbName}\" CONNECTION LIMIT 0");
-                connection.Execute($"ALTER DATABASE \"{dbName}\" IS_TEMPLATE false");
-                TerminateUsers(dbName, connection);
-                connection.Execute($"DROP DATABASE \"{dbName}\"");
+                Console.WriteLine($"DropDb: Database does not exist ({dbName}).");
+                return;
+            }
+
+            connection.Execute($@"ALTER DATABASE ""{dbName}"" IS_TEMPLATE false");
+
+            var version = GetVersion(connection);
+            if (version.Major >= 13)
+            {
+                connection.Execute($@"DROP DATABASE ""{dbName}"" WITH (FORCE)");
             }
             else
             {
-                Console.WriteLine($"DropDb: Database does not exist ({dbName}).");
+                connection.Execute($@"ALTER DATABASE ""{dbName}"" CONNECTION LIMIT 0");
+                TerminateUsers(dbName, connection);
+                connection.Execute($@"DROP DATABASE ""{dbName}""");
             }
         }
 
@@ -202,6 +211,20 @@ namespace Fusonic.Extensions.UnitTests.Adapters.PostgreSql
                 return null;
 
             return match.Groups[1].Value;
+        }
+
+        public static Version GetVersion(string connectionString)
+        {
+            using var connection = CreatePostgresDbConnection(connectionString);
+            connection.Open();
+            return GetVersion(connection);
+        }
+
+        public static Version GetVersion(NpgsqlConnection connection)
+        {
+            var serverVersion = connection.ExecuteScalar<string>("SHOW server_version");
+            return Version.TryParse(serverVersion, out var version) ? version : new Version();
+
         }
 
         private static void EnsureNotPostgres(string dbName)
