@@ -1,4 +1,4 @@
-﻿// Copyright (c) Fusonic GmbH. All rights reserved.
+// Copyright (c) Fusonic GmbH. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
 using System.Globalization;
@@ -23,10 +23,14 @@ namespace Fusonic.Extensions.Email
             public Command(string recipient, string recipientDisplayName, CultureInfo culture, object viewModel) : this(recipient, recipientDisplayName, culture, null, viewModel)
             { }
 
-            public Command(string recipient, string recipientDisplayName, CultureInfo culture, string? subjectKey, object viewModel)
+            public Command(string recipient, string recipientDisplayName, CultureInfo culture, string? subjectKey, object viewModel) : this(recipient, recipientDisplayName, null, culture, subjectKey, viewModel)
+            { }
+
+            public Command(string recipient, string recipientDisplayName, string? bccRecipient, CultureInfo culture, string? subjectKey, object viewModel)
             {
                 Recipient = recipient;
                 RecipientDisplayName = recipientDisplayName;
+                BccRecipient = bccRecipient;
                 SubjectKey = subjectKey;
                 ViewModel = viewModel;
                 Culture = culture;
@@ -34,6 +38,7 @@ namespace Fusonic.Extensions.Email
 
             public string Recipient { get; set; }
             public string RecipientDisplayName { get; set; }
+            public string? BccRecipient { get; set; }
             public string? SubjectKey { get; set; }
             public object ViewModel { get; set; }
             public CultureInfo Culture { get; set; }
@@ -66,6 +71,12 @@ namespace Fusonic.Extensions.Email
                     To = { new MailboxAddress(command.RecipientDisplayName, command.Recipient) },
                     Subject = subject
                 };
+
+                if (!string.IsNullOrWhiteSpace(command.BccRecipient))
+                {
+                    message.Bcc.Add(new MailboxAddress(command.BccRecipient, command.BccRecipient));
+                }
+
                 await smtpClient.SendMailAsync(message);
             }
         }
