@@ -59,7 +59,7 @@ pages:
     paths:
       - public
   only:
-    - master
+    - main
 
 publish:
   variables:
@@ -70,4 +70,4 @@ publish:
   when: manual
   only:
     - /^release\/.*$/
-    - master
+    - main
