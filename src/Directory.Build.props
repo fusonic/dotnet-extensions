@@ -1,6 +1,6 @@
 <Project>
   <PropertyGroup>
-    <UnitTestVersion>3.2.0</UnitTestVersion>
+    <UnitTestVersion>3.2.1</UnitTestVersion>
     <ValidationVersion>3.2.0</ValidationVersion>
   </PropertyGroup>
 
