@@ -1,10 +1,7 @@
 // Copyright (c) Fusonic GmbH. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
-using System;
 using System.Globalization;
-using System.Linq;
-using System.Threading.Tasks;
 using FluentAssertions;
 using Fusonic.Extensions.Email.Tests.Models;
 using Microsoft.AspNetCore.Mvc.Localization;
@@ -14,105 +11,105 @@ using NSubstitute;
 using SimpleInjector;
 using Xunit;
 
-namespace Fusonic.Extensions.Email.Tests
+namespace Fusonic.Extensions.Email.Tests;
+
+public class SendEmailTests : TestBase<SendEmailTests.SendEmailFixture>
 {
-    public class SendEmailTests : TestBase<SendEmailTests.SendEmailFixture>
+    public SendEmailTests(SendEmailFixture fixture) : base(fixture)
+    { }
+
+    [Fact]
+    public async Task SendEmail()
     {
-        public SendEmailTests(SendEmailFixture fixture) : base(fixture)
-        { }
+        Fixture.SmtpServer!.ClearReceivedEmail();
 
-        [Fact]
-        public async Task SendEmail()
+        var model = new RenderTestEmailViewModel { SomeField = "Some field." };
+        await SendAsync(new SendEmail.Command("recipient@fusonic.net", "The Recipient", new CultureInfo("de-AT"), model));
+
+        Fixture.SmtpServer.ReceivedEmailCount.Should().Be(1);
+        var email = Fixture.SmtpServer.ReceivedEmail.Single();
+        email.ToAddresses
+             .Should().HaveCount(1)
+             .And.Contain(a => a.Address == "recipient@fusonic.net");
+
+        email.FromAddress.Address.Should().Be("test@fusonic.net");
+        email.Headers.AllKeys.Should().Contain("Subject");
+        email.Headers["Subject"].Should().Be("The subject");
+
+        email.MessageParts.Should().HaveCount(1);
+        email.MessageParts[0].BodyData.Should().Be(
+            "<html><head><title>Render Test</title></head>" + Environment.NewLine
+          + "<body style=\"color: red\"><p>Some field.</p>" + Environment.NewLine
+          + "</body></html>");
+    }
+
+    [Fact]
+    public async Task SendEmail_BccAdded()
+    {
+        Fixture.SmtpServer!.ClearReceivedEmail();
+
+        var model = new RenderTestEmailViewModel { SomeField = "Some field." };
+        await SendAsync(new SendEmail.Command("recipient@fusonic.net", "The Recipient", "bcc@fusonic.net", new CultureInfo("de-AT"), null, model));
+
+        Fixture.SmtpServer.ReceivedEmailCount.Should().Be(1);
+        var email = Fixture.SmtpServer.ReceivedEmail.Single();
+        email.ToAddresses
+             .Should().HaveCount(2)
+             .And.Contain(a => a.Address == "recipient@fusonic.net")
+             .And.Contain(a => a.Address == "bcc@fusonic.net");
+
+        email.FromAddress.Address.Should().Be("test@fusonic.net");
+        email.Headers.AllKeys.Should().Contain("Subject");
+        email.Headers["Subject"].Should().Be("The subject");
+
+        email.MessageParts.Should().HaveCount(1);
+        email.MessageParts[0].BodyData.Should().Be(
+            "<html><head><title>Render Test</title></head>" + Environment.NewLine
+          + "<body style=\"color: red\"><p>Some field.</p>" + Environment.NewLine
+          + "</body></html>");
+    }
+
+    [Fact]
+    public async Task SendEmail_InvalidEmailAddress_ThrowsException()
+    {
+        Fixture.SmtpServer!.ClearReceivedEmail();
+
+        var model = new RenderTestEmailViewModel { SomeField = "Some field." };
+
+        Func<Task> act = async () => await SendAsync(new SendEmail.Command("recipient@fusonic.net", "The Recipient", "invalidEmailAddress", new CultureInfo("de-AT"), null, model));
+
+        await act.Should().ThrowAsync<Exception>();
+    }
+
+    public class SendEmailFixture : TestFixture
+    {
+        public SimpleSmtpServer? SmtpServer { get; private set; }
+
+        protected override void RegisterDependencies(Container container)
         {
-            Fixture.SmtpServer!.ClearReceivedEmail();
+            base.RegisterDependencies(container);
 
-            var model = new RenderTestEmailViewModel { SomeField = "Some field." };
-            await SendAsync(new SendEmail.Command("recipient@fusonic.net", "The Recipient", new CultureInfo("de-AT"), model));
+            var localizer = Substitute.For<IViewLocalizer>();
+            localizer.GetString(Arg.Any<string>()).ReturnsForAnyArgs(_ => new LocalizedString("Subject", "The subject"));
+            container.RegisterInstance(localizer);
 
-            Fixture.SmtpServer.ReceivedEmailCount.Should().Be(1);
-            var email = Fixture.SmtpServer.ReceivedEmail.Single();
-            email.ToAddresses
-                 .Should().HaveCount(1)
-                 .And.Contain(a => a.Address == "recipient@fusonic.net");
+            SmtpServer = SimpleSmtpServer.Start();
 
-            email.FromAddress.Address.Should().Be("test@fusonic.net");
-            email.Headers.AllKeys.Should().Contain("Subject");
-            email.Headers["Subject"].Should().Be("The subject");
-
-            email.MessageParts.Should().HaveCount(1);
-            email.MessageParts[0].BodyData.Should().Be(
-                "<html><head><title>Render Test</title></head>" + Environment.NewLine
-              + "<body style=\"color: red\"><p>Some field.</p>" + Environment.NewLine
-              + "</body></html>");
-        }
-
-        [Fact]
-        public async Task SendEmail_BccAdded()
-        {
-            Fixture.SmtpServer!.ClearReceivedEmail();
-
-            var model = new RenderTestEmailViewModel { SomeField = "Some field." };
-            await SendAsync(new SendEmail.Command("recipient@fusonic.net", "The Recipient", "bcc@fusonic.net", new CultureInfo("de-AT"), null, model));
-
-            Fixture.SmtpServer.ReceivedEmailCount.Should().Be(1);
-            var email = Fixture.SmtpServer.ReceivedEmail.Single();
-            email.ToAddresses
-                 .Should().HaveCount(2)
-                 .And.Contain(a => a.Address == "recipient@fusonic.net")
-                 .And.Contain(a => a.Address == "bcc@fusonic.net");
-
-            email.FromAddress.Address.Should().Be("test@fusonic.net");
-            email.Headers.AllKeys.Should().Contain("Subject");
-            email.Headers["Subject"].Should().Be("The subject");
-
-            email.MessageParts.Should().HaveCount(1);
-            email.MessageParts[0].BodyData.Should().Be(
-                "<html><head><title>Render Test</title></head>" + Environment.NewLine
-              + "<body style=\"color: red\"><p>Some field.</p>" + Environment.NewLine
-              + "</body></html>");
-        }
-
-        [Fact]
-        public async Task SendEmail_InvalidEmailAddress_ThrowsException()
-        {
-            Fixture.SmtpServer!.ClearReceivedEmail();
-
-            var model = new RenderTestEmailViewModel { SomeField = "Some field." };
-
-            Func<Task> act = async () => await SendAsync(new SendEmail.Command("recipient@fusonic.net", "The Recipient", "invalidEmailAddress", new CultureInfo("de-AT"), null, model));
-
-            await act.Should().ThrowAsync<Exception>();
-        }
-
-        public class SendEmailFixture : TestFixture
-        {
-            public SimpleSmtpServer? SmtpServer { get; private set; }
-
-            protected override void RegisterDependencies(Container container)
+            container.RegisterEmail(c =>
             {
-                base.RegisterDependencies(container);
+                c.CssPath = "email.css";
+                c.SmtpServer = "localhost";
+                c.SmtpPort = SmtpServer.Configuration.Port;
+                c.SenderAddress = "test@fusonic.net";
+                c.SenderName = "Test Fusonic";
+            });
+        }
 
-                var localizer = Substitute.For<IViewLocalizer>();
-                localizer.GetString(Arg.Any<string>()).ReturnsForAnyArgs(_ => new LocalizedString("Subject", "The subject"));
-                container.RegisterInstance(localizer);
-
-                SmtpServer = SimpleSmtpServer.Start();
-
-                container.RegisterEmail(c =>
-                {
-                    c.CssPath = "email.css";
-                    c.SmtpServer = "localhost";
-                    c.SmtpPort = SmtpServer.Configuration.Port;
-                    c.SenderAddress = "test@fusonic.net";
-                    c.SenderName = "Test Fusonic";
-                });
-            }
-
-            public override void Dispose()
-            {
-                base.Dispose();
-                SmtpServer?.Dispose();
-            }
+        public override void Dispose()
+        {
+            base.Dispose();
+            SmtpServer?.Dispose();
+            GC.SuppressFinalize(this);
         }
     }
 }

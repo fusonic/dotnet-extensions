@@ -1,9 +1,7 @@
-﻿// Copyright (c) Fusonic GmbH. All rights reserved.
+// Copyright (c) Fusonic GmbH. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
-using System;
 using System.Diagnostics;
-using System.IO;
 using System.Reflection;
 using Fusonic.Extensions.UnitTests;
 using MediatR;
@@ -14,62 +12,58 @@ using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using SimpleInjector;
 
-namespace Fusonic.Extensions.Email.Tests
+namespace Fusonic.Extensions.Email.Tests;
+
+public class TestFixture : UnitTestFixture
 {
-    public class TestFixture : UnitTestFixture
+    protected override void RegisterCoreDependencies(Container container)
     {
-        protected override void RegisterCoreDependencies(Container container)
+        base.RegisterCoreDependencies(container);
+
+        container.RegisterEmail(o =>
         {
-            base.RegisterCoreDependencies(container);
+            var path = Path.GetDirectoryName(typeof(TestFixture).Assembly.Location)!;
 
-            container.RegisterEmail(o =>
+            o.SenderAddress = "test@fusonic.net";
+            o.SenderName = "Test";
+            o.CssPath = Path.Combine(path, "email.css");
+            o.StoreInDirectory = path;
+        });
+
+        container.Register<RazorEmailRenderingService>();
+
+        var viewLocalizer = Substitute.For<IViewLocalizer>();
+        container.RegisterInstance<Func<IViewLocalizer>>(() => viewLocalizer);
+
+        var mediatorAssemblies = new[] { typeof(IMediator).Assembly, typeof(SendEmail).Assembly };
+        container.Register(() => new ServiceFactory(container.GetInstance), Lifestyle.Singleton);
+        container.RegisterSingleton<IMediator, Mediator>();
+        container.Register(typeof(IRequestHandler<,>), mediatorAssemblies);
+
+        container.Collection.Register(typeof(INotificationHandler<>), mediatorAssemblies);
+        container.Collection.Register(typeof(IPipelineBehavior<,>),
+            new[]
             {
-                var path = Path.GetDirectoryName(typeof(TestFixture).Assembly.Location)!;
-
-                o.SenderAddress = "test@fusonic.net";
-                o.SenderName = "Test";
-                o.CssPath = Path.Combine(path, "email.css");
-                o.StoreInDirectory = path;
-            });
-
-            container.Register<RazorEmailRenderingService>();
-
-            var viewLocalizer = Substitute.For<IViewLocalizer>();
-            container.RegisterInstance<Func<IViewLocalizer>>(() => viewLocalizer);
-
-            var mediatorAssemblies = new[] { typeof(IMediator).Assembly, typeof(SendEmail).Assembly };
-            container.Register(() => new ServiceFactory(container.GetInstance), Lifestyle.Singleton);
-            container.RegisterSingleton<IMediator, Mediator>();
-            container.Register(typeof(IRequestHandler<,>), mediatorAssemblies);
-
-            container.Collection.Register(typeof(INotificationHandler<>), mediatorAssemblies);
-            container.Collection.Register(typeof(IPipelineBehavior<,>),
-                new[]
-                {
                     typeof(RequestPreProcessorBehavior<,>),
                     typeof(RequestPostProcessorBehavior<,>)
-                });
+            });
 
-            container.Collection.Register(typeof(IRequestPreProcessor<>), mediatorAssemblies);
-            container.Collection.Register(typeof(IRequestPostProcessor<,>), mediatorAssemblies);
+        container.Collection.Register(typeof(IRequestPreProcessor<>), mediatorAssemblies);
+        container.Collection.Register(typeof(IRequestPostProcessor<,>), mediatorAssemblies);
 
-            var services = new ServiceCollection();
+        var services = new ServiceCollection();
 
-            services.AddSimpleInjector(container, setup => setup.AutoCrossWireFrameworkComponents = true);
+        services.AddSimpleInjector(container, setup => setup.AutoCrossWireFrameworkComponents = true);
 
-            var viewsDll = typeof(TestFixture).Assembly.GetName().Name + ".Views.dll";
-            var viewsAssembly = Assembly.LoadFrom(viewsDll);
+        services.AddRazorPages()
+                .ConfigureApplicationPartManager(apm => apm.ApplicationParts.Add(new CompiledRazorAssemblyPart(Assembly.GetExecutingAssembly())));
 
-            services.AddRazorPages()
-                    .ConfigureApplicationPartManager(apm => apm.ApplicationParts.Add(new CompiledRazorAssemblyPart(viewsAssembly)));
+        services.AddLogging();
 
-            services.AddLogging();
+        var listener = new DiagnosticListener("Microsoft.AspNetCore");
+        services.AddSingleton(listener);
+        services.AddSingleton<DiagnosticSource>(listener);
 
-            var listener = new DiagnosticListener("Microsoft.AspNetCore");
-            services.AddSingleton(listener);
-            services.AddSingleton<DiagnosticSource>(listener);
-
-            services.BuildServiceProvider(validateScopes: true).UseSimpleInjector(container);
-        }
+        services.BuildServiceProvider(validateScopes: true).UseSimpleInjector(container);
     }
 }

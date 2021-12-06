@@ -5,33 +5,32 @@ using System.Diagnostics.CodeAnalysis;
 using System.Security.Claims;
 using Fusonic.Extensions.Common.Security;
 
-namespace Fusonic.Extensions.Hangfire
+namespace Fusonic.Extensions.Hangfire;
+
+public class HangfireUserAccessorDecorator : IUserAccessor
 {
-    public class HangfireUserAccessorDecorator : IUserAccessor
+    private readonly IUserAccessor userAccessor;
+    private ClaimsPrincipal? user;
+
+    public HangfireUserAccessorDecorator(IUserAccessor userAccessor)
+        => this.userAccessor = userAccessor;
+
+    public ClaimsPrincipal User
     {
-        private readonly IUserAccessor userAccessor;
-        private ClaimsPrincipal? user;
+        get => user ?? userAccessor.User;
+        set => user = value;
+    }
 
-        public HangfireUserAccessorDecorator(IUserAccessor userAccessor)
-            => this.userAccessor = userAccessor;
-
-        public ClaimsPrincipal User
+    public bool TryGetUser([MaybeNullWhen(false)] out ClaimsPrincipal user)
+    {
+        user = this.user;
+        if (user == null)
         {
-            get => user ?? userAccessor.User;
-            set => user = value;
+            return userAccessor.TryGetUser(out user);
         }
-
-        public bool TryGetUser([MaybeNullWhen(false)] out ClaimsPrincipal user)
+        else
         {
-            user = this.user;
-            if (user == null)
-            {
-                return userAccessor.TryGetUser(out user);
-            }
-            else
-            {
-                return true;
-            }
+            return true;
         }
     }
 }

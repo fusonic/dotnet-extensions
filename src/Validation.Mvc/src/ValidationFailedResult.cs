@@ -3,13 +3,12 @@
 
 using Microsoft.AspNetCore.Mvc;
 
-namespace Fusonic.Extensions.Validation.Mvc
+namespace Fusonic.Extensions.Validation.Mvc;
+
+internal class ValidationFailedResult : BadRequestObjectResult
 {
-    internal class ValidationFailedResult : BadRequestObjectResult
+    public ValidationFailedResult(ValidationResult result)
+        : base(result)
     {
-        public ValidationFailedResult(ValidationResult result)
-            : base(result)
-        {
-        }
     }
 }

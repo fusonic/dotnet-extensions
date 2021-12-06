@@ -1,4 +1,4 @@
-﻿@model Fusonic.Extensions.Email.Tests.Models.CultureTestEmailViewModel
+@model Fusonic.Extensions.Email.Tests.Models.CultureTestEmailViewModel
 
 @{
     Layout = null;
@@ -9,7 +9,7 @@
     <meta charset="UTF-8" />
 </head>
 <body>
-<p>@($"{Model.Date:d}")</p>
+<p>@($"{Model!.Date:d}")</p>
 <p>@($"{Model.Date:MMMM}")</p>
 <p>@($"{Model.Number:N}")</p>
 </body>

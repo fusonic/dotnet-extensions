@@ -1,50 +1,48 @@
 ﻿// Copyright (c) Fusonic GmbH. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
-using System.Linq;
 using System.Reflection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 
-namespace Fusonic.Extensions.Validation.Mvc
+namespace Fusonic.Extensions.Validation.Mvc;
+
+internal class ValidationApiBehaviorApplicationModelProvider : IApplicationModelProvider
 {
-    internal class ValidationApiBehaviorApplicationModelProvider : IApplicationModelProvider
+    private readonly ValidationFailedFilterConvention convention;
+
+    public ValidationApiBehaviorApplicationModelProvider()
     {
-        private readonly ValidationFailedFilterConvention convention;
+        convention = new ValidationFailedFilterConvention();
+    }
 
-        public ValidationApiBehaviorApplicationModelProvider()
+    public int Order => 0;
+
+    public void OnProvidersExecuting(ApplicationModelProviderContext context)
+    {
+        foreach (var controller in context.Result.Controllers)
         {
-            convention = new ValidationFailedFilterConvention();
-        }
+            if (!IsApiController(controller))
+                continue;
 
-        public int Order => 0;
-
-        public void OnProvidersExecuting(ApplicationModelProviderContext context)
-        {
-            foreach (var controller in context.Result.Controllers)
+            foreach (var action in controller.Actions)
             {
-                if (!IsApiController(controller))
-                    continue;
-
-                foreach (var action in controller.Actions)
-                {
-                    convention.Apply(action);
-                }
+                convention.Apply(action);
             }
         }
+    }
 
-        public void OnProvidersExecuted(ApplicationModelProviderContext context)
+    public void OnProvidersExecuted(ApplicationModelProviderContext context)
+    {
+    }
+
+    private static bool IsApiController(ControllerModel controller)
+    {
+        if (controller.Attributes.OfType<ApiControllerAttribute>().Any())
         {
+            return true;
         }
 
-        private static bool IsApiController(ControllerModel controller)
-        {
-            if (controller.Attributes.OfType<ApiControllerAttribute>().Any())
-            {
-                return true;
-            }
-
-            return controller.ControllerType.Assembly.GetCustomAttribute<ApiControllerAttribute>() != null;
-        }
+        return controller.ControllerType.Assembly.GetCustomAttribute<ApiControllerAttribute>() != null;
     }
 }

@@ -1,41 +1,39 @@
-﻿// Copyright (c) Fusonic GmbH. All rights reserved.
+// Copyright (c) Fusonic GmbH. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
-using System;
 using Hangfire;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;
 
-namespace Fusonic.Extensions.Hangfire
+namespace Fusonic.Extensions.Hangfire;
+
+public sealed class ContainerJobActivator : JobActivator
 {
-    public sealed class ContainerJobActivator : JobActivator
+    private readonly Container container;
+
+    public ContainerJobActivator(Container container)
+        => this.container = container;
+
+    public override object ActivateJob(Type jobType)
+        => container.GetInstance(jobType);
+
+    public override JobActivatorScope BeginScope(JobActivatorContext context)
+        => new SimpleInjectorScope(container);
+
+    private sealed class SimpleInjectorScope : JobActivatorScope
     {
-        private readonly Container container;
+        private readonly Scope scope;
 
-        public ContainerJobActivator(Container container)
-            => this.container = container;
+        public SimpleInjectorScope(Container container)
+            => scope = AsyncScopedLifestyle.BeginScope(container);
 
-        public override object ActivateJob(Type type)
-            => container.GetInstance(type);
+        public override object Resolve(Type type)
+            => scope.Container!.GetInstance(type);
 
-        public override JobActivatorScope BeginScope(JobActivatorContext context)
-            => new SimpleInjectorScope(container);
-
-        private sealed class SimpleInjectorScope : JobActivatorScope
+        public override void DisposeScope()
         {
-            private readonly Scope scope;
-
-            public SimpleInjectorScope(Container container)
-                => scope = AsyncScopedLifestyle.BeginScope(container);
-
-            public override object Resolve(Type type)
-                => scope.Container!.GetInstance(type);
-
-            public override void DisposeScope()
-            {
-                base.DisposeScope();
-                scope.Dispose();
-            }
+            base.DisposeScope();
+            scope.Dispose();
         }
     }
 }

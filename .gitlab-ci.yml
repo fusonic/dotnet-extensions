@@ -1,4 +1,4 @@
-image: mcr.microsoft.com/dotnet/sdk:5.0
+image: mcr.microsoft.com/dotnet/sdk:6.0
 stages:
   - build
   - test
@@ -71,3 +71,4 @@ publish:
   only:
     - /^release\/.*$/
     - main
+    - net6 #TODO REMOVE

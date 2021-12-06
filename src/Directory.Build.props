@@ -1,21 +1,30 @@
 <Project>
   <PropertyGroup>
-    <Version>5.4.0</Version>
-    <TargetFramework>net5.0</TargetFramework>
+    <Version>6.0.0-rc.1</Version>
+    <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
 
   <PropertyGroup>
     <Authors>Fusonic</Authors>
     <Company>Fusonic GmbH</Company>
     <Copyright>Fusonic Gmbh</Copyright>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <WarningsAsErrors />
-    <NoWarn>1701;1702;1591</NoWarn>
-    <Nullable>enable</Nullable>
     <PackageIcon>icon.png</PackageIcon>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningsAsErrors />
+    <NoWarn>1701;1702;1591;CA1716;CA1848</NoWarn>
+    <Nullable>enable</Nullable>
+    <Features>strict</Features>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(MSBuildProjectName.EndsWith('.Tests'))">
+    <NoWarn>1701;1702;1591;CA1716;CA1848;CA1707</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(GITLAB_CI)' == 'true'">
@@ -23,7 +32,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.Github" Version="1.0.0" PrivateAssets="All"/>
+    <PackageReference Include="Microsoft.SourceLink.Github" Version="1.1.1" PrivateAssets="All"/>
     <None Include="..\..\..\icon.png">
       <Pack>True</Pack>
       <PackagePath></PackagePath>

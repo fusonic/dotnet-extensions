@@ -1,4 +1,4 @@
-﻿@model Fusonic.Extensions.Email.Tests.Models.RenderTestEmailViewModel
+@model Fusonic.Extensions.Email.Tests.Models.RenderTestEmailViewModel
 
 @{
     Layout = null;
@@ -6,5 +6,5 @@
 
 <html>
 <head><title>Render Test</title></head>
-<body><p>@($"{Model.SomeField}")</p></body>
+<body><p>@($"{Model!.SomeField}")</p></body>
 </html>

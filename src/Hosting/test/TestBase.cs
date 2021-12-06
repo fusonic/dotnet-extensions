@@ -3,18 +3,17 @@
 
 using Fusonic.Extensions.UnitTests;
 
-namespace Fusonic.Extensions.Hosting.Tests
-{
-    public class TestBase<TFixture> : UnitTest<TFixture>
-        where TFixture : TestFixture
-    {
-        public TestBase(TFixture fixture) : base(fixture)
-        { }
-    }
+namespace Fusonic.Extensions.Hosting.Tests;
 
-    public class TestBase : TestBase<TestFixture>
-    {
-        public TestBase(TestFixture fixture) : base(fixture)
-        { }
-    }
+public class TestBase<TFixture> : UnitTest<TFixture>
+    where TFixture : TestFixture
+{
+    public TestBase(TFixture fixture) : base(fixture)
+    { }
+}
+
+public class TestBase : TestBase<TestFixture>
+{
+    public TestBase(TestFixture fixture) : base(fixture)
+    { }
 }

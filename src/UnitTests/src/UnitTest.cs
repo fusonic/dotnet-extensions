@@ -1,109 +1,97 @@
-﻿// Copyright (c) Fusonic GmbH. All rights reserved.
+// Copyright (c) Fusonic GmbH. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
-using System;
 using System.Diagnostics;
-using System.Threading.Tasks;
 using Fusonic.Extensions.UnitTests.SimpleInjector;
 using MediatR;
 using SimpleInjector;
 using Xunit;
 
-namespace Fusonic.Extensions.UnitTests
+namespace Fusonic.Extensions.UnitTests;
+
+public abstract class UnitTest<TFixture> : IDisposable, IClassFixture<TFixture>
+    where TFixture : UnitTestFixture
 {
-    public abstract class UnitTest<TFixture> : IDisposable, IClassFixture<TFixture>
-        where TFixture : UnitTestFixture
+    private Scope currentScope;
+
+    protected TFixture Fixture { get; }
+    protected Container Container => currentScope.Container!;
+
+    protected UnitTest(TFixture fixture)
     {
-        private Scope currentScope;
+        Fixture = fixture;
+        currentScope = fixture.BeginLifetimeScope();
+    }
 
-        protected TFixture Fixture { get; }
-        protected Container Container => currentScope.Container!;
+    /// <summary> Shortcut for Container.GetInstance{T} </summary>
+    [DebuggerStepThrough]
+    protected T GetInstance<T>()
+        where T : class
+        => Container.GetInstance<T>();
 
-        protected UnitTest(TFixture fixture)
+    /// <summary> Runs a mediator command in its own scope. Used to reduce possible side effects from test data creation and the like. </summary>
+    [DebuggerStepThrough]
+    protected Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> request)
+        => ScopedAsync(() => Container.GetInstance<IMediator>().Send(request));
+
+    /// <summary> <see cref="ScopedAsync{TResult}"/> </summary>
+    [DebuggerStepThrough]
+    protected TResult Scoped<TResult>(Func<TResult> action)
+    {
+        var prevScope = currentScope;
+        try
         {
-            Fixture = fixture;
-            currentScope = fixture.BeginLifetimeScope();
+            using var newScope = Fixture.BeginLifetimeScope();
+            currentScope = newScope;
+            var result = action();
+            return result;
         }
-
-        /// <summary> Shortcut for Container.GetInstance{T} </summary>
-        [DebuggerStepThrough]
-        protected T GetInstance<T>()
-            where T : class
+        finally
         {
-            return Container.GetInstance<T>();
+            currentScope = prevScope;
         }
+    }
 
-        /// <summary> Runs a mediator command in its own scope. Used to reduce possible side effects from test data creation and the like. </summary>
-        [DebuggerStepThrough]
-        protected Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> request)
+
+
+    /// <summary> Runs an action in its own scope. Used to reduce possible side effects from test data creation and the like. </summary>
+    [DebuggerStepThrough]
+    protected async Task<TResult> ScopedAsync<TResult>(Func<Task<TResult>> taskFactory)
+    {
+        var prevScope = currentScope;
+        try
         {
-            return ScopedAsync(() => Container.GetInstance<IMediator>().Send(request));
+            await using var newScope = Fixture.BeginLifetimeScope();
+            currentScope = newScope;
+            var result = await taskFactory();
+            return result;
         }
-
-        /// <summary> <see cref="ScopedAsync{TResult}"/> </summary>
-        [DebuggerStepThrough]
-        protected TResult Scoped<TResult>(Func<TResult> action)
+        finally
         {
-            var prevScope = currentScope;
-            try
-            {
-                using var newScope = Fixture.BeginLifetimeScope();
-                currentScope = newScope;
-                var result = action();
-                return result;
-            }
-            finally
-            {
-                currentScope = prevScope;
-            }
+            currentScope = prevScope;
         }
+    }
 
-        
+    /// <summary> <see cref="ScopedAsync{TResult}"/> </summary>
+    [DebuggerStepThrough]
+    protected void Scoped(Action action) => Scoped(() =>
+    {
+        action();
+        return true;
+    });
 
-        /// <summary> Runs an action in its own scope. Used to reduce possible side effects from test data creation and the like. </summary>
-        [DebuggerStepThrough]
-        protected async Task<TResult> ScopedAsync<TResult>(Func<Task<TResult>> taskFactory)
-        {
-            var prevScope = currentScope;
-            try
-            {
-                using var newScope = Fixture.BeginLifetimeScope();
-                currentScope = newScope;
-                var result = await taskFactory();
-                return result;
-            }
-            finally
-            {
-                currentScope = prevScope;
-            }
-        }
+    /// <summary> <see cref="ScopedAsync{TResult}"/> </summary>
+    [DebuggerStepThrough]
+    protected Task ScopedAsync(Func<Task> taskFactory) => ScopedAsync(async () =>
+    {
+        await taskFactory();
+        return true;
+    });
 
-        /// <summary> <see cref="ScopedAsync{TResult}"/> </summary>
-        [DebuggerStepThrough]
-        protected void Scoped(Action action)
-        {
-            Scoped(() =>
-            {
-                action();
-                return true;
-            });
-        }
-
-        /// <summary> <see cref="ScopedAsync{TResult}"/> </summary>
-        [DebuggerStepThrough]
-        protected Task ScopedAsync(Func<Task> taskFactory)
-        {
-            return ScopedAsync(async () =>
-            {
-                await taskFactory();
-                return true;
-            });
-        }
-
-        public virtual void Dispose()
-        {
-            currentScope?.Dispose();
-            TestScopedLifestyle.CleanupTestScopes();
-        }
+    public virtual void Dispose()
+    {
+        currentScope?.Dispose();
+        TestScopedLifestyle.CleanupTestScopes();
+        GC.SuppressFinalize(this);
     }
 }

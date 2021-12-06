@@ -1,28 +1,26 @@
 ﻿// Copyright (c) Fusonic GmbH. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
-using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace Fusonic.Extensions.Validation.Mvc
+namespace Fusonic.Extensions.Validation.Mvc;
+
+internal class ValidationFailedActionFilter : IActionFilter
 {
-    internal class ValidationFailedActionFilter : IActionFilter
+    public void OnActionExecuting(ActionExecutingContext context)
     {
-        public void OnActionExecuting(ActionExecutingContext context)
+        if (context.Result == null && !context.ModelState.IsValid)
         {
-            if (context.Result == null && !context.ModelState.IsValid)
-            {
-                var ex = (ObjectValidationException?)context.ModelState[DataAnnotationsModelValidator.ValidationResultKey]?.Errors.SingleOrDefault()?.Exception;
+            var ex = (ObjectValidationException?)context.ModelState[DataAnnotationsModelValidator.ValidationResultKey]?.Errors.SingleOrDefault()?.Exception;
 
-                if (ex is null)
-                    context.Result = new BadRequestResult();
-                else
-                    context.Result = new ValidationFailedResult(ex.Result);
-            }
+            if (ex is null)
+                context.Result = new BadRequestResult();
+            else
+                context.Result = new ValidationFailedResult(ex.Result);
         }
-
-        public void OnActionExecuted(ActionExecutedContext context)
-        { }
     }
+
+    public void OnActionExecuted(ActionExecutedContext context)
+    { }
 }

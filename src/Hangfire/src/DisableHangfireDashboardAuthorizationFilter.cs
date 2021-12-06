@@ -3,10 +3,9 @@
 
 using Hangfire.Dashboard;
 
-namespace Fusonic.Extensions.Hangfire
+namespace Fusonic.Extensions.Hangfire;
+
+public class DisableHangfireDashboardAuthorizationFilter : IDashboardAuthorizationFilter
 {
-    public class DisableHangfireDashboardAuthorizationFilter : IDashboardAuthorizationFilter
-    {
-        public bool Authorize(DashboardContext context) => true;
-    }
+    public bool Authorize(DashboardContext context) => true;
 }
