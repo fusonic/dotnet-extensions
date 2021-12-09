@@ -1,6 +1,6 @@
 # Fusonic Extensions 
 [![build](https://github.com/fusonic/dotnet-extensions/workflows/build/badge.svg)](https://github.com/fusonic/dotnet-extensions/actions?query=workflow%3Abuild)
-[![nuget](https://img.shields.io/badge/fusonic%20extensions-5.1.1-blue)](https://www.nuget.org/packages?q=Fusonic.Extensions)
+[![nuget](https://img.shields.io/badge/fusonic%20extensions-6.0.0-blue)](https://www.nuget.org/packages?q=Fusonic.Extensions)
 [![licence](https://img.shields.io/github/license/fusonic/dotnet-extensions)](https://github.com/fusonic/dotnet-extensions/blob/main/LICENSE)
 
 The **Fusonic Extensions** project aggregates several thoughtfully designed, reusable class libraries, which can be used in modern .NET application development. Fusonic successfully uses these libraries in its own individual projects. Some packages are general purpose libs which can be used by any kind of .net project (console, web, rich client). Other packages may be best suited for ASP<span>.</span>NET Core development. Because we believe that they can be useful for the broader community, we open source it under a permissive license.
@@ -11,12 +11,8 @@ If we see broader community engagement in the future, we may consider switching 
 
 Latest Fusonic Extensions supports the platforms:
 
-* .NET 5.0 and up.
-
-We do have a maintenance-only branch though, where the following platforms are supported until 11/2021:
-
-* .NET Standard 2.1
-* .NET Core 3.1
+* .NET 5.0
+* .NET 6.0
 
 Packages
 ===============
@@ -59,11 +55,12 @@ Adds support for database tests using PostgreSql for EF Core. See the [unit test
 [![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.UnitTests.Tools.PostgreSql.svg?label=Fusonic.Extensions.UnitTests.Tools.PostgreSql&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.UnitTests.Tools.PostgreSql/)
 Command line tools for several standard operations related to testing on PostgreSql-Databases. See the [unit test documentation](docs/UnitTests/README.md) for more details.
 
+[![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.XUnit.svg?label=Fusonic.Extensions.XUnit&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.XUnit/)
+Extensions to XUnit. Provides an own framework adding capabilities like a test context and attributes running before a test class gets instantiated.
+
 [![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.Validation.svg?label=Fusonic.Extensions.Validation&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.Validation/)
 Provides validation pipeline and recursive DataAnnotations annotation
 
-[![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.Validation.Mvc.svg?label=Fusonic.Extensions.Validation.Mvc&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.Validation.Mvc/)
-Provides an integration for validation to ASP<span>.</span>NET Core MVC.
 
 Important information
 ===============
