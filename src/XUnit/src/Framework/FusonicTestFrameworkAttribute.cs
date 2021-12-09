@@ -4,12 +4,12 @@
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
-namespace Fusonic.Extensions.UnitTests.XunitExtensibility;
+namespace Fusonic.Extensions.XUnit.Framework;
 
 /// <summary>
 /// Used to decorate an assembly to allow the use of a custom <see cref="ITestFramework"/>.
 /// </summary>
-[TestFrameworkDiscoverer("Fusonic.Extensions.UnitTests.XunitExtensibility." + nameof(FusonicTestFrameworkTypeDiscoverer), "Fusonic.Extensions.UnitTests")]
+[TestFrameworkDiscoverer("Fusonic.Extensions.XUnit.Framework." + nameof(FusonicTestFrameworkTypeDiscoverer), "Fusonic.Extensions.XUnit")]
 [AttributeUsage(AttributeTargets.Assembly)]
 public sealed class FusonicTestFrameworkAttribute : Attribute, ITestFrameworkAttribute
 { }

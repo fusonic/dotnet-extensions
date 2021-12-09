@@ -1,26 +1,25 @@
-﻿// Copyright (c) Fusonic GmbH. All rights reserved.
+// Copyright (c) Fusonic GmbH. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
-namespace Fusonic.Extensions.UnitTests.XunitExtensibility;
+namespace Fusonic.Extensions.XUnit.Framework;
 
-public class FusonicSkippedDataRowTestCase : XunitSkippedDataRowTestCase
+public class FusonicTestCase : XunitTestCase
 {
 #pragma warning disable 618
     //ctor is marked with obsolete, but is required by serializer. See base class.
-    public FusonicSkippedDataRowTestCase()
+    public FusonicTestCase()
     { }
 #pragma warning restore 618
 
-    public FusonicSkippedDataRowTestCase(
+    public FusonicTestCase(
         IMessageSink diagnosticMessageSink,
         TestMethodDisplay defaultMethodDisplay,
         TestMethodDisplayOptions defaultMethodDisplayOptions,
         ITestMethod testMethod,
-        string skipReason,
-        object[]? testMethodArguments = null) : base(diagnosticMessageSink, defaultMethodDisplay, defaultMethodDisplayOptions, testMethod, skipReason, testMethodArguments)
+        object[]? testMethodArguments = null) : base(diagnosticMessageSink, defaultMethodDisplay, defaultMethodDisplayOptions, testMethod, testMethodArguments)
     { }
 
     public override Task<RunSummary> RunAsync(

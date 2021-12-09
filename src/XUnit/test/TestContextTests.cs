@@ -3,13 +3,10 @@
 
 using Xunit;
 
-namespace Fusonic.Extensions.UnitTests.Tests;
+namespace Fusonic.Extensions.XUnit.Tests;
 
-public class TestContextTests : TestBase
+public class TestContextTests
 {
-    public TestContextTests(TestFixture fixture) : base(fixture)
-    { }
-
     [Fact]
     public void TestClassIsSet()
     {

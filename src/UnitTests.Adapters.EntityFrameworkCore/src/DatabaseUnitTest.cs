@@ -14,7 +14,7 @@ public abstract class DatabaseUnitTest<TDbContext, TFixture> : UnitTest<TFixture
     protected DatabaseUnitTest(TFixture fixture) : base(fixture) => Query(dbContext =>
     {
         var provider = GetInstance<ITestDatabaseProvider<TDbContext>>();
-        provider.SeedDb(dbContext);
+        provider.SeedDatabase(dbContext);
     });
 
     /// <summary> Executes a query in an own scope. </summary>
@@ -59,12 +59,19 @@ public abstract class DatabaseUnitTest<TDbContext, TFixture> : UnitTest<TFixture
         return await query(dbContext);
     });
 
+    /// <inheritdoc cref="ITestDatabaseProvider{TDbContext}.CreateDatabase" />
+    protected void CreateDatabase() => Query(dbContext =>
+    {
+        var provider = GetInstance<ITestDatabaseProvider<TDbContext>>();
+        provider.CreateDatabase(dbContext);
+    });
+
     public override void Dispose()
     {
         Query(dbContext =>
         {
             var provider = GetInstance<ITestDatabaseProvider<TDbContext>>();
-            provider.DropDb(dbContext);
+            provider.DropDatabase(dbContext);
         });
 
         GC.SuppressFinalize(this);

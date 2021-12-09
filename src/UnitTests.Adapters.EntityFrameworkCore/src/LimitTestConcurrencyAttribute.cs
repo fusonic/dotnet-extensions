@@ -1,9 +1,8 @@
 using System.Reflection;
-using Fusonic.Extensions.UnitTests.XunitExtensibility;
+using Fusonic.Extensions.XUnit.Framework;
 
 namespace Fusonic.Extensions.UnitTests.Adapters.EntityFrameworkCore;
 
-//TODO 6.0: Move this logic/idea to the executor (-> FusonicTestFramework.CreateExecutor) to avoid falsifying execution times and just not execute limited tests instead.
 [AttributeUsage(AttributeTargets.Class)]
 internal class LimitTestConcurrencyAttribute : BeforeAfterTestInvokeAsyncAttribute
 {
@@ -40,6 +39,8 @@ internal class LimitTestConcurrencyAttribute : BeforeAfterTestInvokeAsyncAttribu
 
     public override Task BeforeAsync(MethodInfo methodUnderTest)
     {
+        //Note: While the test method was reported as started when reaching this point, waiting for the semaphore
+        //      does not affect the measured execution time or the test timeout.
         testExecuted = true;
         return semaphore?.WaitAsync() ?? Task.CompletedTask;
     }

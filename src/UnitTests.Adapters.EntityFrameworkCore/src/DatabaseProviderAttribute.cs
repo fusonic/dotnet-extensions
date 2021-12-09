@@ -1,8 +1,8 @@
-﻿// Copyright (c) Fusonic GmbH. All rights reserved.
+// Copyright (c) Fusonic GmbH. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
 using System.Reflection;
-using Fusonic.Extensions.UnitTests.XunitExtensibility;
+using Fusonic.Extensions.XUnit.Framework;
 
 namespace Fusonic.Extensions.UnitTests.Adapters.EntityFrameworkCore;
 
@@ -11,12 +11,8 @@ namespace Fusonic.Extensions.UnitTests.Adapters.EntityFrameworkCore;
 public abstract class DatabaseProviderAttribute : BeforeAfterTestInvokeAttribute
 {
     public sealed override void Before(MethodInfo methodUnderTest)
-    {
-        DatabaseTestContext.CurrentProviderAttribute.Value = this;
-    }
+        => DatabaseTestContext.CurrentProviderAttribute.Value = this;
 
     public sealed override void After(MethodInfo methodUnderTest)
-    {
-        DatabaseTestContext.CurrentProviderAttribute.Value = null;
-    }
+        => DatabaseTestContext.CurrentProviderAttribute.Value = null;
 }

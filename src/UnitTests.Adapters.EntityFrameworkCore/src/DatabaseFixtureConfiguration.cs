@@ -14,7 +14,7 @@ public class DatabaseFixtureConfiguration<TDbContext>
 
     public DatabaseFixtureConfiguration()
     {
-        ProviderFactories[typeof(NoDatabaseAttribute)] = attr => new NoDatabaseProvider<TDbContext>();
+        ProviderFactories[typeof(NoDatabaseAttribute)] = _ => new NoDatabaseProvider<TDbContext>();
     }
 
     /// <summary> Registers a provider for a specific attribute. Normally you don't call this in your unit test base as there should be proper extensions from the providers themselves. (like .UseInMemoryDatabase()) </summary>

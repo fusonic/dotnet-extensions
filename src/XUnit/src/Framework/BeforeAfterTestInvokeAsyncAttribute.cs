@@ -3,12 +3,12 @@
 
 using System.Reflection;
 
-namespace Fusonic.Extensions.UnitTests.XunitExtensibility;
+namespace Fusonic.Extensions.XUnit.Framework;
 
 /// <summary>
 /// Base attribute which indicates a test method interception. This allows code to be run before and after the test is run.
 ///
-/// The difference to the Xunit.Sdk.BeforeAfterTestAttribute is, that the xunit version executes the 'Before' after the test class is created and the constructor ran.
+/// The difference to the Xunit.Sdk.BeforeAfterTestAttribute is that the xunit version executes the 'Before' after the test class is created and the constructor ran.
 /// This version runs before the test class is created.
 ///
 /// Limitations: You cannot use this to do changes to the test context. The test context is AsyncLocal. Due to the nature of AsyncLocal, which only propagates the context

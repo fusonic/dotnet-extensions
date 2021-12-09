@@ -1,6 +1,8 @@
-﻿// Copyright (c) Fusonic GmbH. All rights reserved.
+// Copyright (c) Fusonic GmbH. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
+using Fusonic.Extensions.XUnit;
+using Fusonic.Extensions.XUnit.Framework;
 using SimpleInjector;
 
 namespace Fusonic.Extensions.UnitTests.SimpleInjector;
@@ -11,14 +13,14 @@ namespace Fusonic.Extensions.UnitTests.SimpleInjector;
 /// </summary>
 public sealed class TestScopedLifestyle : ScopedLifestyle
 {
-    private static readonly object scopeKey = new object();
+    private static readonly object ScopeKey = new();
 
     public TestScopedLifestyle() : base(nameof(TestScopedLifestyle))
     { }
 
     internal static void CleanupTestScopes()
     {
-        if (TestContext.Items[scopeKey] is List<Scope> scopes)
+        if (TestContext.Items[ScopeKey] is List<Scope> scopes)
             DisposeScopes(scopes);
     }
 
@@ -27,12 +29,11 @@ public sealed class TestScopedLifestyle : ScopedLifestyle
 
     private static Scope? GetOrCreateScope(Container container)
     {
-        var context = TestContext.Current;
-        if (context is null)
-            return null;
+        if (!TestContext.IsSet)
+            throw new InvalidOperationException($"The test context is not set. This indicates that you did not set the {nameof(FusonicTestFrameworkAttribute)} in your assembly.");
 
-        if (context.Items[scopeKey] is not List<Scope> scopes)
-            context.Items[scopeKey] = scopes = new List<Scope>(capacity: 2);
+        if (TestContext.Items[ScopeKey] is not List<Scope> scopes)
+            TestContext.Items[ScopeKey] = scopes = new List<Scope>(capacity: 2);
 
         var scope = FindScopeForContainer(scopes, container);
         if (scope is null)

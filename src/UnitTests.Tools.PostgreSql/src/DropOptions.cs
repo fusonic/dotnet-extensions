@@ -19,11 +19,13 @@ public class DropOptions
     {
         string? dbName;
         if (!string.IsNullOrWhiteSpace(Database))
+        {
             dbName = Database;
+        }
 
         else
         {
-            dbName = PostgreSqlUtil.GetDatabase(ConnectionString!);
+            dbName = PostgreSqlUtil.GetDatabaseName(ConnectionString!);
             if (dbName == null)
             {
                 Console.Error.WriteLine("Could not find database name in connection string.");

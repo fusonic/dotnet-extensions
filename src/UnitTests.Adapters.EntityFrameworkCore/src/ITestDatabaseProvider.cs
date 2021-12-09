@@ -1,4 +1,4 @@
-﻿// Copyright (c) Fusonic GmbH. All rights reserved.
+// Copyright (c) Fusonic GmbH. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
 using Microsoft.EntityFrameworkCore;
@@ -12,8 +12,15 @@ public interface ITestDatabaseProvider<TDbContext>
     DbContextOptions<TDbContext> GetContextOptions();
 
     /// <summary> Seeds the database. </summary>
-    void SeedDb(TDbContext dbContext);
+    void SeedDatabase(TDbContext dbContext);
 
     /// <summary> Drops the database that was created. </summary>
-    void DropDb(TDbContext dbContext);
+    void DropDatabase(TDbContext dbContext);
+
+    /// <summary>
+    /// Creates the database if it does not exist yet.
+    /// You usually only need to call this if you have DB access without using EntityFramework.
+    /// The PostgreSql database provider initializes the DB on the first access when using EntityFramework.
+    /// </summary>
+    void CreateDatabase(TDbContext dbContext);
 }

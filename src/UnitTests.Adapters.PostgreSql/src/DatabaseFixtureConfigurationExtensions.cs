@@ -1,4 +1,4 @@
-﻿// Copyright (c) Fusonic GmbH. All rights reserved.
+// Copyright (c) Fusonic GmbH. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
 using Fusonic.Extensions.UnitTests.Adapters.EntityFrameworkCore;
@@ -18,8 +18,11 @@ public static class DatabaseFixtureConfigurationExtensions
     /// <param name="templateDb">When a template is defined, the test database will initially be copied from it (ie. `YourProjectTest_Template`). When a template is set, migrations won't be executed.
     /// The template is expected to be up to date. Use <see cref="PostgreSqlUtil" /> for template creation support.</param>
     /// <param name="seed">The seed that should be executed when this provider is used.</param>
-    /// <param name="npgsqlOptions">The options builder for Npgsql if the context requires one. Gets used in DbContextOptionsBuilder{TDbContext}().UseNpgsql(). Example: o => o.UseNodaTime(). Note: UseNpgSql has been already called on this builder.</param>
-    /// <param name="dbContextOptions">The <see cref="DbContextOptionsBuilder{TDbContext}"/> which can be used for further configration. Example: o => o.AddInterceptors(...).</param>
+    /// <param name="npgsqlOptions">
+    ///     The options builder for Npgsql if the context requires one. Gets used in DbContextOptionsBuilder{TDbContext}().UseNpgsql().
+    ///     Example: o => o.UseNodaTime().
+    ///     Note: UseNpgSql() has already been called on this builder.</param>
+    /// <param name="dbContextOptions">The <see cref="DbContextOptionsBuilder{TDbContext}"/> which can be used for further configuration. Example: o => o.AddInterceptors(...).</param>
     public static DatabaseFixtureConfiguration<TDbContext> UsePostgreSqlDatabase<TDbContext>(
         this DatabaseFixtureConfiguration<TDbContext> configuration,
         string connectionString,

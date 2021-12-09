@@ -3,7 +3,7 @@
 
 using System.Diagnostics;
 using System.Reflection;
-using Fusonic.Extensions.UnitTests.XunitExtensibility;
+using Fusonic.Extensions.XUnit.Framework;
 using Microsoft.Extensions.Configuration;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;

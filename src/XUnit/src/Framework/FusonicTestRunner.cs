@@ -5,7 +5,7 @@ using System.Reflection;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
-namespace Fusonic.Extensions.UnitTests.XunitExtensibility;
+namespace Fusonic.Extensions.XUnit.Framework;
 
 /// <summary>
 /// Runs the test methods. This class is additionally responsible for creating the TestContext, handling the test output and running the BeforeAfterInvokeAttribute-Methods.

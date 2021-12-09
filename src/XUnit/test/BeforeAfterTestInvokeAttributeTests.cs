@@ -2,16 +2,13 @@
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
 using System.Reflection;
-using Fusonic.Extensions.UnitTests.XunitExtensibility;
+using Fusonic.Extensions.XUnit.Framework;
 using Xunit;
 
-namespace Fusonic.Extensions.UnitTests.Tests;
+namespace Fusonic.Extensions.XUnit.Tests;
 
-public class BeforeAfterTestInvokeAttributeTests : TestBase
+public class BeforeAfterTestInvokeAttributeTests
 {
-    public BeforeAfterTestInvokeAttributeTests(TestFixture fixture) : base(fixture)
-    { }
-
     [Test]
     [Fact]
     public void AttributeCalled()

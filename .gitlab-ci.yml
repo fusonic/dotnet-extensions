@@ -71,4 +71,3 @@ publish:
   only:
     - /^release\/.*$/
     - main
-    - net6 #TODO REMOVE
