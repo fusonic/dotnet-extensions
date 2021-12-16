@@ -6,6 +6,7 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Logging;
 using Npgsql;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure;
@@ -132,7 +133,9 @@ public static class PostgreSqlUtil
         //Migrate & run seed
         var options = new DbContextOptionsBuilder<TDbContext>()
                      .UseNpgsql(connectionString, npgsqlOptionsAction)
-                     .LogTo(msg => logger.LogInformation("[Npgsql] {Message}", msg))
+                     .LogTo(
+                          (eventId, _) => eventId != RelationalEventId.CommandExecuted,
+                          eventData => logger.Log(eventData.LogLevel, eventData.EventId, "[EF] {Message}", eventData.ToString()))
                      .Options;
         using (var dbContext = dbContextFactory(options))
         {
@@ -208,5 +211,6 @@ public static class PostgreSqlUtil
     }
 
     private static ILogger CreateConsoleLogger()
-        => LoggerFactory.Create(b => b.AddSimpleConsole(c => c.SingleLine = true)).CreateLogger(nameof(PostgreSqlUtil));
+        => LoggerFactory.Create(b => b.AddSimpleConsole(c => c.SingleLine = true))
+                        .CreateLogger(nameof(PostgreSqlUtil));
 }
