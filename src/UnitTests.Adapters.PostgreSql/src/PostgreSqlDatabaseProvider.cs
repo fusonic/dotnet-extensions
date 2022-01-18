@@ -76,8 +76,8 @@ internal class PostgreSqlDatabaseProvider<TDbContext> : ITestDatabaseProvider<TD
         // The lock usually prevents this, however, we still encounter race conditions
         // where we just have to retry.
         // 55006: source database "test_template" is being accessed by other users
-        Policy.Handle<NpgsqlException>(e => e.ErrorCode == 55006)
-              .WaitAndRetry(10, _ => TimeSpan.FromSeconds(1))
+        Policy.Handle<NpgsqlException>(e => e.SqlState == "55006")
+              .WaitAndRetry(15, _ => TimeSpan.FromSeconds(1))
               .Execute(CreateDatabase);
 
         void CreateDatabase()
