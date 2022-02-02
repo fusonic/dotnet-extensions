@@ -75,8 +75,8 @@ dotnet_diagnostic.CA1309.severity = silent # CA1309: Use ordinal string comparis
 dotnet_diagnostic.CA1310.severity = silent # CA1310: Specify StringComparison for correctness
 dotnet_diagnostic.CA1716.severity = none # CA1716: Identifiers should not match keywords
 dotnet_diagnostic.CA1848.severity = none # CA1848: Use the LoggerMessage delegates
-dotnet_diagnostic.CA2016.severity = suggestion # CA2016: Forward the 'CancellationToken' parameter to methods
 dotnet_diagnostic.IDE0010.severity = suggestion # IDE0010: Add missing cases
+dotnet_diagnostic.IDE0042.severity = suggestion # IDE0042: Variable declaration can be deconstructed
 dotnet_diagnostic.IDE0072.severity = suggestion # IDE0072: Add missing cases
 
 ##########################################

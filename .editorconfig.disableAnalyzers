@@ -1,0 +1,5 @@
+# This .editorconfig disables the analyzers. This can be used for folders containing generated code, like the EF migrations directory.
+
+[*.cs]
+
+dotnet_analyzer_diagnostic.category-Style.severity = silent
