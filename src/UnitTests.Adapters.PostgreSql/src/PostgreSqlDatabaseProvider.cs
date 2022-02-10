@@ -66,7 +66,6 @@ internal class PostgreSqlDatabaseProvider<TDbContext> : ITestDatabaseProvider<TD
         PostgreSqlUtil.DropDb(connectionString, dbName, pgVersion);
     }
 
-    private static readonly object TemplateSync = new();
     public void CreateDatabase(TDbContext dbContext)
     {
         if (dbCreated)
@@ -77,30 +76,26 @@ internal class PostgreSqlDatabaseProvider<TDbContext> : ITestDatabaseProvider<TD
         // where we just have to retry.
         // 55006: source database "test_template" is being accessed by other users
         Policy.Handle<NpgsqlException>(e => e.SqlState == "55006")
-              .WaitAndRetry(15, _ => TimeSpan.FromSeconds(1))
+              .WaitAndRetry(30, _ => TimeSpan.FromMilliseconds(500))
               .Execute(CreateDatabase);
 
         void CreateDatabase()
         {
-            lock (TemplateSync)
-            {
-                if (dbCreated)
-                    return;
+            if (dbCreated)
+                return;
 
-                PostgreSqlUtil.CreateDatabase(connectionString, dbName, templateDb);
+            PostgreSqlUtil.CreateDatabase(connectionString, dbName, templateDb);
+            dbCreated = true;
 
-                //if no template database was given, run the migrations
-                if (templateDb == null)
-                    dbContext.Database.Migrate();
+            //if no template database was given, run the migrations
+            if (templateDb == null)
+                dbContext.Database.Migrate();
 
-                //For some weird reason any async access to the dbContext causes some kind of task deadlock. The cause for it is the AsyncTestSyncContext from XUnit.
-                //It causes .Wait() to lock indefinitely. It doesn't relate to the connection or the migrate above.
-                //Seems somehow connected to dbContext.SaveChangesAsync() when called in the seed. (at least in my tests).
-                //Running the seed with an extra Task.Run() around works...
-                Task.Run(() => seed?.Invoke(dbContext).Wait()).Wait();
-
-                dbCreated = true;
-            }
+            //For some weird reason any async access to the dbContext causes some kind of task deadlock. The cause for it is the AsyncTestSyncContext from XUnit.
+            //It causes .Wait() to lock indefinitely. It doesn't relate to the connection or the migrate above.
+            //Seems somehow connected to dbContext.SaveChangesAsync() when called in the seed. (at least in my tests).
+            //Running the seed with an extra Task.Run() around works...
+            Task.Run(() => seed?.Invoke(dbContext).Wait()).Wait();
         }
     }
 

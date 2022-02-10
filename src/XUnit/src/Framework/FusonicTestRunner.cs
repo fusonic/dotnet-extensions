@@ -12,8 +12,11 @@ namespace Fusonic.Extensions.XUnit.Framework;
 /// </summary>
 public class FusonicTestRunner : XunitTestRunner
 {
-    private readonly List<BeforeAfterTestInvokeAttribute> beforeAfterInvokeAttributes = new();
+#pragma warning disable CS0618 // Type or member is obsolete. Code will be removed in v7.0
     private readonly List<BeforeAfterTestInvokeAsyncAttribute> beforeAfterInvokeAsyncAttributes = new();
+#pragma warning restore CS0618 // Type or member is obsolete
+
+    private readonly List<BeforeAfterTestInvokeAttribute> beforeAfterInvokeAttributes = new();
     private readonly ITestOutputHelper? testOutputHelper;
 
     public FusonicTestRunner(
@@ -33,8 +36,10 @@ public class FusonicTestRunner : XunitTestRunner
         beforeAfterInvokeAttributes.AddRange(testClass.GetCustomAttributes<BeforeAfterTestInvokeAttribute>(inherit: true));
         beforeAfterInvokeAttributes.AddRange(testMethod.GetCustomAttributes<BeforeAfterTestInvokeAttribute>());
 
+#pragma warning disable CS0618 // Type or member is obsolete. Code will be removed in v7.0
         beforeAfterInvokeAsyncAttributes.AddRange(testClass.GetCustomAttributes<BeforeAfterTestInvokeAsyncAttribute>(inherit: true));
         beforeAfterInvokeAsyncAttributes.AddRange(testMethod.GetCustomAttributes<BeforeAfterTestInvokeAsyncAttribute>());
+#pragma warning restore CS0618 // Type or member is obsolete
 
         //If there's a ITestOutputHelper in the ctor, we use that one instead of creating an own.
         testOutputHelper = constructorArguments.OfType<ITestOutputHelper>().FirstOrDefault();

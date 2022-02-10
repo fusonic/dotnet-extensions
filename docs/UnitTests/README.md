@@ -7,6 +7,7 @@
   - [Test settings / Microsoft.Extensions.Configuration](#test-settings--microsoftextensionsconfiguration)
   - [Database provider setup](#database-provider-setup)
     - [Fixture](#fixture)
+    - [Database test concurrency](#database-test-concurrency)
     - [Test base](#test-base)
   - [Supported providers](#supported-providers)
     - [NoDb](#nodb)
@@ -14,7 +15,6 @@
     - [PostgreSql](#postgresql)
       - [CLI - Test DB Templates](#cli---test-db-templates)
       - [Cleanup](#cleanup)
-    - [SQL Server](#sql-server)
 
 ## Introduction
 
@@ -150,12 +150,9 @@ public class TestFixture : DatabaseFixture<YourDbContext>
 
     protected override void ConfigureDatabaseProviderss(DatabaseFixtureConfiguration<YourDbContext> configuration)
     {
-        var maxDbTestConcurrency = int.TryParse(Environment.GetEnvironmentVariable("MAX_TEST_CONCURRENCY"), out var c) ? c : 0; // 0 = Processor count
-
         configuration.UseInMemoryDatabase(seed: ctx => new TestDataSeed(ctx).Seed())
                      .UsePostgreSqlDatabase(connectionString: "...", dbNamePrefix: "YourProjectTest", templateDb: "YourProjectTest_Template")
-                     .UseDefaultProviderAttribute(new InMemoryTestAttribute())
-                     .SetMaxTestConcurrency(maxDbTestConcurrency);
+                     .UseDefaultProviderAttribute(new InMemoryTestAttribute());
 
         if (bool.TryParse(Environment.GetEnvironmentVariable("NIGHTLY"), out bool isNightly) && isNightly)
             configuration.UseProviderAttributeReplacer(_ => new PostgreSqlTestAttribute());
@@ -202,14 +199,18 @@ Simplified, as soon as a test awaits a task somewhere, the thread is returned to
 
 This behavior can cause issues when running integration tests against a database, especially when lots of tests are started. Connection limits can be exhausted quickly and other issues, like timeouts due to overload, may occur.
 
-By using `SetMaxTestConcurrency` in the provider configuration, you can steer the maximum concurrent database tests that can be started. The default limit is the virtual processor count on the machine.  
+Our framework provides a possibility to limit the max. number of tests executing in parallel. This can be done in two ways:
+* Set `MaxParallelTests` on the `FusonicTestFramework` assembly attribute
+* Set the environment variable `MAX_PARALLEL_TESTS`
 
-Note that this setting is not affecting the connection limit of entity framework or any other connection limits. Entity framework or this unit testing framework could still have more open connections than the maxConcurrency setting, but it still can be leveraged to drastically reduce the chance of connection limit exhaustion and timeouts due to a too high load.
+If both are set, the environment variable has the higher precedence.
+
+Note that this setting is not affecting the connection limit of entity framework or any other connection limits. Entity framework or this unit testing framework could still have more open connections than the MaxParallelTests setting, but it still can be leveraged to drastically reduce the chance of connection limit exhaustion and timeouts due to a too high load.
 
 The following values are supported:
-* `maxConcurrency < 0` disables the limits completly. Tests get executed as XUnit intends to.
-* `maxConcurrency = 0` sets the limit to the virtual processor count of the machine. This is the default.
-* `maxConcurrency > 0` sets the limit to the given number.
+* `maxParallelTests < 0` disables the limits completly. Tests get executed as XUnit intends to.
+* `maxParallelTests = 0` sets the limit to the virtual processor count of the machine. This is the default.
+* `maxParallelTests > 0` sets the limit to the given number.
 
 ### Test base
 
@@ -238,7 +239,7 @@ You'll get some new supporting methods to call:
 
 ### NoDb
 
-This one does not configure the DbContext at all. You can use it to ensure that no DB gets created or just to skip the DB overhead when you don't need it. You don't need any extra configuration for it. Mark a test or a test class with `[NoDatabase]` to use it.
+This one does not configure the DbContext at all. You can use it to ensure that the database does not get accessed. You don't need any extra configuration for it. Mark a test or a test class with `[NoDatabase]` to use it.
 
 ### InMemory
 
@@ -310,17 +311,13 @@ public class TestDbTemplateCreator : ITestDbTemplateCreator
         PostgreSqlUtil.Cleanup(connectionString, dbPrefix: dbName);
 
         //Create the template
-        PostgreSqlUtil.CreateTestDbTemplate<HomeDbContext>(connectionString, o => new HomeDbContext(o), seed: c => new TestDataSeed(c).Seed());
+        PostgreSqlUtil.CreateTestDbTemplate<AppDbContext>(connectionString, o => new AppDbContext(o), seed: c => new TestDataSeed(c).Seed());
     }
 }
 ```
 
-This then can be called with `pgtestutil template -c "ConnectionString" -a Path\To\Your\Assembly.dll`
+This then can be called with `pgtestutil template -c "ConnectionString" -a Path/To/Your/Assembly.dll`
 
 #### Cleanup
 
 Normally the tests and CI jobs do a fine job of cleaning everything up. However, if for example you just stop an environment while a test is running and delete it then, it may happen that there are remains of unused test databases on the RDS server. To get rid of them, there is a template for a nightly task available. See `Cleanup-TestDatabases` in our project `gitlab-ci-tools` for details.
-
-### SQL Server
-
-Not supported yet :(

@@ -59,6 +59,7 @@ public class DatabaseFixtureConfiguration<TDbContext>
     /// 0: Use number of virtual CPUs available (default)<br/>
     /// &gt; 0: Use the given value as limit
     /// </param>
+    [Obsolete("This method is obsolete and will be removed in v7.0. The maximum number of tests can now be set in the attribute 'FusonicTestFramework' on assembly level.")]
     public DatabaseFixtureConfiguration<TDbContext> SetMaxTestConcurrency(int maxConcurrency)
     {
         LimitTestConcurrencyAttribute.MaxConcurrency = maxConcurrency;

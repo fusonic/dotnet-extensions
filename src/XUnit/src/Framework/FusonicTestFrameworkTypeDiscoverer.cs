@@ -9,7 +9,5 @@ namespace Fusonic.Extensions.XUnit.Framework;
 public class FusonicTestFrameworkTypeDiscoverer : ITestFrameworkTypeDiscoverer
 {
     public Type GetTestFrameworkType(IAttributeInfo attribute)
-    {
-        return typeof(FusonicTestFramework);
-    }
+        => typeof(FusonicTestFramework);
 }

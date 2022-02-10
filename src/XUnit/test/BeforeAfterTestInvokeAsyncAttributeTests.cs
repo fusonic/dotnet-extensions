@@ -14,7 +14,9 @@ public class BeforeAfterTestInvokeAsyncAttributeTests
         Assert.False(TestAsyncAttribute.AfterCalled); //gets called after the test...
     }
 
+#pragma warning disable CS0618 // Type or member is obsolete. Test will be removed with v7.0
     public class TestAsyncAttribute : BeforeAfterTestInvokeAsyncAttribute
+#pragma warning restore CS0618 // Type or member is obsolete
     {
         public static bool BeforeCalled { get; set; }
         public static bool AfterCalled { get; set; }

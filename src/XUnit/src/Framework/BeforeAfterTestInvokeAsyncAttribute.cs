@@ -17,6 +17,7 @@ namespace Fusonic.Extensions.XUnit.Framework;
 /// If you need to set something in the test context, use the sync attribute BeforeAfterTestInvokeAttribute instead.
 /// </summary>
 [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class, AllowMultiple = true)]
+[Obsolete("This attribute is obsolete/unused in future and will be removed in v7.0.")]
 public abstract class BeforeAfterTestInvokeAsyncAttribute : Attribute
 {
     /// <summary>
