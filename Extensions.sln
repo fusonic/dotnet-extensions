@@ -57,6 +57,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XUnit.Tests", "src\XUnit\te
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XUnit", "src\XUnit\src\XUnit.csproj", "{E2B7EB8C-267D-426C-BB97-D4FBC5B151E9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EntityFrameworkCore.Tests", "src\EntityFrameworkCore\test\EntityFrameworkCore.Tests.csproj", "{68F735B4-D3E5-477F-8071-F65D1C2137E2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -151,6 +153,10 @@ Global
 		{E2B7EB8C-267D-426C-BB97-D4FBC5B151E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E2B7EB8C-267D-426C-BB97-D4FBC5B151E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E2B7EB8C-267D-426C-BB97-D4FBC5B151E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{68F735B4-D3E5-477F-8071-F65D1C2137E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68F735B4-D3E5-477F-8071-F65D1C2137E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68F735B4-D3E5-477F-8071-F65D1C2137E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68F735B4-D3E5-477F-8071-F65D1C2137E2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -163,6 +169,7 @@ Global
 		{C0FDFA5A-5421-40A1-8653-823FB9C94E5C} = {95D2383B-80C5-46AA-9190-826A0377A156}
 		{32C689D9-1CC6-4FBD-9EF4-91BCF39B0FC1} = {95D2383B-80C5-46AA-9190-826A0377A156}
 		{2721A46C-6ED7-4427-BBE2-AB766D9D1FF1} = {95D2383B-80C5-46AA-9190-826A0377A156}
+		{68F735B4-D3E5-477F-8071-F65D1C2137E2} = {95D2383B-80C5-46AA-9190-826A0377A156}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DCAD7035-5EC8-4B6E-82B5-769C5A4892EA}
