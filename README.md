@@ -1,6 +1,6 @@
 # Fusonic Extensions 
 [![build](https://github.com/fusonic/dotnet-extensions/workflows/build/badge.svg)](https://github.com/fusonic/dotnet-extensions/actions?query=workflow%3Abuild)
-[![nuget](https://img.shields.io/badge/fusonic%20extensions-6.0.0-blue)](https://www.nuget.org/packages?q=Fusonic.Extensions)
+[![nuget](https://img.shields.io/badge/fusonic%20extensions-6.1.0-blue)](https://www.nuget.org/packages?q=Fusonic.Extensions)
 [![licence](https://img.shields.io/github/license/fusonic/dotnet-extensions)](https://github.com/fusonic/dotnet-extensions/blob/main/LICENSE)
 
 The **Fusonic Extensions** project aggregates several thoughtfully designed, reusable class libraries, which can be used in modern .NET application development. Fusonic successfully uses these libraries in its own individual projects. Some packages are general purpose libs which can be used by any kind of .net project (console, web, rich client). Other packages may be best suited for ASP<span>.</span>NET Core development. Because we believe that they can be useful for the broader community, we open source it under a permissive license.
@@ -11,7 +11,6 @@ If we see broader community engagement in the future, we may consider switching 
 
 Latest Fusonic Extensions supports the platforms:
 
-* .NET 5.0
 * .NET 6.0
 
 Packages
