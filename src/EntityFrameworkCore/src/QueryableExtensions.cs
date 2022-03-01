@@ -1,4 +1,4 @@
-﻿// Copyright (c) Fusonic GmbH. All rights reserved.
+// Copyright (c) Fusonic GmbH. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
 using System.Diagnostics.CodeAnalysis;
@@ -34,7 +34,7 @@ public static class QueryableExtensions
     /// <exception cref="EntityNotFoundException">when the entity is not available</exception>
     public static async Task<T> FindRequiredAsync<T, TId>(this DbSet<T> dbSet, TId id, CancellationToken cancellationToken = default)
         where TId : struct
-        where T : class, IEntity<TId>
+        where T : class, IEntity
         => (await dbSet.FindAsync(new object[] { id }, cancellationToken)).IsRequired();
 
     /// <summary>
