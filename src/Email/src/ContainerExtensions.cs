@@ -1,4 +1,4 @@
-﻿// Copyright (c) Fusonic GmbH. All rights reserved.
+// Copyright (c) Fusonic GmbH. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
 using System.Reflection;
@@ -31,8 +31,9 @@ public static class ContainerExtensions
         container.RegisterInstance(options);
         container.RegisterInstance(new CssInliner(options));
         container.Register<IEmailRenderingService, RazorEmailRenderingService>();
+        container.Register<IEmailAttachmentResolver, FileAttachmentResolver>(Lifestyle.Singleton);
         container.Register<ISmtpClient, SmtpClient>();
-        container.RegisterInstance<Func<IViewLocalizer>>(container.GetInstance<IViewLocalizer>);
+        container.RegisterInstance(() => container.GetInstance<IViewLocalizer>());
         container.Register(typeof(IRequestHandler<,>), Assembly.GetExecutingAssembly());
     }
 }

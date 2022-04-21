@@ -1,4 +1,4 @@
-﻿// Copyright (c) Fusonic GmbH. All rights reserved.
+// Copyright (c) Fusonic GmbH. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
 using System.Globalization;
@@ -23,20 +23,17 @@ public class RazorEmailRenderingService : IEmailRenderingService
     private readonly IServiceScope serviceScope;
     private readonly ITempDataProvider tempDataProvider;
     private readonly Func<IViewLocalizer> viewLocalizerFactory;
-    private readonly CssInliner cssInliner;
 
     public RazorEmailRenderingService(
         IRazorViewEngine viewEngine,
         IServiceScope serviceScope,
         ITempDataProvider tempDataProvider,
-        Func<IViewLocalizer> viewLocalizerFactory,
-        CssInliner cssInliner)
+        Func<IViewLocalizer> viewLocalizerFactory)
     {
         this.viewEngine = viewEngine;
         this.serviceScope = serviceScope;
         this.tempDataProvider = tempDataProvider;
         this.viewLocalizerFactory = viewLocalizerFactory;
-        this.cssInliner = cssInliner;
     }
 
     /// <inheritdoc />

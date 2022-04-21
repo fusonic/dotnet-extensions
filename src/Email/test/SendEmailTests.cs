@@ -2,6 +2,8 @@
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
 using System.Globalization;
+using System.Text;
+using System.Text.RegularExpressions;
 using FluentAssertions;
 using Fusonic.Extensions.Email.Tests.Models;
 using Microsoft.AspNetCore.Mvc.Localization;
@@ -69,6 +71,45 @@ public class SendEmailTests : TestBase<SendEmailTests.SendEmailFixture>
           + "</body></html>");
     }
 
+    [Theory]
+    [InlineData("testFile.txt")]
+    [InlineData("speciölChäracters.xml")]
+    [InlineData("!even-More.xml")]
+    public async Task SendEmail_AttachmentsAdded(string attachmentName)
+    {
+        var attachmentPath = Path.Combine(Path.GetDirectoryName(typeof(TestFixture).Assembly.Location)!, "email.css");
+        Fixture.SmtpServer!.ClearReceivedEmail();
+
+        var model = new RenderTestEmailViewModel { SomeField = "Some field." };
+        var attachments = new Attachment[]
+        {
+            new(
+                attachmentName,
+                new Uri(attachmentPath)
+            )
+        };
+
+        await SendAsync(new SendEmail.Command("recipient@fusonic.net", "The Recipient", attachments, new CultureInfo("de-AT"), model));
+
+        Fixture.SmtpServer.ReceivedEmailCount.Should().Be(1);
+        var email = Fixture.SmtpServer.ReceivedEmail.Single();
+        email.MessageParts.Should().HaveCount(2);
+
+        var onlyAsciiChars = new Regex("^[a-zA-Z0-9.!-]*$");
+        if (!onlyAsciiChars.IsMatch(attachmentName))
+        {
+            var base64EncodedName = Convert.ToBase64String(Encoding.UTF8.GetBytes(attachmentName));
+            email.MessageParts[1].HeaderData.Should().Be($"application/octet-stream; name=\"=?utf-8?B?{base64EncodedName}?=\"");
+        }
+        else
+        {
+            email.MessageParts[1].HeaderData.Should().Contain(attachmentName);
+        }
+
+        var expectedAttachmentContent = await File.ReadAllTextAsync(attachmentPath);
+        email.MessageParts[1].BodyData.Should().Be(expectedAttachmentContent);
+    }
+
     [Fact]
     public async Task SendEmail_InvalidEmailAddress_ThrowsException()
     {
@@ -76,7 +117,7 @@ public class SendEmailTests : TestBase<SendEmailTests.SendEmailFixture>
 
         var model = new RenderTestEmailViewModel { SomeField = "Some field." };
 
-        Func<Task> act = async () => await SendAsync(new SendEmail.Command("recipient@fusonic.net", "The Recipient", "invalidEmailAddress", new CultureInfo("de-AT"), null, model));
+        Func<Task> act = async () => await SendAsync(new SendEmail.Command("recipient@fusonic.net", "The Recipient", "invalidEmailAddress", new CultureInfo("de-AT"), null, null, model));
 
         await act.Should().ThrowAsync<Exception>();
     }
