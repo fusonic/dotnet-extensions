@@ -33,7 +33,7 @@ public sealed class ContainerJobActivator : JobActivator
         public override void DisposeScope()
         {
             base.DisposeScope();
-            scope.Dispose();
+            scope.DisposeScopeAsync().Wait();
         }
     }
 }
