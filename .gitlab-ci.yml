@@ -47,7 +47,9 @@ test:
       - reports/dotnetcoverage
     reports:
       junit: testresults/*.xml
-      cobertura: src/**/TestResults/*/coverage.cobertura.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: src/**/TestResults/*/coverage.cobertura.xml
   coverage: /.*Line coverage.*?(\d{1,3}\.?\d*)%.*/
 
 pages:
