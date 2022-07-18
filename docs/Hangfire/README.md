@@ -1,8 +1,8 @@
 # Hangfire
 
 - [Hangfire](#hangfire)
-  - [DisableHangfireDashboardAuthorizationFilter](#disablehangfiredashboardauthorizationfilter)
-  - [Transactional job processor](#transactional-job-processor)
+    - [DisableHangfireDashboardAuthorizationFilter](#disablehangfiredashboardauthorizationfilter)
+    - [Transactional job processor](#transactional-job-processor)
 
 ## Out-Of-Band Processing of CQRS Command and Event-Handlers
 
@@ -13,12 +13,16 @@ That means that the message will be stored in the outbox as part of the current 
 This way we you can atomically perform your business operation including scheduling commands/events which must be executed afterwards, so that we get into an consistent state.
 
 Registration:
+
 ```cs
 Container.RegisterOutOfBandDecorators();
 Container.RegisterDecorator(typeof(IRequestHandler<,>), typeof(TransactionalRequestHandlerDecorator<,>));
 ```
 
+If you want to process notifications out of band it is important to call `Container.RegisterOutOfBandDecorators()` before you register any other decorator. Otherwise this would cause the `NotificationDispatcher` to try to resolve a decorator instead of the actual `NotificationHandler`.
+
 Usage:
+
 ```cs
 [OutOfBand]
 public class SendEmailCommandHandler : IRequestHandler<SendEmailCommand>
@@ -27,15 +31,15 @@ public class SendEmailCommandHandler : IRequestHandler<SendEmailCommand>
 }
 ```
 
-
 ## DisableHangfireDashboardAuthorizationFilter
 
-For local development or when you have other means of authorization, you may want to disable the hangfire authorization for the dashboard.  
+For local development, where you have other means of authorization, you may want to disable the hangfire authorization for the dashboard.
 
 For disabling the local development authorization for local development, you usually just can use the default options. However, those may not work when running the backend in a docker container, as hangfire still filters the requests to "only local requests".
 To completly disable any authorization use this filter instead.
 
 Usage:
+
 ```cs
 dashboardOptions = new DashboardOptions { Authorization = new[] { new DisableHangfireDashboardAuthorizationFilter() } };
 app.UseHangfireDashboard(options: dashboardOptions);
@@ -46,6 +50,7 @@ app.UseHangfireDashboard(options: dashboardOptions);
 If you want all your background jobs to run within a transaction (which is usually the case), you can use the `TransactionalJobProcessor`.
 
 Configuration with SimpleInjector:
+
 ```cs
 Container.RegisterSingleton<ITransactionScopeHandler, TransactionScopeHandler>();
 
