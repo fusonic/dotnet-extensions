@@ -8,8 +8,7 @@ namespace Fusonic.Extensions.XUnit.Framework;
 
 public class FusonicSkippedDataRowTestCase : XunitSkippedDataRowTestCase
 {
-#pragma warning disable 618
-    //ctor is marked with obsolete, but is required by serializer. See base class.
+#pragma warning disable 618 //ctor is marked with obsolete, but is required by serializer. See base class.
     public FusonicSkippedDataRowTestCase()
     { }
 #pragma warning restore 618

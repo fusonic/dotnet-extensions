@@ -28,7 +28,7 @@ internal static class TemplateCreator
         }
         else
         {
-            var interfaceName = nameof(ITestDbTemplateCreator); //nameof() get compiled to strings, so using non-system types there is allowed.
+            const string interfaceName = nameof(ITestDbTemplateCreator); //nameof() get compiled to strings, so using non-system types there is allowed.
             var types = assembly.GetTypes().Where(t => t.IsClass && !t.IsAbstract && t.GetInterface(interfaceName) != null).ToList();
 
             if (types.Count == 0)

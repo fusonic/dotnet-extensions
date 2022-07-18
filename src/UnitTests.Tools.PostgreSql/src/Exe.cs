@@ -1,4 +1,4 @@
-﻿// Copyright (c) Fusonic GmbH. All rights reserved.
+// Copyright (c) Fusonic GmbH. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
 using System.Diagnostics;
@@ -6,7 +6,9 @@ using System.Text;
 
 namespace Fusonic.Extensions.UnitTests.Tools.PostgreSql;
 
-//Shamelessly taken from dotnet-ef Microsoft.EntityFrameworkCore.Tools
+/// <summary>
+/// Shamelessly taken from dotnet-ef Microsoft.EntityFrameworkCore.Tools
+/// </summary>
 internal static class Exe
 {
     public static int Run(string executable, IReadOnlyList<string> args, string workingDirectory)

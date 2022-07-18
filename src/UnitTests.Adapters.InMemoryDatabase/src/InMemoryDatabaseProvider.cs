@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace Fusonic.Extensions.UnitTests.Adapters.InMemoryDatabase;
 
-internal class InMemoryDatabaseProvider<TDbContext> : ITestDatabaseProvider<TDbContext>
+internal sealed class InMemoryDatabaseProvider<TDbContext> : ITestDatabaseProvider<TDbContext>
     where TDbContext : DbContext
 {
     private static readonly string DbPrefix = typeof(TDbContext).FullName + "_";

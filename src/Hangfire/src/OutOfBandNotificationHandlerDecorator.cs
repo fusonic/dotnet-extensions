@@ -1,4 +1,4 @@
-﻿// Copyright (c) Fusonic GmbH. All rights reserved.
+// Copyright (c) Fusonic GmbH. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
 using System.Globalization;
@@ -34,11 +34,9 @@ public class OutOfBandNotificationHandlerDecorator<TNotification, TProcessor> : 
             runtimeOptions.SkipOutOfBandDecorators = false;
             return inner.Handle(notification, cancellationToken);
         }
-        else
-        {
-            EnqueueHangfireJob(inner.GetType(), notification);
-            return Task.CompletedTask;
-        }
+
+        EnqueueHangfireJob(inner.GetType(), notification);
+        return Task.CompletedTask;
     }
 
     private void EnqueueHangfireJob(Type handler, object notification)

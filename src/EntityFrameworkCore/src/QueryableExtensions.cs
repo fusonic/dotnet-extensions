@@ -33,8 +33,8 @@ public static class QueryableExtensions
     /// <typeparam name="TId">is a typeof an <see cref="IEntity"/> Id</typeparam>
     /// <exception cref="EntityNotFoundException">when the entity is not available</exception>
     public static async Task<T> FindRequiredAsync<T, TId>(this DbSet<T> dbSet, TId id, CancellationToken cancellationToken = default)
-        where TId : struct
         where T : class, IEntity
+        where TId : struct
         => (await dbSet.FindAsync(new object[] { id }, cancellationToken)).IsRequired();
 
     /// <summary>
@@ -47,7 +47,7 @@ public static class QueryableExtensions
         {
             return await query.SingleAsync(predicate, cancellationToken);
         }
-        catch (InvalidOperationException e) when (e.Message != null && e.Message.StartsWith("Sequence contains no elements", StringComparison.Ordinal))
+        catch (InvalidOperationException e) when (e.Message?.StartsWith("Sequence contains no elements", StringComparison.Ordinal) == true)
         {
             throw new EntityNotFoundException(typeof(T));
         }
@@ -63,7 +63,7 @@ public static class QueryableExtensions
         {
             return await query.SingleAsync(cancellationToken);
         }
-        catch (InvalidOperationException e) when (e.Message != null && e.Message.StartsWith("Sequence contains no elements", StringComparison.Ordinal))
+        catch (InvalidOperationException e) when (e.Message?.StartsWith("Sequence contains no elements", StringComparison.Ordinal) == true)
         {
             throw new EntityNotFoundException(typeof(T));
         }
@@ -74,14 +74,14 @@ public static class QueryableExtensions
     /// This is useful for the first call in a query where the existence of an entity is checked.
     /// </summary>
     public static async Task<T> SingleRequiredAsync<T, TId>(this IQueryable<T> query, TId id, CancellationToken cancellationToken = default)
-        where TId : struct
         where T : class, IEntity<TId>
+        where TId : struct
     {
         try
         {
             return await query.SingleAsync(e => Equals(e.Id, id), cancellationToken);
         }
-        catch (InvalidOperationException e) when (e.Message != null && e.Message.StartsWith("Sequence contains no elements", StringComparison.Ordinal))
+        catch (InvalidOperationException e) when (e.Message?.StartsWith("Sequence contains no elements", StringComparison.Ordinal) == true)
         {
             throw new EntityNotFoundException(typeof(T), id);
         }
@@ -89,17 +89,13 @@ public static class QueryableExtensions
 
     /// <summary> Determines if the entity with the given ID exists.</summary>
     public static async Task<bool> ExistsAsync<T, TId>(this DbSet<T> dbSet, TId id, CancellationToken cancellationToken = default)
-        where TId : struct
         where T : class, IEntity<TId>
-    {
-        var exists = await dbSet.AnyAsync(d => Equals(d.Id, id), cancellationToken);
-        return exists;
-    }
+        where TId : struct => await dbSet.AnyAsync(d => Equals(d.Id, id), cancellationToken);
 
     /// <summary> Determines if the entity with the given ID exists. Throws a EntityNotFoundException if it does not. </summary>
     public static async Task RequireAsync<T, TId>(this DbSet<T> dbSet, TId id, CancellationToken cancellationToken = default)
-        where TId : struct
         where T : class, IEntity<TId>
+        where TId : struct
     {
         if (!await ExistsAsync(dbSet, id, cancellationToken))
             throw new EntityNotFoundException(typeof(T), id);

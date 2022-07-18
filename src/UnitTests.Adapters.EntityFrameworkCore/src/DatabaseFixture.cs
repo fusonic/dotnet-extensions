@@ -53,8 +53,7 @@ public abstract class DatabaseFixture<TDbContext> : UnitTestFixture
                 throw new InvalidOperationException($"Cannot resolve provider for attribute {attributeType.FullName}. No provider is registered for it.");
 
             var providerFactory = configuration.ProviderFactories[attributeType];
-            var provider = providerFactory(attribute);
-            return provider;
+            return providerFactory(attribute);
         });
 
         //The db context options given by the database provider

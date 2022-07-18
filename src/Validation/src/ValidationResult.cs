@@ -1,4 +1,4 @@
-﻿// Copyright (c) Fusonic GmbH. All rights reserved.
+// Copyright (c) Fusonic GmbH. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
 namespace Fusonic.Extensions.Validation;
@@ -9,6 +9,5 @@ public abstract class ValidationResult
 
     public static ValidationResult Success() => new ValidationResult<object>();
 
-    public static ValidationResult<TError> Error<TError>(TError error) where TError : notnull
-        => new ValidationResult<TError>(error);
+    public static ValidationResult<TError> Error<TError>(TError error) where TError : notnull => new(error);
 }

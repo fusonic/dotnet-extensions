@@ -44,8 +44,7 @@ public static class DataAnnotationsValidator
 
         if (instance is IValidatableObject validatableObject)
         {
-            var results = validatableObject.Validate(new ValidationContext(instance)).Where(x => x != null);
-            foreach (var validationResult in results)
+            foreach (var validationResult in validatableObject.Validate(new ValidationContext(instance)).Where(x => x != null))
             {
                 if (validationResult.MemberNames.Any())
                 {

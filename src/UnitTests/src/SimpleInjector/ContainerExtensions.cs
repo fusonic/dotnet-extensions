@@ -14,8 +14,8 @@ public static class ContainerExtensions
         => container.Register<TConcrete>(TestScopedLifestyle);
 
     public static void RegisterTestScoped<TService, TServiceImplementation>(this Container container)
-        where TServiceImplementation : class, TService
         where TService : class
+        where TServiceImplementation : class, TService
         => container.Register<TService, TServiceImplementation>(TestScopedLifestyle);
 
     public static void RegisterTestScoped<TService>(this Container container, Func<TService> instanceCreator)

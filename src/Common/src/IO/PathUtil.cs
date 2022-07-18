@@ -1,4 +1,4 @@
-﻿// Copyright (c) Fusonic GmbH. All rights reserved.
+// Copyright (c) Fusonic GmbH. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
 namespace Fusonic.Extensions.Common.IO;
@@ -8,7 +8,7 @@ public static class PathUtil
     /// <summary>
     /// Removes invalid characters from a filename.
     /// Note: When using this method, you don't have to call RemoveInvalidPathChars() anymore, as all the chars removed by RemoveInvalidPathChars() are also removed here.
-    /// 
+    ///
     /// Path.GetInvalidFileNameChars() returns different values based on the OS. Linux for example only returns char 0 and 47 '/'. This uses the set returned on windows.
     /// (The windows set seems not to lack any chars, linux and mac os sets are a subset of this, so we should be fine everywhere)
     /// </summary>
@@ -76,7 +76,7 @@ public static class PathUtil
 
     /// <summary>
     ///    Removes invalid characters from a path.
-    ///    
+    ///
     ///    Path.GetInvalidPathChars() returns different values based on the OS. Linux for example only returns char 0. This uses the set returned on windows.
     ///    (The windows set seems not to lack any chars, linux and mac os sets are a subset of this, so we should be fine everywhere)
     /// </summary>

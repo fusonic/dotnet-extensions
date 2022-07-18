@@ -5,7 +5,7 @@ using CommandLine;
 
 namespace Fusonic.Extensions.UnitTests.Tools.PostgreSql;
 
-internal class Commandline
+internal sealed class Commandline
 {
     public static int ParseAndExecute(string[] args)
         => Parser.Default
@@ -14,5 +14,5 @@ internal class Commandline
                       (CleanupOptions o) => o.Execute(),
                       (DropOptions o) => o.Execute(),
                       (TemplateOptions o) => o.Execute(),
-                      errors => 1);
+                      _ => 1);
 }

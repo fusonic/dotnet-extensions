@@ -1,4 +1,4 @@
-﻿// Copyright (c) Fusonic GmbH. All rights reserved.
+// Copyright (c) Fusonic GmbH. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
 using Microsoft.AspNetCore.Mvc;
@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Fusonic.Extensions.Validation.Mvc;
 
-internal class ValidationFailedActionFilter : IActionFilter
+internal sealed class ValidationFailedActionFilter : IActionFilter
 {
     public void OnActionExecuting(ActionExecutingContext context)
     {

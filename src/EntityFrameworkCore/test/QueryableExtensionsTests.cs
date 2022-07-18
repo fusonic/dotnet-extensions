@@ -1,4 +1,4 @@
-﻿// Copyright (c) Fusonic GmbH. All rights reserved.
+// Copyright (c) Fusonic GmbH. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
 using FluentAssertions;
@@ -12,7 +12,7 @@ namespace Fusonic.Extensions.EntityFrameworkCore.Tests;
 
 public class QueryableExtensionsTests : IDisposable
 {
-    private TestDbContext testDbContext;
+    private readonly TestDbContext testDbContext;
 
     public QueryableExtensionsTests()
     {
@@ -47,7 +47,7 @@ public class QueryableExtensionsTests : IDisposable
         // Assert
         errorAction.Should()
                    .Throw<EntityNotFoundException>()
-                   .WithMessage($"Could not find entity of type '{typeof(SampleDomainEntity).Name}'.");
+                   .WithMessage($"Could not find entity of type '{nameof(SampleDomainEntity)}'.");
     }
 
     [Fact]
@@ -72,7 +72,7 @@ public class QueryableExtensionsTests : IDisposable
         // Assert
         await errorAction.Should()
                          .ThrowAsync<EntityNotFoundException>()
-                         .WithMessage($"Could not find entity of type '{typeof(SampleDomainEntity).Name}'.");
+                         .WithMessage($"Could not find entity of type '{nameof(SampleDomainEntity)}'.");
     }
 
     [Fact]
@@ -98,7 +98,7 @@ public class QueryableExtensionsTests : IDisposable
         // Assert
         await errorAction.Should()
                          .ThrowAsync<EntityNotFoundException>()
-                         .WithMessage($"Could not find entity of type '{typeof(SampleDomainEntity).Name}'.");
+                         .WithMessage($"Could not find entity of type '{nameof(SampleDomainEntity)}'.");
     }
 
     [Fact]
@@ -140,7 +140,7 @@ public class QueryableExtensionsTests : IDisposable
         // Assert
         await errorAction.Should()
                          .ThrowAsync<EntityNotFoundException>()
-                         .WithMessage($"Could not find entity of type '{typeof(SampleDomainEntity).Name}' with id {guid}.");
+                         .WithMessage($"Could not find entity of type '{nameof(SampleDomainEntity)}' with id {guid}.");
     }
 
     [Fact]
@@ -165,7 +165,7 @@ public class QueryableExtensionsTests : IDisposable
         // Assert
         await errorAction.Should()
                          .ThrowAsync<EntityNotFoundException>()
-                         .WithMessage($"Could not find entity of type '{typeof(SampleDomainEntity).Name}'.");
+                         .WithMessage($"Could not find entity of type '{nameof(SampleDomainEntity)}'.");
     }
 
     [Fact]
@@ -189,7 +189,7 @@ public class QueryableExtensionsTests : IDisposable
 
         // Assert
         (await errorAction.Should().ThrowAsync<EntityNotFoundException>())
-           .WithMessage($"Could not find entity of type '{typeof(SampleDomainEntity).Name}'.");
+           .WithMessage($"Could not find entity of type '{nameof(SampleDomainEntity)}'.");
     }
 
     [Fact]
@@ -238,7 +238,7 @@ public class QueryableExtensionsTests : IDisposable
 
         // Assert
         (await errorAction.Should().ThrowAsync<EntityNotFoundException>())
-           .WithMessage($"Could not find entity of type '{typeof(SampleDomainEntity).Name}' with id {guid}.");
+           .WithMessage($"Could not find entity of type '{nameof(SampleDomainEntity)}' with id {guid}.");
     }
 
     private async Task<SampleDomainEntity> CreateSampleEntity()

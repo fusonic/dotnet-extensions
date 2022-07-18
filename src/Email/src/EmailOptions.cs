@@ -65,9 +65,9 @@ public class EmailOptions
                 errors.Add("SMTP port is invalid.");
         }
 
-        if (errors.Any())
+        if (errors.Count > 0)
         {
-            string message = string.Join(Environment.NewLine, errors);
+            var message = string.Join(Environment.NewLine, errors);
             throw new ValidationException($"Email options are invalid.{Environment.NewLine}{message}");
         }
 

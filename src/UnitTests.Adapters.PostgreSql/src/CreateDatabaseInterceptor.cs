@@ -11,7 +11,7 @@ namespace Fusonic.Extensions.UnitTests.Adapters.PostgreSql;
 /// This interceptor creates a test database on first connection. This also works on pooled connections as the test databases
 /// are unique per test and thus always require a new connection.
 /// </summary>
-internal class CreateDatabaseInterceptor<TDbContext> : DbConnectionInterceptor
+internal sealed class CreateDatabaseInterceptor<TDbContext> : DbConnectionInterceptor
     where TDbContext : DbContext
 {
     private readonly Action<TDbContext> createDb;

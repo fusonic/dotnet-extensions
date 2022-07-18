@@ -43,16 +43,13 @@ public abstract class UnitTest<TFixture> : IDisposable, IClassFixture<TFixture>
         {
             using var newScope = Fixture.BeginLifetimeScope();
             currentScope = newScope;
-            var result = action();
-            return result;
+            return action();
         }
         finally
         {
             currentScope = prevScope;
         }
     }
-
-
 
     /// <summary> Runs an action in its own scope. Used to reduce possible side effects from test data creation and the like. </summary>
     [DebuggerStepThrough]
@@ -63,8 +60,7 @@ public abstract class UnitTest<TFixture> : IDisposable, IClassFixture<TFixture>
         {
             await using var newScope = Fixture.BeginLifetimeScope();
             currentScope = newScope;
-            var result = await taskFactory();
-            return result;
+            return await taskFactory();
         }
         finally
         {

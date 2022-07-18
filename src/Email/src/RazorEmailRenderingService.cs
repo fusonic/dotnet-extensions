@@ -103,9 +103,7 @@ public class RazorEmailRenderingService : IEmailRenderingService
 
             await view.RenderAsync(viewContext);
             var compiled = writer.ToString();
-            var body = CssInliner.Inline(compiled);
-
-            return body;
+            return CssInliner.Inline(compiled);
         }
         finally
         {

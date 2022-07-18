@@ -1,11 +1,11 @@
-﻿// Copyright (c) Fusonic GmbH. All rights reserved.
+// Copyright (c) Fusonic GmbH. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
 namespace Fusonic.Extensions.Validation;
 
 public sealed class ModelValidationResult : ValidationResult
 {
-    private readonly Dictionary<string, List<string>> errors = new Dictionary<string, List<string>>();
+    private readonly Dictionary<string, List<string>> errors = new();
     public override bool IsValid => errors.Count == 0;
 
     public IReadOnlyDictionary<string, IReadOnlyList<string>> Errors

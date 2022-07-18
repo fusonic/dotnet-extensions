@@ -1,4 +1,4 @@
-﻿// Copyright (c) Fusonic GmbH. All rights reserved.
+// Copyright (c) Fusonic GmbH. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
 using Hangfire;
@@ -14,7 +14,7 @@ public class DecoratorTests : TestBase
     public async Task OnlyJobProcessorShouldBeCalled_IfOutOfBandAttributeHasBeenApplied_ToCommandHandler()
     {
         var handled = false;
-        OutOfBandCommandHandler.Handled += (_, __) => handled = true;
+        OutOfBandCommandHandler.Handled += (_, _) => handled = true;
 
         var handler = Container.GetInstance<IRequestHandler<OutOfBandCommand, Unit>>();
         await handler.Handle(new OutOfBandCommand(), CancellationToken.None);
@@ -27,10 +27,10 @@ public class DecoratorTests : TestBase
     public async Task OnlyJobProcessorShouldBeCalled_IfOutOfBandAttributeHasBeenApplied_ToNotificationHandler()
     {
         var outOfBandHandled = false;
-        OutOfBandNotificationHandler.Handled += (_, __) => outOfBandHandled = true;
+        OutOfBandNotificationHandler.Handled += (_, _) => outOfBandHandled = true;
 
         var syncHandled = false;
-        OutOfBandNotificationHandlerWithoutAttribute.Handled += (_, __) => syncHandled = true;
+        OutOfBandNotificationHandlerWithoutAttribute.Handled += (_, _) => syncHandled = true;
 
         var handlers = Container.GetAllInstances<INotificationHandler<OutOfBandNotification>>().ToList();
         Assert.Equal(2, handlers.Count);

@@ -26,7 +26,7 @@ public static class PostgreSqlUtil
     ///   Prefix = Test_
     ///   Exclude = branch1, branch2
     /// Deletes all databases beginning with Test_ except those beginning with Test_branch1 and Test_branch2.
-    /// 
+    ///
     /// </summary>
     /// <param name="connectionString">Connection string to the postgres database.</param>
     /// <param name="dbPrefix">Prefix of the test databases that should be dropped.</param>

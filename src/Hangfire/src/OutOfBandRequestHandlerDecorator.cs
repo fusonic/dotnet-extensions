@@ -1,4 +1,4 @@
-﻿// Copyright (c) Fusonic GmbH. All rights reserved.
+// Copyright (c) Fusonic GmbH. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
 using System.Globalization;
@@ -34,11 +34,9 @@ public class OutOfBandRequestHandlerDecorator<TRequest, TProcessor> : IRequestHa
             runtimeOptions.SkipOutOfBandDecorators = false;
             return inner.Handle(request, cancellationToken);
         }
-        else
-        {
-            EnqueueHangfireJob(inner.GetType(), request);
-            return Task.FromResult(Unit.Value);
-        }
+
+        EnqueueHangfireJob(inner.GetType(), request);
+        return Task.FromResult(Unit.Value);
     }
 
     private void EnqueueHangfireJob(Type handler, object command)

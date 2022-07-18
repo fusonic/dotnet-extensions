@@ -5,11 +5,15 @@ namespace Fusonic.Extensions.UnitTests.Adapters.EntityFrameworkCore;
 
 [Obsolete("This attribute is obsolete and will be removed in v7.0. The maximum number of tests can now be set in the attribute 'FusonicTestFramework' on assembly level.")]
 [AttributeUsage(AttributeTargets.Class)]
-internal class LimitTestConcurrencyAttribute : BeforeAfterTestInvokeAsyncAttribute
+internal sealed class LimitTestConcurrencyAttribute : BeforeAfterTestInvokeAsyncAttribute
 {
     private static SemaphoreSlim? semaphore;
     private static bool testExecuted;
-    private static int maxConcurrency = -1; // Default = -1 = disabled
+
+    /// <summary>
+    /// Default = -1 = disabled
+    /// </summary>
+    private static int maxConcurrency = -1;
 
     static LimitTestConcurrencyAttribute()
     {
@@ -29,10 +33,8 @@ internal class LimitTestConcurrencyAttribute : BeforeAfterTestInvokeAsyncAttribu
             maxConcurrency = value;
             if (maxConcurrency < 0)
                 semaphore = null;
-
             else if (maxConcurrency == 0)
                 semaphore = new(Environment.ProcessorCount);
-
             else
                 semaphore = new(maxConcurrency);
         }

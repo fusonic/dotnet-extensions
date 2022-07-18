@@ -1,4 +1,4 @@
-﻿// Copyright (c) Fusonic GmbH. All rights reserved.
+// Copyright (c) Fusonic GmbH. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
 using System.Linq.Expressions;
@@ -33,8 +33,7 @@ public static class PropertyUtil
             throw new ArgumentNullException(nameof(propertyExpression));
 
         var propertyMember = GetPropertyMember(propertyExpression.Body);
-        var propertyType = propertyMember.DeclaringType!.GetProperty(propertyMember.Name)!.PropertyType;
-        return propertyType;
+        return propertyMember.DeclaringType!.GetProperty(propertyMember.Name)!.PropertyType;
     }
 
     private static MemberInfo GetPropertyMember(Expression expression)
@@ -44,7 +43,7 @@ public static class PropertyUtil
 
         return GetMember(expression);
 
-        MemberInfo GetMember(Expression exp)
+        static MemberInfo GetMember(Expression exp)
         {
             if (exp is MemberExpression memberExp && memberExp.Member.MemberType == MemberTypes.Property)
                 return memberExp.Member;

@@ -44,7 +44,7 @@ public static class TestContext
         return InternalContext.Value;
     }
 
-    internal class InternalTestContext : IDisposable
+    internal sealed class InternalTestContext : IDisposable
     {
         private IDictionary? items;
 

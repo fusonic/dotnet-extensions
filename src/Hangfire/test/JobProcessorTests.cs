@@ -94,7 +94,7 @@ public class HangfireJobProcessorTests : TestBase
     public async Task OutOfBandCommand_NoRecursion()
     {
         var handled = false;
-        OutOfBandCommandHandler.Handled += (_, __) =>
+        OutOfBandCommandHandler.Handled += (_, _) =>
         {
             handled = true;
             Assert.False(Container.GetInstance<RuntimeOptions>().SkipOutOfBandDecorators);
@@ -110,7 +110,7 @@ public class HangfireJobProcessorTests : TestBase
     public async Task OutOfBandNotification_NoRecursion()
     {
         var handled = false;
-        OutOfBandNotificationHandler.Handled += (_, __) =>
+        OutOfBandNotificationHandler.Handled += (_, _) =>
         {
             handled = true;
             Assert.False(Container.GetInstance<RuntimeOptions>().SkipOutOfBandDecorators);

@@ -129,10 +129,10 @@ public class TimedHostedServiceTests : TestBase<TimedHostedServiceTests.TimedHos
         }
     }
 
-    private class ServiceNoWatchdog : Service
+    private sealed class ServiceNoWatchdog : Service
     { }
 
-    private class ServiceCrashing
+    private sealed class ServiceCrashing
     {
 #pragma warning disable CA1822 // Mark members as static
         public Task Run() => throw new IOException("Could not find directory /mnt/uRock/uRule");
@@ -158,8 +158,8 @@ public class TimedHostedServiceTests : TestBase<TimedHostedServiceTests.TimedHos
         protected override void RegisterDependencies(Container container)
         {
             AddTimedHostedService<Service>(s => s.WatchdogUri = new Uri("https://woof.woof"), (s, c) => s.Run(c));
-            AddTimedHostedService<ServiceNoWatchdog>(s => { }, (s, c) => s.Run(c));
-            AddTimedHostedService<ServiceCrashing>(s => { }, (s, c) => s.Run());
+            AddTimedHostedService<ServiceNoWatchdog>(_ => { }, (s, c) => s.Run(c));
+            AddTimedHostedService<ServiceCrashing>(_ => { }, (s, _) => s.Run());
 
             container.RegisterTestScoped<HttpMessageHandlerMock>();
             container.RegisterTestScoped(() =>

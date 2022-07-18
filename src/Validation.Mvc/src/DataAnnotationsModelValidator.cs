@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace Fusonic.Extensions.Validation.Mvc;
 
-internal class DataAnnotationsModelValidator : IObjectModelValidator
+internal sealed class DataAnnotationsModelValidator : IObjectModelValidator
 {
     private readonly IModelMetadataProvider modelMetadataProvider;
     public const string ValidationResultKey = "DataAnnotationsModelValidatorValidationResult";

@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Fusonic.Extensions.UnitTests.Adapters.EntityFrameworkCore;
 
-
 #pragma warning disable CS0618 // Type or member is obsolete
 [LimitTestConcurrency] // Disabled by default now. Only enabled if SetMaxTestConcurrency is explicitly set. Will be removed with 7.0.
 #pragma warning restore CS0618 // Type or member is obsolete

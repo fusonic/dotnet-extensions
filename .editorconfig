@@ -509,6 +509,15 @@ resharper_use_object_or_collection_initializer_highlighting = hint
 # Roslynator inspection severities
 ##########################################
 dotnet_diagnostic.RCS1090.severity = none # RCS1090: Add call to 'ConfigureAwait' (or vice versa).
+dotnet_diagnostic.RCS1226.severity = none # RCS1226: Add paragraph to documentation comment.
+dotnet_diagnostic.RCS1141.severity = none # RCS1141: Add 'param' element to documentation comment.
+dotnet_diagnostic.RCS1142.severity = none # RCS1142: Add 'typeparam' element to documentation comment.
+dotnet_diagnostic.RCS1140.severity = none # RCS1140: Add exception to documentation comment.
+dotnet_diagnostic.RCS1194.severity = suggestion # RCS1194: Implement exception constructors.
+dotnet_diagnostic.RCS1170.severity = suggestion # RCS1170: Use read-only auto-implemented property.
+dotnet_diagnostic.RCS1220.severity = suggestion # RCS1220: Use pattern matching instead of combination of 'is' operator and cast operator.
+dotnet_diagnostic.RCS1124.severity = suggestion # RCS1124: Inline local variable.
+dotnet_diagnostic.RCS1170.severity = none # RCS1170: Use read-only auto-implemented property
 
 ##########################################
 # Fusonic.Extensions specific settings

@@ -22,7 +22,6 @@ public class DropOptions
         {
             dbName = Database;
         }
-
         else
         {
             dbName = PostgreSqlUtil.GetDatabaseName(ConnectionString!);

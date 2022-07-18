@@ -1,4 +1,4 @@
-﻿// Copyright (c) Fusonic GmbH. All rights reserved.
+// Copyright (c) Fusonic GmbH. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
 using System.Globalization;
@@ -28,10 +28,10 @@ public class MediatorHandlerContext
         public List<HangfireUserClaim> Claims { get; }
 
         public static HangfireUser FromClaimsPrincipal(ClaimsPrincipal principal) =>
-            new HangfireUser(principal.Claims.Select(x => new HangfireUserClaim(x.Type, x.Value, x.ValueType, x.Issuer, x.OriginalIssuer)).ToList());
+            new(principal.Claims.Select(x => new HangfireUserClaim(x.Type, x.Value, x.ValueType, x.Issuer, x.OriginalIssuer)).ToList());
 
         public ClaimsPrincipal ToClaimsPrincipal()
-            => new ClaimsPrincipal(new ClaimsIdentity(Claims.Select(x => new Claim(x.Type, x.Value, x.ValueType, x.Issuer, x.OriginalIssuer))));
+            => new(new ClaimsIdentity(Claims.Select(x => new Claim(x.Type, x.Value, x.ValueType, x.Issuer, x.OriginalIssuer))));
 
         public class HangfireUserClaim
         {

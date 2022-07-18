@@ -18,7 +18,6 @@ public class CssInliner
     public static string Inline(string source)
     {
         using var pm = new PreMailer.Net.PreMailer(source);
-        var html = pm.MoveCssInline(css: EmailCssContent, removeComments: true, stripIdAndClassAttributes: false, removeStyleElements: false).Html;
-        return html;
+        return pm.MoveCssInline(css: EmailCssContent, removeComments: true, stripIdAndClassAttributes: false, removeStyleElements: false).Html;
     }
 }

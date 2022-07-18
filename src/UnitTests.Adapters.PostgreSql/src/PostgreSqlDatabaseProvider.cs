@@ -11,7 +11,7 @@ using Polly;
 
 namespace Fusonic.Extensions.UnitTests.Adapters.PostgreSql;
 
-internal class PostgreSqlDatabaseProvider<TDbContext> : ITestDatabaseProvider<TDbContext>
+internal sealed class PostgreSqlDatabaseProvider<TDbContext> : ITestDatabaseProvider<TDbContext>
     where TDbContext : DbContext
 {
     private static Version? pgVersion;

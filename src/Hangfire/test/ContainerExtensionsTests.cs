@@ -82,7 +82,7 @@ public class ContainerExtensionsTests : IDisposable
         Assert.IsType<HangfireUserAccessorDecorator>(Container.GetInstance<IUserAccessor>());
     }
 
-    private class CustomJobProcessor : JobProcessor
+    private sealed class CustomJobProcessor : JobProcessor
     {
         public CustomJobProcessor(Container container) : base(container)
         { }

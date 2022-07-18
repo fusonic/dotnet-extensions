@@ -1,4 +1,4 @@
-﻿// Copyright (c) Fusonic GmbH. All rights reserved.
+// Copyright (c) Fusonic GmbH. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
 using System.Globalization;
@@ -42,7 +42,7 @@ public static class CultureUtil
 
         foreach (var language in orderedLanguages)
         {
-            var cultureInfo = GetFirstSupportedCulture(language.Value, cultures, defaultCulture: null);
+            var cultureInfo = language.Value != null ? GetFirstSupportedCulture(language.Value, cultures, defaultCulture: null) : null;
 
             if (cultureInfo != null && !Equals(cultureInfo, CultureInfo.InvariantCulture))
                 return cultureInfo;
@@ -82,12 +82,10 @@ public static class CultureUtil
         //for example: Supported is de-AT, user comes with de-DE, falls back to 'de' (<- we are here), we want to return de-AT (so convert de-DE to de-AT)
         if (culture.IsNeutralCulture)
         {
-            var firstSpecific = supportedCultures.FirstOrDefault(c => !c.IsNeutralCulture && c.Parent.Equals(culture));
+            var firstSpecific = supportedCultures.Find(c => !c.IsNeutralCulture && c.Parent.Equals(culture));
             return firstSpecific ?? defaultCulture;
         }
-        else
-        {
-            return GetFirstSupportedCulture(culture.Parent, supportedCultures, defaultCulture);
-        }
+
+        return GetFirstSupportedCulture(culture.Parent, supportedCultures, defaultCulture);
     }
 }

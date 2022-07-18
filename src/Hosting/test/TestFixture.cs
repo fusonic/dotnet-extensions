@@ -9,15 +9,12 @@ namespace Fusonic.Extensions.Hosting.Tests;
 
 public class TestFixture : UnitTestFixture
 {
-    private IServiceProvider serviceProvider = null!;
-
     protected sealed override void RegisterCoreDependencies(Container container)
     {
         var services = new ServiceCollection();
         services.AddLogging();
         services.AddSimpleInjector(container);
 
-        serviceProvider = services.BuildServiceProvider()
-                                  .UseSimpleInjector(container);
+        _ = services.BuildServiceProvider().UseSimpleInjector(container);
     }
 }

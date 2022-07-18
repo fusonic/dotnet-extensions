@@ -1,4 +1,4 @@
-﻿// Copyright (c) Fusonic GmbH. All rights reserved.
+// Copyright (c) Fusonic GmbH. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
 using System.Globalization;
@@ -12,7 +12,7 @@ namespace Fusonic.Extensions.AspNetCore.Tests.Http;
 
 public class CultureUtilTests
 {
-    private static readonly List<CultureInfo> supportedCultures = new[] { "de-AT", "en-GB", "fr-FR" }.Select(c => new CultureInfo(c)).ToList();
+    private static readonly List<CultureInfo> SupportedCultures = new[] { "de-AT", "en-GB", "fr-FR" }.Select(c => new CultureInfo(c)).ToList();
 
     [Theory]
     [InlineData("", null)]
@@ -26,7 +26,7 @@ public class CultureUtilTests
     [InlineData("en-US", "en-GB")]
     public void GetFirstSupportedCulture(string culture, string? expectedCulture)
     {
-        var returnedCulture = CultureUtil.GetFirstSupportedCulture(culture, supportedCultures);
+        var returnedCulture = CultureUtil.GetFirstSupportedCulture(culture, SupportedCultures);
 
         if (expectedCulture == null)
             returnedCulture.Should().BeNull();
@@ -37,7 +37,7 @@ public class CultureUtilTests
     [Fact]
     public void GetFirstSupportedCulture_FallsBackToDefault()
     {
-        var returnedCulture = CultureUtil.GetFirstSupportedCulture("Invalid", supportedCultures, new CultureInfo("de-AT"));
+        var returnedCulture = CultureUtil.GetFirstSupportedCulture("Invalid", SupportedCultures, new CultureInfo("de-AT"));
         returnedCulture.Should().Be(new CultureInfo("de-AT"));
     }
 
@@ -58,7 +58,7 @@ public class CultureUtilTests
     {
         var acceptLanguage = new RequestHeaders(new HeaderDictionary { ["accept-language"] = header }).AcceptLanguage;
 
-        var returnedCulture = CultureUtil.FromAcceptLanguageHeader(acceptLanguage, supportedCultures, new CultureInfo("de-AT"));
+        var returnedCulture = CultureUtil.FromAcceptLanguageHeader(acceptLanguage, SupportedCultures, new CultureInfo("de-AT"));
 
         returnedCulture.Should().Be(new CultureInfo(expectedCulture));
     }

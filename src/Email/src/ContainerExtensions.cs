@@ -17,7 +17,7 @@ public static class ContainerExtensions
     /// Example:
     /// <code>
     /// services.AddLocalization(options => options.ResourcesPath = "Resources/Localization");
-    /// 
+    ///
     /// services.AddMvc(options => options.Filters.Add(typeof(ExceptionFilter)))
     ///         .AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix);
     /// </code>

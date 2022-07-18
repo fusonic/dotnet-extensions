@@ -23,9 +23,9 @@ public class XUnitLogger : ILogger
     }
 
     public bool IsEnabled(LogLevel logLevel) => true;
-    public IDisposable BeginScope<TState>(TState state) => NoScope.Instance;
+    public IDisposable BeginScope<TState>(TState state) where TState : notnull => NoScope.Instance;
 
-    private class NoScope : IDisposable
+    private sealed class NoScope : IDisposable
     {
         public static readonly NoScope Instance = new();
         public void Dispose()

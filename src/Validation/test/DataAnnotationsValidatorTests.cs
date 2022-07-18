@@ -148,7 +148,7 @@ public class DataAnnotationsValidatorTests
         Assert.True(result.IsValid);
     }
 
-    private class HeaderDictionary : IEnumerable
+    private sealed class HeaderDictionary : IEnumerable
     {
         public IEnumerator GetEnumerator() { yield break; }
     }
