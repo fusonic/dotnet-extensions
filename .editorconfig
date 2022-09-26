@@ -508,6 +508,7 @@ resharper_use_object_or_collection_initializer_highlighting = hint
 ##########################################
 # Roslynator inspection severities
 ##########################################
+dotnet_diagnostic.RCS1080.severity = none # RCS1080: Use 'Count' property instead of 'Any' method.
 dotnet_diagnostic.RCS1090.severity = none # RCS1090: Add call to 'ConfigureAwait' (or vice versa).
 
 ##########################################
