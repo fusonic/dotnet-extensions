@@ -25,6 +25,7 @@ public class HttpContextUserAccessorTests
         {
             HttpContext = Substitute.For<HttpContext>()
         };
+
         var userAccessor = new HttpContextUserAccessor(httpContextAccessor);
         Assert.NotNull(userAccessor.User);
     }

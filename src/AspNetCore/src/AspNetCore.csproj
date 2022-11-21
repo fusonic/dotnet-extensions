@@ -1,20 +1,24 @@
 <Project Sdk="Microsoft.NET.Sdk">
-    <PropertyGroup>
-        <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-        <Description>Provides ASP.NET Core extensions (Middelwares, Utilities ...)</Description>
-        <AssemblyName>Fusonic.Extensions.AspNetCore</AssemblyName>
-        <RootNamespace>Fusonic.Extensions.AspNetCore</RootNamespace>
-        <PackageProjectUrl>https://github.com/fusonic/dotnet-extensions</PackageProjectUrl>
-        <IncludeSymbols>true</IncludeSymbols>
-        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-        <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
-    </PropertyGroup>
+  <PropertyGroup>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <Description>Provides ASP.NET Core extensions (Middelwares, Utilities ...)</Description>
+    <AssemblyName>Fusonic.Extensions.AspNetCore</AssemblyName>
+    <RootNamespace>Fusonic.Extensions.AspNetCore</RootNamespace>
+    <PackageProjectUrl>https://github.com/fusonic/dotnet-extensions</PackageProjectUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+  </PropertyGroup>
 
-    <ItemGroup>
-        <FrameworkReference Include="Microsoft.AspNetCore.App" />
-    </ItemGroup>
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
 
-    <ItemGroup>
-        <ProjectReference Include="..\..\Common\src\Common.csproj" />
-    </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="11.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\src\Common.csproj" />
+  </ItemGroup>
 </Project>

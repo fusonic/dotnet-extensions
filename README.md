@@ -57,9 +57,6 @@ Command line tools for several standard operations related to testing on Postgre
 [![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.XUnit.svg?label=Fusonic.Extensions.XUnit&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.XUnit/)
 Extensions to XUnit. Provides an own framework adding capabilities like a test context and attributes running before a test class gets instantiated.
 
-[![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.Validation.svg?label=Fusonic.Extensions.Validation&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.Validation/)
-Provides validation pipeline and recursive DataAnnotations annotation
-
 
 Important information
 ===============

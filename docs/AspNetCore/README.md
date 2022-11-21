@@ -4,6 +4,7 @@
   - [ServiceCollection extensions](#servicecollection-extensions)
   - [CultureUtil](#cultureutil)
   - [Ignore paths Middleware](#ignore-paths-middleware)
+- [Validation of MediatR requests](#validation-of-mediatr-requests)
 
 ## ServiceCollection extensions
 
@@ -46,3 +47,42 @@ Usage:
 //For example right before the SPA
 app.UseIgnorePaths("/api", "/swagger", "/hangfire");
 ```
+
+# Validation of MediatR requests
+
+MediatR requests can be validated with a simple decorator. Internally it uses the same validator that is used by ASP.NET Core for the request validation.  
+
+To enable MediatR request validation, simply add the decorator `RequestValidationDecorator` to `IRequestHandler`:
+
+```cs
+// SimpleInjector
+container.RegisterDecorator(typeof(IRequestHandler<,>), typeof(RequestValidationDecorator<,>));
+
+// Scrutor
+services.Decorate(typeof(IRequestHandler<,>), typeof(RequestValidationDecorator<,>));
+```
+
+You can then use the `System.ComponentModel`-attributes and the `IValidatableObject`-interface for validating your models. When model validation fails, a `RequestValidationException` gets thrown containing all the model validation errors. You might want to handle that one in your [Exception filter](https://learn.microsoft.com/en-us/aspnet/core/mvc/controllers/filters?view=aspnetcore-7.0#exception-filters), if you have one.
+
+Example:
+```cs
+public class GetSomething : IValidatableObject
+{
+    [Required]
+    public string Search { get; set; }
+
+    [Range(1, 100)]
+    public int MaxResults { get; set; } = 10;
+
+    public DateTime From { get; set; }
+    public DateTime To { get; set; }
+
+    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+    {
+        if (From >= To)
+            yield return new ValidationResult("From must be before To.", new[] { nameof(From), nameof(To) });
+    }
+}
+```
+
+This also works with records.

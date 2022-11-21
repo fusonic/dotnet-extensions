@@ -17,12 +17,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Validation.Tests", "src\Validation\test\Validation.Tests.csproj", "{F7E18E33-409B-4FF8-947F-898B4C3DC9FF}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Validation", "src\Validation\src\Validation.csproj", "{2E442BD1-6F58-4667-B953-6DBF91100F1B}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Validation.Mvc", "src\Validation.Mvc\src\Validation.Mvc.csproj", "{1D9BFCB9-431F-471F-B0F0-6F31DF28618E}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests", "src\UnitTests\src\UnitTests.csproj", "{7A90D138-8AF4-4674-8BC6-638FE8FDF0BC}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests.Adapters.PostgreSql", "src\UnitTests.Adapters.PostgreSql\src\UnitTests.Adapters.PostgreSql.csproj", "{BD40CF13-F9EA-4E43-A638-814FDAD56A4C}"
@@ -53,11 +47,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hosting", "src\Hosting\src\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hosting.Tests", "src\Hosting\test\Hosting.Tests.csproj", "{32C689D9-1CC6-4FBD-9EF4-91BCF39B0FC1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XUnit.Tests", "src\XUnit\test\XUnit.Tests.csproj", "{2721A46C-6ED7-4427-BBE2-AB766D9D1FF1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XUnit.Tests", "src\XUnit\test\XUnit.Tests.csproj", "{2721A46C-6ED7-4427-BBE2-AB766D9D1FF1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XUnit", "src\XUnit\src\XUnit.csproj", "{E2B7EB8C-267D-426C-BB97-D4FBC5B151E9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XUnit", "src\XUnit\src\XUnit.csproj", "{E2B7EB8C-267D-426C-BB97-D4FBC5B151E9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EntityFrameworkCore.Tests", "src\EntityFrameworkCore\test\EntityFrameworkCore.Tests.csproj", "{68F735B4-D3E5-477F-8071-F65D1C2137E2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EntityFrameworkCore.Tests", "src\EntityFrameworkCore\test\EntityFrameworkCore.Tests.csproj", "{68F735B4-D3E5-477F-8071-F65D1C2137E2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -73,18 +67,6 @@ Global
 		{1E49506C-6A7C-4E98-A0E8-0169F941E2BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1E49506C-6A7C-4E98-A0E8-0169F941E2BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1E49506C-6A7C-4E98-A0E8-0169F941E2BD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F7E18E33-409B-4FF8-947F-898B4C3DC9FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F7E18E33-409B-4FF8-947F-898B4C3DC9FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F7E18E33-409B-4FF8-947F-898B4C3DC9FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F7E18E33-409B-4FF8-947F-898B4C3DC9FF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2E442BD1-6F58-4667-B953-6DBF91100F1B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2E442BD1-6F58-4667-B953-6DBF91100F1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2E442BD1-6F58-4667-B953-6DBF91100F1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2E442BD1-6F58-4667-B953-6DBF91100F1B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1D9BFCB9-431F-471F-B0F0-6F31DF28618E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1D9BFCB9-431F-471F-B0F0-6F31DF28618E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1D9BFCB9-431F-471F-B0F0-6F31DF28618E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1D9BFCB9-431F-471F-B0F0-6F31DF28618E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7A90D138-8AF4-4674-8BC6-638FE8FDF0BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7A90D138-8AF4-4674-8BC6-638FE8FDF0BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7A90D138-8AF4-4674-8BC6-638FE8FDF0BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -163,7 +145,6 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{1E49506C-6A7C-4E98-A0E8-0169F941E2BD} = {95D2383B-80C5-46AA-9190-826A0377A156}
-		{F7E18E33-409B-4FF8-947F-898B4C3DC9FF} = {95D2383B-80C5-46AA-9190-826A0377A156}
 		{BE7F4612-7386-4637-8C17-C1CD0AF7A871} = {95D2383B-80C5-46AA-9190-826A0377A156}
 		{4443416D-35A0-48B0-AA92-785FECFDE582} = {95D2383B-80C5-46AA-9190-826A0377A156}
 		{C0FDFA5A-5421-40A1-8653-823FB9C94E5C} = {95D2383B-80C5-46AA-9190-826A0377A156}
