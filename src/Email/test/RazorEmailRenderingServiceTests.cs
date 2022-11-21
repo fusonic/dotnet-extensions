@@ -13,7 +13,7 @@ using Xunit;
 
 namespace Fusonic.Extensions.Email.Tests;
 
-public class RazorEmailRenderingServiceTests : TestBase
+public partial class RazorEmailRenderingServiceTests : TestBase
 {
     private readonly CultureInfo culture = new("de-AT");
     private readonly RazorEmailRenderingService emailRenderingService;
@@ -83,7 +83,7 @@ public class RazorEmailRenderingServiceTests : TestBase
 
         var (_, body) = await emailRenderingService.RenderAsync(viewModel, cultureInfo, subjectKey: null);
 
-        var regex = new Regex("<p>(.*?)<\\/p>");
+        var regex = GetHtmlParagraphContentsRegex();
         var matches = regex.Matches(body);
 
         Match(0).Should().Be(expectedDate);
@@ -100,4 +100,7 @@ public class RazorEmailRenderingServiceTests : TestBase
 
     public class InvalidViewModel
     { }
+
+    [GeneratedRegex("<p>(.*?)<\\/p>")]
+    private static partial Regex GetHtmlParagraphContentsRegex();
 }

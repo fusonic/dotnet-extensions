@@ -7,11 +7,12 @@ using Fusonic.Extensions.UnitTests.Adapters.EntityFrameworkCore;
 
 namespace Fusonic.Extensions.UnitTests.Tools.PostgreSql;
 
-internal static class TemplateCreator
+internal static partial class TemplateCreator
 {
     public const string Verb = "exectemplatecreation";
 
-    private static readonly Regex GetDatabaseRegex = new("Database=([^;]+)", RegexOptions.Compiled);
+    /// <inheritdoc cref="GetDatabaseRegex"/>
+    private static readonly Regex DatabaseRegex = GetDatabaseRegex();
 
     internal static int Run(string[] args)
     {
@@ -47,7 +48,7 @@ internal static class TemplateCreator
         }
 
         if (!string.IsNullOrWhiteSpace(database))
-            connectionString = GetDatabaseRegex.Replace(connectionString, $"Database={database}");
+            connectionString = DatabaseRegex.Replace(connectionString, $"Database={database}");
 
         var templateCreator = Activator.CreateInstance(creatorType!);
         var createMethod = creatorType!.GetMethod(nameof(ITestDbTemplateCreator.Create));
@@ -80,4 +81,7 @@ internal static class TemplateCreator
         options.Database ?? "-",
         options.CreatorTypeName ?? "-"
     };
+
+    [GeneratedRegex("Database=([^;]+)", RegexOptions.Compiled)]
+    private static partial Regex GetDatabaseRegex();
 }

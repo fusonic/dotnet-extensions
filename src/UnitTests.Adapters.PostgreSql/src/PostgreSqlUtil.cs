@@ -16,9 +16,10 @@ namespace Fusonic.Extensions.UnitTests.Adapters.PostgreSql;
 /// <summary>
 /// Utilities for Postgres tests. This class is can be used from external sources, like LinqPad or PowerShell scripts
 /// </summary>
-public static class PostgreSqlUtil
+public static partial class PostgreSqlUtil
 {
-    private static readonly Regex GetDatabaseRegex = new("Database=([^;]+)", RegexOptions.Compiled);
+    /// <inheritdoc cref="GetDatabaseRegex"/>>
+    private static readonly Regex DatabaseRegex = GetDatabaseRegex();
 
     /// <summary>
     /// Drops all test databases with the given prefix. Excludes those from deleting that continue with one of the strings in the exclude-parameter.
@@ -170,12 +171,12 @@ public static class PostgreSqlUtil
 
     /// <summary> Replaces the database in a connection string with another one. </summary>
     public static string ReplaceDatabaseName(string connectionString, string dbName)
-        => GetDatabaseRegex.Replace(connectionString, $"Database={dbName}");
+        => DatabaseRegex.Replace(connectionString, $"Database={dbName}");
 
     /// <summary> Returns the database name in the connection string or null, if it could not be matched. </summary>
     public static string? GetDatabaseName(string connectionString)
     {
-        var match = GetDatabaseRegex.Match(connectionString);
+        var match = DatabaseRegex.Match(connectionString);
         if (!match.Success || match.Groups.Count != 2)
             return null;
 
@@ -213,4 +214,7 @@ public static class PostgreSqlUtil
     private static ILogger CreateConsoleLogger()
         => LoggerFactory.Create(b => b.AddSimpleConsole(c => c.SingleLine = true))
                         .CreateLogger(nameof(PostgreSqlUtil));
+
+    [GeneratedRegex("Database=([^;]+)", RegexOptions.Compiled)]
+    private static partial Regex GetDatabaseRegex();
 }

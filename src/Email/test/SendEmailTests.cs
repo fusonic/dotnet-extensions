@@ -15,7 +15,7 @@ using Xunit;
 
 namespace Fusonic.Extensions.Email.Tests;
 
-public class SendEmailTests : TestBase<SendEmailTests.SendEmailFixture>
+public partial class SendEmailTests : TestBase<SendEmailTests.SendEmailFixture>
 {
     public SendEmailTests(SendEmailFixture fixture) : base(fixture)
     { }
@@ -95,8 +95,7 @@ public class SendEmailTests : TestBase<SendEmailTests.SendEmailFixture>
         var email = Fixture.SmtpServer.ReceivedEmail.Single();
         email.MessageParts.Should().HaveCount(2);
 
-        var onlyAsciiChars = new Regex("^[a-zA-Z0-9.!-]*$");
-        if (!onlyAsciiChars.IsMatch(attachmentName))
+        if (!GetAsciiCharsRegex().IsMatch(attachmentName))
         {
             var base64EncodedName = Convert.ToBase64String(Encoding.UTF8.GetBytes(attachmentName));
             email.MessageParts[1].HeaderData.Should().Be($"application/octet-stream; name=\"=?utf-8?B?{base64EncodedName}?=\"");
@@ -153,4 +152,7 @@ public class SendEmailTests : TestBase<SendEmailTests.SendEmailFixture>
             GC.SuppressFinalize(this);
         }
     }
+
+    [GeneratedRegex("^[a-zA-Z0-9.!-]*$")]
+    private static partial Regex GetAsciiCharsRegex();
 }
