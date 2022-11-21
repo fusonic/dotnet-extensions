@@ -15,6 +15,7 @@
     - [PostgreSql](#postgresql)
       - [CLI - Test DB Templates](#cli---test-db-templates)
       - [Cleanup](#cleanup)
+  - [Samples](#samples)
 
 ## Introduction
 
@@ -321,3 +322,12 @@ This then can be called with `pgtestutil template -c "ConnectionString" -a Path/
 #### Cleanup
 
 Normally the tests and CI jobs do a fine job of cleaning everything up. However, if for example you just stop an environment while a test is running and delete it then, it may happen that there are remains of unused test databases on the RDS server. To get rid of them, there is a template for a nightly task available. See `Cleanup-TestDatabases` in our project `gitlab-ci-tools` for details.
+
+## Samples
+
+There's a series of blog posts released about how to do fast unit testing, also related to this library. It is split into three parts:
+ - [Fast unit tests with databases, part 1 – a primer](https://www.fusonic.net/de/blog/fast-unit-tests-with-databases-part-1)
+ - [Fast unit tests with databases, part 2 – Introduction to the fusonic testing framework](https://www.fusonic.net/de/blog/fast-unit-tests-with-databases-part-2)
+ - [Fast unit tests with databases, part 3 – Implementation of our solution](https://www.fusonic.net/de/blog/fast-unit-tests-with-databases-part-3)
+
+Related to that there's a [sample project in this repository](../../samples/UnitTests/).
