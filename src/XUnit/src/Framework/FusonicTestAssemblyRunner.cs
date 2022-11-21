@@ -26,8 +26,7 @@ public class FusonicTestAssemblyRunner : XunitTestAssemblyRunner
             return;
 
         // Try get maxParallelTests value from the environment
-        var env = Environment.GetEnvironmentVariable("MAX_PARALLEL_TESTS")
-            ?? Environment.GetEnvironmentVariable("MAX_TEST_CONCURRENCY"); // TODO: Remove support for this var with v7.0. It's here for backwards compatibility, as it was named that way in the v6 docs.
+        var env = Environment.GetEnvironmentVariable("MAX_PARALLEL_TESTS");
 
         int maxParallelTests;
         if (env != null && int.TryParse(env, out var max))
