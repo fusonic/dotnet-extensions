@@ -1,3 +1,6 @@
+# Version: 4.1.1 (Using https://semver.org/)
+# Updated: 2022-05-23
+# See https://github.com/RehanSaeed/EditorConfig/releases for release notes.
 # See https://github.com/RehanSaeed/EditorConfig for updates to this file.
 # See http://EditorConfig.org for more information about .editorconfig files.
 
@@ -41,11 +44,11 @@ indent_size = 2
 indent_size = 2
 
 # Markdown Files
-[*.md]
+[*.{md,mdx}]
 trim_trailing_whitespace = false
 
 # Web Files
-[*.{htm,html,js,jsm,ts,tsx,css,sass,scss,less,pcss,svg,vue}]
+[*.{htm,html,js,jsm,ts,tsx,cjs,cts,ctsx,mjs,mts,mtsx,css,sass,scss,less,pcss,svg,vue}]
 indent_size = 2
 
 # Batch Files
@@ -132,8 +135,6 @@ dotnet_style_prefer_is_null_check_over_reference_equality_method = true:warning
 # Undocumented
 dotnet_style_operator_placement_when_wrapping = beginning_of_line:warning
 csharp_style_prefer_null_check_over_type_check = true:warning
-dotnet_style_namespace_match_folder = true:suggestion
-dotnet_diagnostic.IDE0130.severity = suggestion
 
 # C# Style Rules
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/language-rules#c-style-rules
@@ -180,8 +181,6 @@ dotnet_diagnostic.IDE0063.severity = suggestion
 csharp_using_directive_placement = outside_namespace:warning
 # Modifier preferences
 csharp_prefer_static_local_function = true:warning
-# Undocumented
-csharp_style_namespace_declarations = file_scoped:warning
 
 ##########################################
 # Unnecessary Code Rules
@@ -195,8 +194,8 @@ dotnet_remove_unnecessary_suppression_exclusions = none:warning
 
 # C# Unnecessary code rules
 [*.{cs,csx,cake}]
-csharp_style_unused_value_expression_statement_preference = discard_variable:none
-dotnet_diagnostic.IDE0058.severity = none
+csharp_style_unused_value_expression_statement_preference = discard_variable:suggestion
+dotnet_diagnostic.IDE0058.severity = suggestion
 csharp_style_unused_value_assignment_preference = discard_variable:suggestion
 dotnet_diagnostic.IDE0059.severity = suggestion
 
@@ -211,12 +210,15 @@ dotnet_diagnostic.IDE0059.severity = suggestion
 # Organize using directives
 dotnet_sort_system_directives_first = true
 dotnet_separate_import_directive_groups = false
+# Dotnet namespace options
+dotnet_style_namespace_match_folder = true:suggestion
+dotnet_diagnostic.IDE0130.severity = suggestion
 
 # C# formatting rules
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/formatting-rules#c-formatting-rules
 [*.{cs,csx,cake}]
 # Newline options
-# https://docs.microsoft.com/visualstudio/ide/editorconfig-formatting-conventions#new-line-options
+# https://docs.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/formatting-rules#new-line-options
 csharp_new_line_before_open_brace = all
 csharp_new_line_before_else = true
 csharp_new_line_before_catch = true
@@ -225,7 +227,7 @@ csharp_new_line_before_members_in_object_initializers = true
 csharp_new_line_before_members_in_anonymous_types = true
 csharp_new_line_between_query_expression_clauses = true
 # Indentation options
-# https://docs.microsoft.com/visualstudio/ide/editorconfig-formatting-conventions#indentation-options
+# https://docs.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/formatting-rules#indentation-options
 csharp_indent_case_contents = true
 csharp_indent_switch_labels = true
 csharp_indent_labels = no_change
@@ -233,7 +235,7 @@ csharp_indent_block_contents = true
 csharp_indent_braces = false
 csharp_indent_case_contents_when_block = false
 # Spacing options
-# https://docs.microsoft.com/visualstudio/ide/editorconfig-formatting-conventions#spacing-options
+# https://docs.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/formatting-rules#spacing-options
 csharp_space_after_cast = false
 csharp_space_after_keywords_in_control_flow_statements = true
 csharp_space_between_parentheses = false
@@ -257,9 +259,12 @@ csharp_space_before_open_square_brackets = false
 csharp_space_between_empty_square_brackets = false
 csharp_space_between_square_brackets = false
 # Wrap options
-# https://docs.microsoft.com/visualstudio/ide/editorconfig-formatting-conventions#wrap-options
+# https://docs.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/formatting-rules#wrap-options
 csharp_preserve_single_line_statements = false
 csharp_preserve_single_line_blocks = true
+# Namespace options
+# https://docs.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/formatting-rules#namespace-options
+csharp_style_namespace_declarations = file_scoped:warning
 
 ##########################################
 # .NET Naming Rules
@@ -437,10 +442,10 @@ resharper_arguments_string_literal = named
 resharper_blank_lines_after_control_transfer_statements = 1
 resharper_blank_lines_after_multiline_statements = 1
 resharper_blank_lines_around_multiline_case_section = 1
-resharper_braces_for_for = required_for_multiline
-resharper_braces_for_foreach = required_for_multiline
-resharper_braces_for_ifelse = required_for_multiline
-resharper_braces_for_while = required_for_multiline
+resharper_braces_for_for = required
+resharper_braces_for_foreach = required
+resharper_braces_for_ifelse = not_required_for_both
+resharper_braces_for_while = required
 resharper_csharp_align_multiple_declaration = true
 resharper_csharp_empty_block_style = together
 resharper_csharp_keep_blank_lines_in_code = 1
@@ -524,3 +529,38 @@ dotnet_diagnostic.RCS1170.severity = none # RCS1170: Use read-only auto-implemen
 # Fusonic.Extensions specific settings
 ##########################################
 dotnet_diagnostic.IDE0073.severity = warning # IDE0073: The file header is missing or not located at the top of the file
+
+##########################################
+# License
+##########################################
+# The following applies as to the .editorconfig file ONLY, and is
+# included below for reference, per the requirements of the license
+# corresponding to this .editorconfig file.
+# See: https://github.com/RehanSaeed/EditorConfig
+#
+# MIT License
+#
+# Copyright (c) 2017-2019 Muhammad Rehan Saeed
+# Copyright (c) 2019 Henry Gabryjelski
+#
+# Permission is hereby granted, free of charge, to any
+# person obtaining a copy of this software and associated
+# documentation files (the "Software"), to deal in the
+# Software without restriction, including without limitation
+# the rights to use, copy, modify, merge, publish, distribute,
+# sublicense, and/or sell copies of the Software, and to permit
+# persons to whom the Software is furnished to do so, subject
+# to the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+# OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+# HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+# WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+# OTHER DEALINGS IN THE SOFTWARE.
+##########################################
