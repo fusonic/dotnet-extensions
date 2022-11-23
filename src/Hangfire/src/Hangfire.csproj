@@ -12,9 +12,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Hangfire.Core" Version="1.7.32" />
-        <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-        <PackageReference Include="SimpleInjector" Version="5.4.1" />
+        <PackageReference Include="Hangfire.Core" />
+        <PackageReference Include="Microsoft.CSharp" />
+        <PackageReference Include="SimpleInjector" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\..\Common\src\Common.csproj" />
