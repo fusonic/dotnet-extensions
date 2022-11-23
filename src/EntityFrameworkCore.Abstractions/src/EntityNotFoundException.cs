@@ -3,7 +3,7 @@
 
 using System.Runtime.Serialization;
 
-namespace Fusonic.Extensions.EntityFrameworkCore.Domain;
+namespace Fusonic.Extensions.EntityFrameworkCore.Abstractions;
 
 [Serializable]
 public sealed class EntityNotFoundException : Exception

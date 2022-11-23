@@ -15,5 +15,6 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\Common\src\Common.csproj" />
+        <ProjectReference Include="..\..\EntityFrameworkCore.Abstractions\src\EntityFrameworkCore.Abstractions.csproj" />
     </ItemGroup>
 </Project>

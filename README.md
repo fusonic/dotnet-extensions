@@ -30,6 +30,9 @@ Adds support for sending emails. See the [documentation](docs/Email/README.md) f
 [![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.EntityFrameworkCore.svg?label=Fusonic.Extensions.EntityFrameworkCore&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.EntityFrameworkCore/)
 Extensions for EF Core.
 
+[![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.EntityFrameworkCore.Abstractions.svg?label=Fusonic.Extensions.EntityFrameworkCore.Abstractions&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.EntityFrameworkCore.Abstractions/)
+Abstractions to the EF Core extensions without referencing EF Core.
+
 [![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.Hangfire.svg?label=Fusonic.Extensions.Hangfire&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.Hangfire/)
 Provides Hangfire extensions, especially suited for CQRS developement. (Out of band processing). See the [documentation](docs/Hangfire/README.md) for more details.
 
@@ -42,17 +45,11 @@ Provides abstractions for MediatR. See the [documentation](docs/MediatR/README.m
 [![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.UnitTests.svg?label=Fusonic.Extensions.UnitTests&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.UnitTests/)
 Xunit-based testing base classes. Supports DI with SimpleInjector, MediatR-event-recordings, Lifetime-Scoped calls, a test context and so on. See the [unit test documentation](docs/UnitTests/README.md) for more details.
 
-[![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.UnitTests.Adapters.EntityFrameworkCore.svg?label=Fusonic.Extensions.UnitTests.Adapters.EntityFrameworkCore&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.UnitTests.Adapters.EntityFrameworkCore/)
-Adds basic database support using EF Core to the unit tests. Does not ship any database providers. Additional adapters are required. See the [unit test documentation](docs/UnitTests/README.md) for more details.
+[![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.UnitTests.EntityFrameworkCore.svg?label=Fusonic.Extensions.UnitTests.EntityFrameworkCore&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.UnitTests.EntityFrameworkCore/)
+Adds database support using EF Core to the unit tests. See the [unit test documentation](docs/UnitTests/README.md) for more details.
 
-[![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.UnitTests.Adapters.InMemoryDatabase.svg?label=Fusonic.Extensions.UnitTests.Adapters.InMemoryDatabase&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.UnitTests.Adapters.InMemoryDatabase/)
-Adds support for database tests using the InMemoryDatabase for EF Core. See the [unit test documentation](docs/UnitTests/README.md) for more details.
-
-[![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.UnitTests.Adapters.PostgreSql.svg?label=Fusonic.Extensions.UnitTests.Adapters.PostgreSql&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.UnitTests.Adapters.PostgreSql/)
-Adds support for database tests using PostgreSql for EF Core. See the [unit test documentation](docs/UnitTests/README.md) for more details.
-
-[![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.UnitTests.Tools.PostgreSql.svg?label=Fusonic.Extensions.UnitTests.Tools.PostgreSql&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.UnitTests.Tools.PostgreSql/)
-Command line tools for several standard operations related to testing on PostgreSql-Databases. See the [unit test documentation](docs/UnitTests/README.md) for more details.
+[![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.UnitTests.EntityFrameworkCore.Npgsql.svg?label=Fusonic.Extensions.UnitTests.EntityFrameworkCore.Npgsql&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.UnitTests.EntityFrameworkCore.Npgsql/)
+Adds support for database tests using EF Core with PostgreSQL. See the [unit test documentation](docs/UnitTests/README.md) for more details.
 
 [![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.XUnit.svg?label=Fusonic.Extensions.XUnit&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.XUnit/)
 Extensions to XUnit. Provides an own framework adding capabilities like a test context and attributes running before a test class gets instantiated.

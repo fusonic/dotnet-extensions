@@ -6,7 +6,7 @@
     <PackageProjectUrl>https://github.com/fusonic/dotnet-extensions</PackageProjectUrl>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <Description>Adds basic database support using EF Core to the unit tests. Does not add support for specific databases.</Description>
+    <Description>Adds database support using EF Core to the unit tests. Does not add support for specific databases.</Description>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
 
     <IsTestProject>false</IsTestProject>

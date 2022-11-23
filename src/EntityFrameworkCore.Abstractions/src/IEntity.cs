@@ -1,7 +1,7 @@
-﻿// Copyright (c) Fusonic GmbH. All rights reserved.
+// Copyright (c) Fusonic GmbH. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
-namespace Fusonic.Extensions.EntityFrameworkCore.Domain;
+namespace Fusonic.Extensions.EntityFrameworkCore.Abstractions;
 
 public interface IEntity
 { }

@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>Fusonic.Extensions.EntityFrameworkCore.Abstractions</AssemblyName>
+    <RootNamespace>Fusonic.Extensions.EntityFrameworkCore.Abstractions</RootNamespace>
+    <PackageProjectUrl>https://github.com/fusonic/dotnet-extensions</PackageProjectUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    <Description>Abstractions to the EF Core extensions without referencing EF Core (Entities)</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\src\Common.csproj" />
+  </ItemGroup>
+</Project>

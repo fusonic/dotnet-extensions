@@ -54,6 +54,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests.EntityFrameworkCo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests.EntityFrameworkCore.Npgsql.TestDbTemplateCreator", "src\UnitTests.EntityFrameworkCore.Npgsql\template\UnitTests.EntityFrameworkCore.Npgsql.TestDbTemplateCreator.csproj", "{1359BBC2-7C58-42F1-8E92-BF073CE44208}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EntityFrameworkCore.Abstractions", "src\EntityFrameworkCore.Abstractions\src\EntityFrameworkCore.Abstractions.csproj", "{E292E274-10B4-4ACE-B822-C526CCF01568}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -144,6 +146,10 @@ Global
 		{1359BBC2-7C58-42F1-8E92-BF073CE44208}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1359BBC2-7C58-42F1-8E92-BF073CE44208}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1359BBC2-7C58-42F1-8E92-BF073CE44208}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E292E274-10B4-4ACE-B822-C526CCF01568}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E292E274-10B4-4ACE-B822-C526CCF01568}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E292E274-10B4-4ACE-B822-C526CCF01568}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E292E274-10B4-4ACE-B822-C526CCF01568}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

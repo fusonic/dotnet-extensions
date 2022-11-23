@@ -2,9 +2,8 @@
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
 using FluentAssertions;
-using Fusonic.Extensions.EntityFrameworkCore.Domain;
+using Fusonic.Extensions.EntityFrameworkCore.Abstractions;
 using Fusonic.Extensions.EntityFrameworkCore.Tests.Data;
-using Fusonic.Extensions.EntityFrameworkCore.Tests.Domain;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 

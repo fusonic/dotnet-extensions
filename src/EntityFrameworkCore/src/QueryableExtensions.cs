@@ -3,7 +3,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
-using Fusonic.Extensions.EntityFrameworkCore.Domain;
+using Fusonic.Extensions.EntityFrameworkCore.Abstractions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Fusonic.Extensions.EntityFrameworkCore;
@@ -24,7 +24,7 @@ public static class QueryableExtensions
     /// <param name="entity">which is required to be available</param>
     /// <returns>the same entity back</returns>
     /// <exception cref="EntityNotFoundException">when the entity is not available</exception>
-    public static Task<T> IsRequiredAsync<T>([NotNull] this Task<T?> entity)
+    public static Task<T> IsRequiredAsync<T>(this Task<T?> entity)
         where T : class, IEntity
         => entity.ContinueWith(t => t.Result.IsRequired(), TaskContinuationOptions.NotOnFaulted);
 
