@@ -45,9 +45,10 @@ test:
     - !reference [.dotnet-test, script]
     
 publish:
+  image: mcr.microsoft.com/dotnet/sdk:7.0
+  stage: publish
   variables:
     GIT_STRATEGY: none
-  stage: publish
   script:
     - dotnet nuget push "src/**/src/bin/Release/*.nupkg" -k $Nuget_Key -s https://api.nuget.org/v3/index.json --skip-duplicate
   when: manual
