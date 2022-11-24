@@ -1,5 +1,5 @@
-// Copyright (c) Fusonic GmbH. All rights reserved.
-// Licensed under the MIT License. See LICENSE file in the project root for license information.
+// // Copyright (c) Fusonic GmbH. All rights reserved.
+// // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
 using System.Reflection;
 
@@ -8,11 +8,8 @@ namespace Fusonic.Extensions.XUnit.Framework;
 /// <summary>
 /// Base attribute which indicates a test method interception. This allows code to be run before and after the test is run.
 ///
-/// The difference to the Xunit.Sdk.BeforeAfterTestAttribute is that the xunit version executes the 'Before' after the test class is created and the constructor ran.
+/// The difference to the Xunit.Sdk.BeforeAfterTestAttribute is that the XUnit version executes the 'Before' after the test class is created and the constructor ran.
 /// This version runs before the test class is created, allowing to create something like a test context before the constructor gets called.
-///
-/// Note: Do not use this to do throttling, like waiting for a semaphore for limiting integration tests. This can deadlock your tests.
-/// Instead, use the async version <see cref="BeforeAfterTestInvokeAsyncAttribute"/> for those tasks.
 /// </summary>
 [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class, AllowMultiple = true)]
 public abstract class BeforeAfterTestInvokeAttribute : Attribute

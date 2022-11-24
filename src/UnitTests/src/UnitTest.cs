@@ -86,7 +86,7 @@ public abstract class UnitTest<TFixture> : IDisposable, IClassFixture<TFixture>
 
     public virtual void Dispose()
     {
-        currentScope?.Dispose();
+        currentScope.Dispose();
         TestScopedLifestyle.CleanupTestScopes();
         GC.SuppressFinalize(this);
     }

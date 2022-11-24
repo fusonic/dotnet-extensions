@@ -1,4 +1,8 @@
-image: mcr.microsoft.com/dotnet/sdk:7.0
+include:
+  - project: 'fusonic/devops/images/gitlab-ci-tools'
+    file: 'dotnet_test.yml'
+    ref: '3.1'
+
 stages:
   - build
   - test
@@ -9,6 +13,7 @@ default:
 
 build:
   stage: build
+  image: mcr.microsoft.com/dotnet/sdk:7.0
   before_script:
     # Workaround for SourceLink: See: https://github.com/dotnet/sourcelink/issues/689
     - git config url."https://github.com/fusonic/dotnet-extensions".insteadOf https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.com/fusonic/devops/dotnet/extensions
@@ -22,47 +27,23 @@ build:
 
 test:
   stage: test
-  needs: []
+  image: mcr.microsoft.com/dotnet/sdk:7.0
+  extends: .dotnet-test
+  services:
+    - name: postgres:14.6
+      alias: postgres
+  variables:
+    POSTGRES_PASSWORD: postgres
+    BACKEND_SRC_DIR: src/**
+    SLN_PATH: Extensions.sln
+  environment:
+    name: review/$CI_COMMIT_REF_SLUG
+    url: https://fusonic.gitlab.io/-/devops/dotnet/extensions/-/jobs/${CI_JOB_ID}/artifacts/reports/dotnetcoverage/index.html
   script:
-    - set +e
-    - dotnet test -l 'trx;LogFileName=TestOutput.trx' -l 'console;verbosity=detailed' --collect:"XPlat Code Coverage" Extensions.sln
-    - export DOTNET_TEST_EXIT_CODE=$?
-    - set -e
-    # Install tools required for reports
-    - export PATH="$PATH:/root/.dotnet/tools"
-    - dotnet tool install -g dotnet-reportgenerator-globaltool
-    - dotnet tool install -g trx2junit
-    # Generate code coverage report
-    - reportgenerator "-reports:src/**/TestResults/*/coverage.cobertura.xml" "-targetdir:reports/dotnetcoverage"
-    - cat reports/dotnetcoverage/index.htm | grep "Line coverage" | head -1
-    # Convert trx to the JUnit format. This is used for the test results in the MR.
-    - mkdir testresults
-    - find . -iname "TestOutput*.trx" -exec sh -c 'echo ${} | rev | cut -d / -f3 | rev | sed -e s/$/.trx/ | { read OUTPUT; echo "{} -> $OUTPUT"; mv {} testresults/$OUTPUT; } ' \;
-    - cd testresults
-    - trx2junit *.trx
-    - exit $DOTNET_TEST_EXIT_CODE
-  artifacts:
-    when: always
-    paths:
-      - reports/dotnetcoverage
-    reports:
-      junit: testresults/*.xml
-      coverage_report:
-        coverage_format: cobertura
-        path: src/**/TestResults/*/coverage.cobertura.xml
-  coverage: /.*Line coverage.*?(\d{1,3}\.?\d*)%.*/
-
-pages:
-  stage: publish
-  needs: [ test ]
-  script:
-    - mv reports/dotnetcoverage public
-  artifacts:
-    paths:
-      - public
-  only:
-    - main
-
+    - export TemplateConnectionString="Host=postgres;Database=test;Username=postgres;Password=postgres"
+    - dotnet run --project "src/UnitTests.EntityFrameworkCore.Npgsql/template/UnitTests.EntityFrameworkCore.Npgsql.TestDbTemplateCreator.csproj" "${TemplateConnectionString}"
+    - !reference [.dotnet-test, script]
+    
 publish:
   variables:
     GIT_STRATEGY: none

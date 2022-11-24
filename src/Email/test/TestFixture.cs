@@ -16,7 +16,7 @@ namespace Fusonic.Extensions.Email.Tests;
 
 public class TestFixture : UnitTestFixture
 {
-    protected override void RegisterCoreDependencies(Container container)
+    protected sealed override void RegisterCoreDependencies(Container container)
     {
         base.RegisterCoreDependencies(container);
 

@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <IsTestProject>false</IsTestProject>
+    <IsPackable>false</IsPackable>
+    <AssemblyName>Fusonic.Extensions.UnitTests.EntityFrameworkCore.Npgsql.TestDbTemplateCreator</AssemblyName>
+    <RootNamespace>Fusonic.Extensions.UnitTests.EntityFrameworkCore.Npgsql.TestDbTemplateCreator</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\test\UnitTests.EntityFrameworkCore.Npgsql.Tests.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,3 @@
+{
+  "TemplateConnectionString": "Host=127.0.0.1;Port=5433;Database=fusonic_extensions_test;Username=postgres;Password=developer",
+}

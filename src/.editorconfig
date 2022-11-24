@@ -1,0 +1,4 @@
+[*.cs]
+
+file_header_template = Copyright (c) Fusonic GmbH. All rights reserved.\nLicensed under the MIT License. See LICENSE file in the project root for license information.
+dotnet_diagnostic.IDE0073.severity = warning # IDE0073: The file header is missing or not located at the top of the file

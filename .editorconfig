@@ -526,11 +526,6 @@ dotnet_diagnostic.RCS1124.severity = suggestion # RCS1124: Inline local variable
 dotnet_diagnostic.RCS1170.severity = none # RCS1170: Use read-only auto-implemented property
 
 ##########################################
-# Fusonic.Extensions specific settings
-##########################################
-dotnet_diagnostic.IDE0073.severity = warning # IDE0073: The file header is missing or not located at the top of the file
-
-##########################################
 # License
 ##########################################
 # The following applies as to the .editorconfig file ONLY, and is
