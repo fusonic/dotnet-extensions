@@ -8,97 +8,44 @@ using MimeKit;
 
 namespace Fusonic.Extensions.Email;
 
-public static class SendEmail
+/// <summary>
+/// Sends an email in the background.
+/// </summary>
+/// <param name="Recipient">Email-address of the recipient</param>
+/// <param name="RecipientDisplayName">Display name of the recipient</param>
+/// <param name="Culture">Culture to render the email in</param>
+/// <param name="ViewModel">View model for the email. The model must have an [EmailView]-attribute, providing the path to the email to render (cshtml).</param>
+/// <param name="SubjectKey">Subject key to get the subject of the email from the ViewLocalizer. If null, the SubjectKey from the EmailViewAttribute will be used.</param>
+/// <param name="BccRecipient">Email-address of the BCC recipient. Optional.</param>
+/// <param name="Attachments">Attachments for the email.</param>
+public record SendEmail(
+    string Recipient,
+    string RecipientDisplayName,
+    CultureInfo Culture,
+    object ViewModel,
+    string? SubjectKey = null,
+    string? BccRecipient = null,
+    Attachment[]? Attachments = null) : ICommand
 {
-    public class Command : ICommand
-    {
-#pragma warning disable 8618
-        private Command()
-#pragma warning restore 8618
-        { }
-
-        public Command(
-            string recipient,
-            string recipientDisplayName,
-            CultureInfo culture,
-            object viewModel)
-            : this(recipient, recipientDisplayName, culture, null, viewModel)
-        { }
-
-        public Command(
-            string recipient,
-            string recipientDisplayName,
-            Attachment[] attachments,
-            CultureInfo culture,
-            object viewModel)
-            : this(recipient, recipientDisplayName, null, culture, attachments, null, viewModel)
-        { }
-
-        public Command(
-            string recipient,
-            string recipientDisplayName,
-            CultureInfo culture,
-            string? subjectKey,
-            object viewModel)
-            : this(recipient, recipientDisplayName, null, culture, null, subjectKey, viewModel)
-        { }
-
-        public Command(
-            string recipient,
-            string recipientDisplayName,
-            string? bccRecipient,
-            CultureInfo culture,
-            string? subjectKey,
-            object viewModel)
-            : this(recipient, recipientDisplayName, bccRecipient, culture, null, subjectKey, viewModel)
-        { }
-
-        public Command(
-            string recipient,
-            string recipientDisplayName,
-            string? bccRecipient,
-            CultureInfo culture,
-            Attachment[]? attachments,
-            string? subjectKey,
-            object viewModel)
-        {
-            Recipient = recipient;
-            RecipientDisplayName = recipientDisplayName;
-            BccRecipient = bccRecipient;
-            SubjectKey = subjectKey;
-            ViewModel = viewModel;
-            Culture = culture;
-            Attachments = attachments ?? Array.Empty<Attachment>();
-        }
-
-        public string Recipient { get; set; }
-        public string RecipientDisplayName { get; set; }
-        public string? BccRecipient { get; set; }
-        public string? SubjectKey { get; set; }
-        public object ViewModel { get; set; }
-        public CultureInfo Culture { get; set; }
-        public Attachment[] Attachments { get; set; }
-    }
-
     [OutOfBand]
-    public class Handler : AsyncRequestHandler<Command>, IAsyncDisposable
+    public class Handler : AsyncRequestHandler<SendEmail>, IAsyncDisposable
     {
         private readonly EmailOptions emailOptions;
         private readonly ISmtpClient smtpClient;
         private readonly IEmailRenderingService emailRenderingService;
-        private readonly IEmailAttachmentResolver emailAttachmentResolver;
+        private readonly IEnumerable<IEmailAttachmentResolver> emailAttachmentResolvers;
 
         private readonly List<Stream> openedStreams = new();
 
-        public Handler(EmailOptions emailOptions, ISmtpClient smtpClient, IEmailRenderingService emailRenderingService, IEmailAttachmentResolver emailAttachmentResolver)
+        public Handler(EmailOptions emailOptions, ISmtpClient smtpClient, IEmailRenderingService emailRenderingService, IEnumerable<IEmailAttachmentResolver> emailAttachmentResolvers)
         {
             this.emailOptions = emailOptions;
             this.smtpClient = smtpClient;
             this.emailRenderingService = emailRenderingService;
-            this.emailAttachmentResolver = emailAttachmentResolver;
+            this.emailAttachmentResolvers = emailAttachmentResolvers;
         }
 
-        protected override async Task Handle(Command request, CancellationToken cancellationToken)
+        protected override async Task Handle(SendEmail request, CancellationToken cancellationToken)
         {
             var (subject, body) = await emailRenderingService.RenderAsync(request.ViewModel, request.Culture, request.SubjectKey);
             if (emailOptions.SubjectPrefix != null)
@@ -106,7 +53,7 @@ public static class SendEmail
 
             var message = new MimeMessage
             {
-                Body = await GetMessageBody(body, request.Attachments),
+                Body = await GetMessageBody(body, request.Attachments, cancellationToken),
                 From = { new MailboxAddress(emailOptions.SenderName, emailOptions.SenderAddress) },
                 To = { new MailboxAddress(request.RecipientDisplayName, request.Recipient) },
                 Subject = subject
@@ -127,28 +74,36 @@ public static class SendEmail
             }
         }
 
-        private async Task<MimeEntity> GetMessageBody(string htmlBody, Attachment[] attachments)
+        private async Task<MimeEntity> GetMessageBody(string htmlBody, Attachment[]? attachments, CancellationToken cancellationToken)
         {
             var builder = new BodyBuilder { HtmlBody = htmlBody };
 
-            foreach (var attachment in attachments)
+            if (attachments != null)
             {
-                var stream = await emailAttachmentResolver.GetAttachmentAsync(attachment.Source);
-                openedStreams.Add(stream);
-
-                var mailAttachment = new MimePart
+                foreach (var attachment in attachments)
                 {
-                    Content = new MimeContent(stream),
-                    ContentDisposition = new ContentDisposition(ContentDisposition.Attachment),
-                    ContentTransferEncoding = ContentEncoding.Base64,
-                    FileName = attachment.Name
-                };
+                    var resolver = GetResolver(attachment.Source);
+                    var stream = await resolver.GetAttachmentAsync(attachment.Source, cancellationToken);
+                    openedStreams.Add(stream);
 
-                builder.Attachments.Add(mailAttachment);
+                    var mailAttachment = new MimePart
+                    {
+                        Content = new MimeContent(stream),
+                        ContentDisposition = new ContentDisposition(ContentDisposition.Attachment),
+                        ContentTransferEncoding = ContentEncoding.Base64,
+                        FileName = attachment.Name
+                    };
+
+                    builder.Attachments.Add(mailAttachment);
+                }
             }
 
             return builder.ToMessageBody();
         }
+
+        private IEmailAttachmentResolver GetResolver(Uri uri)
+            => emailAttachmentResolvers.FirstOrDefault(r => r.Supports(uri))
+            ?? throw new InvalidOperationException("No attachment resolver registered for uri.");
 
         private async Task DisposeStreams()
         {

@@ -29,11 +29,14 @@ public static class ContainerExtensions
         options.Validate();
 
         container.RegisterInstance(options);
+
         container.RegisterInstance(new CssInliner(options));
         container.Register<IEmailRenderingService, RazorEmailRenderingService>();
-        container.Register<IEmailAttachmentResolver, FileAttachmentResolver>(Lifestyle.Singleton);
+        container.RegisterInstance(container.GetInstance<IViewLocalizer>);
+
         container.Register<ISmtpClient, SmtpClient>();
-        container.RegisterInstance(() => container.GetInstance<IViewLocalizer>());
+        container.Collection.Append<IEmailAttachmentResolver, FileAttachmentResolver>(Lifestyle.Singleton);
+
         container.Register(typeof(IRequestHandler<,>), Assembly.GetExecutingAssembly());
     }
 }

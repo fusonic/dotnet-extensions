@@ -8,11 +8,10 @@ namespace Fusonic.Extensions.Email;
 /// </summary>
 public class FileAttachmentResolver : IEmailAttachmentResolver
 {
-    public Task<Stream> GetAttachmentAsync(Uri uri)
-    {
-        if (uri.Scheme != "file")
-            throw new ArgumentException("Unsupported scheme.", nameof(uri));
+    public bool Supports(Uri uri) => uri.Scheme == "file";
 
+    public Task<Stream> GetAttachmentAsync(Uri uri, CancellationToken cancellationToken)
+    {
         var stream = File.OpenRead(uri.LocalPath);
         return Task.FromResult((Stream)stream);
     }

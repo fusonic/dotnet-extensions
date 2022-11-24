@@ -4,6 +4,7 @@
   - [Setup](#setup)
   - [Create and send an email](#create-and-send-an-email)
   - [View locations](#view-locations)
+  - [Attachments](#attachments)
 
 ## Setup
 
@@ -11,7 +12,7 @@ The following sample binds settings from the configuration located in the sectio
 
 The settings contain sender Email and name, SMTP settings, Debug settings and CSS settings. Check the `EmailSettings` class for details.
 ```cs
-Container.RegisterEmail(options => Configuration.GetSection("Email").Bind(options));
+container.RegisterEmail(options => Configuration.GetSection("Email").Bind(options));
 ```
 
 ## Create and send an email
@@ -22,7 +23,7 @@ To add new emails, following steps need to be done:
 2) Add a new ViewModel in the same namespace as the business logic that needs to send the mail.
 3) Add the `EmailView` attribute to the ViewModel. The constructor argument is path to the view, relative to the `Views` directory without the `.cshtml` extension. Example: `[EmailView("Emails/Registration")]` points to `Views/Emails/Registration.cshtml`.
 4) Extend the `EmailController` with a new method to render the view file and return the contents.
-5) To send the mail in the business logic use `SendEmail.Command` and supply it with the view model. SendEmail renders the mail based on the view model and the `EmailViewAttribute`.
+5) To send the mail in the business logic use the MediatR-command `SendEmail` and supply it with the view model. SendEmail renders the mail based on the view model and the `EmailViewAttribute`.
 
 To check the visuals of the view file, use the [Swagger API](./api.md) to access the methods of the `EmailController`.
 
@@ -34,4 +35,11 @@ If you want to place the Views in other folders, for example `/Emails`, you can 
 
 ```cs
 services.Configure<RazorViewEngineOptions>(options => options.ViewLocationFormats.Add("/Emails/{0}" + RazorViewEngine.ViewExtension));
+```
+
+## Attachments
+
+By default, only attachments in file://-Uris are supported. To allow adding attachments from other sources (eg. AWS S3), implement `IEmailAttachmentResolver` and register it SimpleInjector with
+```cs
+container.Collections.Append<IEmailAttachmentResolver, YourResolver>()
 ```

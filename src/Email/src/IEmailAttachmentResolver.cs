@@ -8,5 +8,13 @@ namespace Fusonic.Extensions.Email;
 /// </summary>
 public interface IEmailAttachmentResolver
 {
-    Task<Stream> GetAttachmentAsync(Uri uri);
+    /// <summary>
+    /// Gets if the resolver supports the given Uri.
+    /// </summary>
+    bool Supports(Uri uri);
+
+    /// <summary>
+    /// Gets the attachment for the given Uri. Only gets called if the Uri is supported. Caller is responsible of disposing the returned stream.
+    /// </summary>
+    Task<Stream> GetAttachmentAsync(Uri uri, CancellationToken cancellationToken);
 }
