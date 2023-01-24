@@ -3,7 +3,7 @@
 
 using System.Diagnostics;
 using System.Reflection;
-using Fusonic.Extensions.UnitTests;
+using Fusonic.Extensions.UnitTests.SimpleInjector;
 using MediatR;
 using MediatR.Pipeline;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
@@ -14,7 +14,7 @@ using SimpleInjector;
 
 namespace Fusonic.Extensions.Email.Tests;
 
-public class TestFixture : UnitTestFixture
+public class TestFixture : SimpleInjectorTestFixture
 {
     protected sealed override void RegisterCoreDependencies(Container container)
     {

@@ -36,13 +36,10 @@ test:
     POSTGRES_PASSWORD: postgres
     BACKEND_SRC_DIR: src/**
     SLN_PATH: Extensions.sln
+    ConnectionString: Host=postgres;Database=test;Username=postgres;Password=postgres
   environment:
     name: review/$CI_COMMIT_REF_SLUG
     url: https://fusonic.gitlab.io/-/devops/dotnet/extensions/-/jobs/${CI_JOB_ID}/artifacts/reports/dotnetcoverage/index.html
-  script:
-    - export TemplateConnectionString="Host=postgres;Database=test;Username=postgres;Password=postgres"
-    - dotnet run --project "src/UnitTests.EntityFrameworkCore.Npgsql/template/UnitTests.EntityFrameworkCore.Npgsql.TestDbTemplateCreator.csproj" "${TemplateConnectionString}"
-    - !reference [.dotnet-test, script]
     
 publish:
   image: mcr.microsoft.com/dotnet/sdk:7.0

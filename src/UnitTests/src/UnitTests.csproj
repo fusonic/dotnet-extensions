@@ -5,7 +5,7 @@
     <PackageProjectUrl>https://github.com/fusonic/dotnet-extensions</PackageProjectUrl>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <Description>Xunit-based testing base classes. Supports DI with SimpleInjector, MediatR-event-recordings, Lifetime-Scoped calls, a test context and so on.</Description>
+    <Description>Xunit-based testing base classes with support for dependency injection. Libraries supporting specific DI containers (SimpleInjector, ServiceProvider) are in separate packages.</Description>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
 
     <IsTestProject>false</IsTestProject>
@@ -18,14 +18,11 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" />
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
     <PackageReference Include="NSubstitute" />
     <PackageReference Include="SimpleInjector" />
     <PackageReference Include="xunit" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\XUnit\src\XUnit.csproj" />
   </ItemGroup>
 
 </Project>

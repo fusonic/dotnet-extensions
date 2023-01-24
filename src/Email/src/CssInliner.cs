@@ -7,7 +7,7 @@ namespace Fusonic.Extensions.Email;
 
 public class CssInliner
 {
-    public static string EmailCssContent { get; private set; } = null!;
+    public static string? EmailCssContent { get; private set; }
 
     public CssInliner(EmailOptions options)
     {

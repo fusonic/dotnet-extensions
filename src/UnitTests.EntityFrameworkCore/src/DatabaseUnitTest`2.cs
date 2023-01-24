@@ -8,7 +8,7 @@ namespace Fusonic.Extensions.UnitTests.EntityFrameworkCore;
 
 public abstract class DatabaseUnitTest<TDbContext, TFixture> : DatabaseUnitTest<TFixture>
     where TDbContext : DbContext
-    where TFixture : UnitTestFixture
+    where TFixture : class, IDependencyInjectionTestFixture
 {
     protected DatabaseUnitTest(TFixture fixture) : base(fixture) { }
 

@@ -26,7 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\UnitTests\src\UnitTests.csproj" />
+    <ProjectReference Include="..\..\UnitTests.ServiceProvider\src\UnitTests.ServiceProvider.csproj" />
     <ProjectReference Include="..\src\UnitTests.EntityFrameworkCore.csproj" />
   </ItemGroup>
 

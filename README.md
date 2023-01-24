@@ -30,9 +30,6 @@ Adds support for sending emails. See the [documentation](docs/Email/README.md) f
 [![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.EntityFrameworkCore.svg?label=Fusonic.Extensions.EntityFrameworkCore&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.EntityFrameworkCore/)
 Extensions for EF Core.
 
-[![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.EntityFrameworkCore.Abstractions.svg?label=Fusonic.Extensions.EntityFrameworkCore.Abstractions&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.EntityFrameworkCore.Abstractions/)
-Abstractions to the EF Core extensions without referencing EF Core.
-
 [![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.Hangfire.svg?label=Fusonic.Extensions.Hangfire&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.Hangfire/)
 Provides Hangfire extensions, especially suited for CQRS developement. (Out of band processing). See the [documentation](docs/Hangfire/README.md) for more details.
 
@@ -43,16 +40,19 @@ Provides services and extensions for hosting. See the [documentation](docs/Hosti
 Provides abstractions for MediatR. See the [documentation](docs/MediatR/README.md) for more details.
 
 [![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.UnitTests.svg?label=Fusonic.Extensions.UnitTests&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.UnitTests/)
-Xunit-based testing base classes. Supports DI with SimpleInjector, MediatR-event-recordings, Lifetime-Scoped calls, a test context and so on. See the [unit test documentation](docs/UnitTests/README.md) for more details.
+Xunit-based testing base classes with support for dependency injection. Libraries supporting specific DI containers (SimpleInjector, ServiceProvider) are in separate packages. See the [unit test documentation](docs/UnitTests/README.md) for more details.
+
+[![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.UnitTests.ServiceProvider.svg?label=Fusonic.Extensions.UnitTests.ServiceProvider&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.UnitTests.ServiceProvider/)
+Xunit-based testing base classes. Supports dependency injection with Microsofts Dependency Injection framework (ServiceProvider).. See the [unit test documentation](docs/UnitTests/README.md) for more details.
+
+[![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.UnitTests.SimpleInjector.svg?label=Fusonic.Extensions.UnitTests.SimpleInjector&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.UnitTests.SimpleInjector/)
+Xunit-based testing base classes. Supports dependency injection with SimpleInjector.. See the [unit test documentation](docs/UnitTests/README.md) for more details.
 
 [![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.UnitTests.EntityFrameworkCore.svg?label=Fusonic.Extensions.UnitTests.EntityFrameworkCore&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.UnitTests.EntityFrameworkCore/)
 Adds database support using EF Core to the unit tests. See the [unit test documentation](docs/UnitTests/README.md) for more details.
 
 [![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.UnitTests.EntityFrameworkCore.Npgsql.svg?label=Fusonic.Extensions.UnitTests.EntityFrameworkCore.Npgsql&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.UnitTests.EntityFrameworkCore.Npgsql/)
 Adds support for database tests using EF Core with PostgreSQL. See the [unit test documentation](docs/UnitTests/README.md) for more details.
-
-[![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.XUnit.svg?label=Fusonic.Extensions.XUnit&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.XUnit/)
-Extensions to XUnit. Provides an own framework adding capabilities like a test context and attributes running before a test class gets instantiated.
 
 
 Important information

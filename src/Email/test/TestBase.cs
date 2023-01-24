@@ -1,7 +1,8 @@
-﻿// Copyright (c) Fusonic GmbH. All rights reserved.
+// Copyright (c) Fusonic GmbH. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
 using Fusonic.Extensions.UnitTests;
+using Fusonic.Extensions.UnitTests.SimpleInjector;
 
 namespace Fusonic.Extensions.Email.Tests;
 
@@ -11,8 +12,8 @@ public abstract class TestBase : TestBase<TestFixture>
     { }
 }
 
-public abstract class TestBase<TFixture> : UnitTest<TFixture>
-    where TFixture : TestFixture
+public abstract class TestBase<TFixture> : DependencyInjectionUnitTest<TFixture>
+    where TFixture : SimpleInjectorTestFixture
 {
     protected TestBase(TFixture fixture) : base(fixture)
     { }

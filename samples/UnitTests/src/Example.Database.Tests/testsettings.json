@@ -1,5 +1,0 @@
-{
-  "ConnectionString": "Host=127.0.0.1;Port=5433;Database=example_test;Username=postgres;Password=postgres",
-  "TestDbPrefix": "example_test",
-  "TestDbTemplate": "example_test"
-}

@@ -14,6 +14,4 @@ public abstract class TestBase<TFixture> : DatabaseUnitTest<TestDbContext, TFixt
 {
     protected TestBase(TFixture fixture) : base(fixture)
     { }
-
-    protected override void DropTestDatabase() => GetInstance<NpgsqlTestDatabaseProvider>().DropDatabase();
 }

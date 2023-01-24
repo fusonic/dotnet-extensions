@@ -3,13 +3,14 @@
 
 using System.Diagnostics;
 using Microsoft.EntityFrameworkCore;
+using Xunit;
 
 namespace Fusonic.Extensions.UnitTests.EntityFrameworkCore;
 
-public abstract class DatabaseUnitTest<TFixture> : UnitTest<TFixture>
-    where TFixture : UnitTestFixture
+public abstract class DatabaseUnitTest<TFixture> : DependencyInjectionUnitTest<TFixture>, IAsyncLifetime
+    where TFixture : class, IDependencyInjectionTestFixture
 {
-    protected DatabaseUnitTest(TFixture fixture) : base(fixture) { }
+    protected DatabaseUnitTest(TFixture fixture) : base(fixture) => GetInstance<ITestStore>().OnTestConstruction();
 
     /// <summary> Executes a query in an own scope. </summary>
     [DebuggerStepThrough]
@@ -60,12 +61,6 @@ public abstract class DatabaseUnitTest<TFixture> : UnitTest<TFixture>
             return await query(dbContext);
         });
 
-    protected abstract void DropTestDatabase();
-
-    public override void Dispose()
-    {
-        DropTestDatabase();
-        base.Dispose();
-        GC.SuppressFinalize(this);
-    }
+    public virtual Task InitializeAsync() => Task.CompletedTask;
+    public virtual async Task DisposeAsync() => await GetInstance<ITestStore>().OnTestEnd();
 }

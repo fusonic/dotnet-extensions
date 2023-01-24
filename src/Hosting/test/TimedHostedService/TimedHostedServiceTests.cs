@@ -4,17 +4,16 @@
 using System.Net;
 using FluentAssertions;
 using Fusonic.Extensions.Hosting.TimedHostedService;
-using Fusonic.Extensions.UnitTests.SimpleInjector;
+using Fusonic.Extensions.UnitTests;
 using NSubstitute;
 using SimpleInjector;
 using Xunit;
 
 namespace Fusonic.Extensions.Hosting.Tests.TimedHostedService;
 
-public class TimedHostedServiceTests : TestBase<TimedHostedServiceTests.TimedHostedServiceFixture>
+public class TimedHostedServiceTests : DependencyInjectionUnitTest<TimedHostedServiceTests.TimedHostedServiceFixture>
 {
-    public TimedHostedServiceTests(TimedHostedServiceFixture fixture) : base(fixture)
-    { }
+    public TimedHostedServiceTests(TimedHostedServiceFixture fixture) : base(fixture) => GetInstance<Service>().Reset();
 
     [Fact]
     public async Task Start_RunsTask_ImmediatelyAfterStart()
@@ -35,7 +34,7 @@ public class TimedHostedServiceTests : TestBase<TimedHostedServiceTests.TimedHos
     public async Task RunTask_CrashesOnStartup_TimedHostedServiceDoesNotCare()
     {
         using var timedHostedService = GetInstance<TimedHostedService<ServiceCrashing>>();
-        Func<Task> act = () => timedHostedService.StartAsync(CancellationToken.None);
+        var act = () => timedHostedService.StartAsync(CancellationToken.None);
 
         await act.Should().NotThrowAsync();
     }
@@ -121,6 +120,12 @@ public class TimedHostedServiceTests : TestBase<TimedHostedServiceTests.TimedHos
         public bool RunCalled { get; private set; }
         public CancellationToken CancellationToken { get; private set; }
 
+        public void Reset()
+        {
+            CancellationToken = CancellationToken.None;
+            RunCalled = false;
+        }
+
         public Task Run(CancellationToken cancellationToken)
         {
             CancellationToken = cancellationToken;
@@ -161,8 +166,8 @@ public class TimedHostedServiceTests : TestBase<TimedHostedServiceTests.TimedHos
             AddTimedHostedService<ServiceNoWatchdog>(_ => { }, (s, c) => s.Run(c));
             AddTimedHostedService<ServiceCrashing>(_ => { }, (s, _) => s.Run());
 
-            container.RegisterTestScoped<HttpMessageHandlerMock>();
-            container.RegisterTestScoped(() =>
+            container.Register<HttpMessageHandlerMock>();
+            container.Register(() =>
             {
                 var httpClientFactory = Substitute.For<IHttpClientFactory>();
                 var messageHandlerMock = container.GetInstance<HttpMessageHandlerMock>();
@@ -177,9 +182,9 @@ public class TimedHostedServiceTests : TestBase<TimedHostedServiceTests.TimedHos
                 configureTimedHostedService(settings);
                 var hostSettings = new TimedHostedService<TService>.Settings(TimeSpan.FromSeconds(settings.Interval), settings.WatchdogUri, executeTask);
 
-                container.RegisterTestScoped<TimedHostedService<TService>>();
-                container.RegisterTestScoped<TService>();
-                container.RegisterTestScoped(() => hostSettings);
+                container.Register<TimedHostedService<TService>>();
+                container.RegisterSingleton<TService>();
+                container.Register(() => hostSettings);
             }
         }
     }

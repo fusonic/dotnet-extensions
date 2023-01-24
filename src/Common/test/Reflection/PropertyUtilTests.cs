@@ -1,4 +1,4 @@
-﻿// Copyright (c) Fusonic GmbH. All rights reserved.
+// Copyright (c) Fusonic GmbH. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
 using FluentAssertions;
@@ -57,6 +57,6 @@ public class PropertyUtilTests
     public class TestClass
     {
         public bool IsBusy { get; set; }
-        public string Value { get; set; } = null!;
+        public required string Value { get; set; }
     }
 }

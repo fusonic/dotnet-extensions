@@ -1,4 +1,4 @@
-﻿// Copyright (c) Fusonic GmbH. All rights reserved.
+// Copyright (c) Fusonic GmbH. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
 namespace Fusonic.Extensions.UnitTests.EntityFrameworkCore.Tests;
@@ -16,7 +16,7 @@ public class CreateDatabaseInterceptorTests : TestBase
             // No database access, only resolving DbContext
         });
 
-        GetInstance<TestDatabaseProvider>().CreateDatabaseCalled.Should().BeFalse();
+        ((SqliteTestStore)GetInstance<ITestStore>()).CreateDatabaseCalled.Should().BeFalse();
     }
 
     [Fact]
@@ -28,6 +28,6 @@ public class CreateDatabaseInterceptorTests : TestBase
             ctx.SaveChanges();
         });
 
-        GetInstance<TestDatabaseProvider>().CreateDatabaseCalled.Should().BeTrue();
+        ((SqliteTestStore)GetInstance<ITestStore>()).CreateDatabaseCalled.Should().BeTrue();
     }
 }

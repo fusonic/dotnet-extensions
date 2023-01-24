@@ -3,37 +3,24 @@
 
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Text.RegularExpressions;
-using Dapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Logging;
 using Npgsql;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure;
+using NpgsqlTypes;
 
 namespace Fusonic.Extensions.UnitTests.EntityFrameworkCore.Npgsql;
 
-public static partial class PostgreSqlUtil
+public static class PostgreSqlUtil
 {
-    private static readonly Regex DatabaseRegex = GetDatabaseRegex();
-
-    // <summary> Returns the database name in the connection string or null, if it could not be matched. </summary>
-    public static string? GetDatabaseName(string connectionString)
-    {
-        var match = DatabaseRegex.Match(connectionString);
-        if (!match.Success || match.Groups.Count != 2)
-            return null;
-
-        return match.Groups[1].Value.Trim();
-    }
-
     /// <summary> Creates a test database. </summary>
     /// <param name="connectionString">Connection string to the test database. The database does not have to exist.</param>
     /// <param name="dbContextFactory">Returns a DbContext using the given options.</param>
     /// <param name="npgsqlOptionsAction">The configuration action for .UseNpgsql().</param>
     /// <param name="seed">Optional seed action that gets executed after creating the database.</param>
     /// <param name="logger">Logger. Defaults to console logger.</param>
-    public static void CreateTestDbTemplate<TDbContext>(
+    public static async Task CreateTestDbTemplate<TDbContext>(
         string connectionString,
         Func<DbContextOptions<TDbContext>, TDbContext> dbContextFactory,
         Action<NpgsqlDbContextOptionsBuilder>? npgsqlOptionsAction = null,
@@ -43,64 +30,80 @@ public static partial class PostgreSqlUtil
     {
         logger ??= CreateConsoleLogger();
 
-        // Open connection to the postgres-DB (for drop, create, alter)
-        using var connection = CreatePostgresDbConnection(connectionString);
-
         // Get database from connection string.
-        var dbName = GetDatabaseName(connectionString);
+        var csBuilder = new NpgsqlConnectionStringBuilder(connectionString);
+        var dbName = csBuilder.Database;
         AssertNotPostgres(dbName);
 
-        // Drop existing Test-DB
-        if (connection.ExecuteScalar<bool>("SELECT EXISTS(SELECT * FROM pg_catalog.pg_database WHERE datname=@dbName)", new { dbName }))
+        // Open connection to the postgres-DB (for drop, create, alter)
+        csBuilder.Database = "postgres";
+        await using (var connection = new NpgsqlConnection(csBuilder.ConnectionString))
         {
-            logger.LogInformation("Dropping database {Database}", dbName);
-            DropDb(connectionString, dbName);
-        }
+            await connection.OpenAsync();
 
-        // Create database
-        logger.LogInformation("Creating database {Database}", dbName);
-        connection.Execute($@"CREATE DATABASE ""{dbName}"" TEMPLATE template0 IS_TEMPLATE true");
-
-        // Migrate & run seed
-        var options = new DbContextOptionsBuilder<TDbContext>()
-                     .UseNpgsql(connectionString, npgsqlOptionsAction)
-                     .LogTo(
-                          (eventId, _) => eventId != RelationalEventId.CommandExecuted,
-                          eventData => logger.Log(eventData.LogLevel, eventData.EventId, "[EF] {Message}", eventData.ToString()))
-                     .Options;
-        using (var dbContext = dbContextFactory(options))
-        {
-            logger.LogInformation("Running migrations");
-            dbContext.Database.Migrate();
-
-            if (seed != null)
+            // Drop existing Test-DB
+            if (await CheckDatabaseExists(connection, dbName))
             {
-                logger.LogInformation("Running seed");
-                seed(dbContext).Wait();
+                logger.LogInformation("Dropping database {Database}", dbName);
+
+                await connection.ExecuteAsync($@"ALTER DATABASE ""{dbName}"" IS_TEMPLATE false");
+                await connection.ExecuteAsync($@"DROP DATABASE ""{dbName}"" WITH (FORCE)");
             }
+
+            // Create database
+            logger.LogInformation("Creating database {Database}", dbName);
+            await connection.ExecuteAsync($@"CREATE DATABASE ""{dbName}"" TEMPLATE template0 IS_TEMPLATE true");
+
+            // Migrate & run seed
+            var options = new DbContextOptionsBuilder<TDbContext>()
+                         .UseNpgsql(connectionString, npgsqlOptionsAction)
+                         .LogTo(
+                              (eventId, _) => eventId != RelationalEventId.CommandExecuted,
+                              eventData => logger.Log(eventData.LogLevel, eventData.EventId, "[EF] {Message}", eventData.ToString()))
+                         .Options;
+
+            await using (var dbContext = dbContextFactory(options))
+            {
+                logger.LogInformation("Running migrations");
+                await dbContext.Database.MigrateAsync();
+
+                if (seed != null)
+                {
+                    logger.LogInformation("Running seed");
+                    await seed(dbContext);
+                }
+            }
+
+            //Convert to template
+            logger.LogInformation("Setting connection limit on template");
+            await connection.ExecuteAsync($@"ALTER DATABASE ""{dbName}"" CONNECTION LIMIT 0");
         }
 
-        //Convert to template
-        logger.LogInformation("Setting connection limit on template");
-        connection.Execute($@"ALTER DATABASE ""{dbName}"" CONNECTION LIMIT 0");
-
+        NpgsqlConnection.ClearAllPools();
         logger.LogInformation("Done");
     }
 
-    /// <summary> Drops the given database. </summary>
-    /// <param name="connectionString">Connection string to the postgres database.</param>
-    /// <param name="dbName">Database that should be dropped.</param>
-    public static void DropDb(string connectionString, string dbName)
+    public static async Task<bool> CheckDatabaseExists(string connectionString)
     {
-        AssertNotPostgres(dbName);
+        var csBuilder = new NpgsqlConnectionStringBuilder(connectionString);
+        var dbName = csBuilder.Database!;
 
-        using var connection = CreatePostgresDbConnection(connectionString);
-        var exists = connection.ExecuteScalar<bool>("SELECT EXISTS(SELECT * FROM pg_database WHERE datname=@dbName)", new { dbName });
-        if (!exists)
-            return;
+        csBuilder.Database = "postgres";
+        await using var connection = new NpgsqlConnection(csBuilder.ConnectionString);
+        connection.Open();
+        var exists = await CheckDatabaseExists(connection, dbName);
 
-        connection.Execute($@"ALTER DATABASE ""{dbName}"" IS_TEMPLATE false");
-        connection.Execute($@"DROP DATABASE ""{dbName}"" WITH (FORCE)");
+        return exists;
+    }
+
+    private static async Task<bool> CheckDatabaseExists(NpgsqlConnection connection, string dbName)
+    {
+        var cmd = connection.CreateCommand();
+        cmd.CommandText = "SELECT EXISTS(SELECT * FROM pg_database WHERE datname=@dbName)";
+        cmd.Parameters.Add("@dbName", NpgsqlDbType.Varchar).Value = dbName;
+
+        var result = await cmd.ExecuteScalarAsync();
+        return result != null && (bool)result;
     }
 
     private static void AssertNotPostgres([NotNull] string? dbName)
@@ -112,18 +115,7 @@ public static partial class PostgreSqlUtil
             throw new ArgumentException("You can't do this on the postgres database.");
     }
 
-    /// <summary> Creates a connection using the given connection string, but replacing the database with postgres. </summary>
-    internal static NpgsqlConnection CreatePostgresDbConnection(string connectionString)
-        => new(ReplaceDatabaseName(connectionString, "postgres"));
-
-    /// <summary> Replaces the database in a connection string with another one. </summary>
-    internal static string ReplaceDatabaseName(string connectionString, string dbName)
-        => DatabaseRegex.Replace(connectionString, $"Database={dbName}");
-
     private static ILogger CreateConsoleLogger()
         => LoggerFactory.Create(b => b.AddSimpleConsole(c => c.SingleLine = true))
                         .CreateLogger(nameof(PostgreSqlUtil));
-
-    [GeneratedRegex("Database=([^;]+)")]
-    private static partial Regex GetDatabaseRegex();
 }

@@ -3,7 +3,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
-using Fusonic.Extensions.EntityFrameworkCore.Abstractions;
+using Fusonic.Extensions.Common.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Fusonic.Extensions.EntityFrameworkCore;
@@ -27,6 +27,22 @@ public static class QueryableExtensions
     public static Task<T> IsRequiredAsync<T>(this Task<T?> entity)
         where T : class, IEntity
         => entity.ContinueWith(t => t.Result.IsRequired(), TaskContinuationOptions.NotOnFaulted);
+
+    /// <summary> Determines if the entity with the given ID exists. Throws a EntityNotFoundException if it does not. </summary>
+    public static async Task IsRequiredAsync<T, TId>(this DbSet<T> dbSet, TId id, CancellationToken cancellationToken = default)
+        where T : class, IEntity<TId>
+        where TId : struct
+    {
+        if (!await ExistsAsync(dbSet, id, cancellationToken))
+            throw new EntityNotFoundException(typeof(T), id);
+    }
+
+    /// <summary> Determines if the query returns any result (AnyAsync). Throws a EntityNotFoundException if it does not. </summary>
+    public static async Task IsRequiredAsync<T>(this IQueryable<T> query, CancellationToken cancellationToken = default)
+    {
+        if (!await query.AnyAsync(cancellationToken))
+            throw new EntityNotFoundException(typeof(T));
+    }
 
     /// <summary> Check in the <see cref="DbSet{TEntity}"/> if the entity is available </summary>
     /// <typeparam name="T">is a typeof an <see cref="IEntity"/></typeparam>
@@ -91,13 +107,4 @@ public static class QueryableExtensions
     public static async Task<bool> ExistsAsync<T, TId>(this DbSet<T> dbSet, TId id, CancellationToken cancellationToken = default)
         where T : class, IEntity<TId>
         where TId : struct => await dbSet.AnyAsync(d => Equals(d.Id, id), cancellationToken);
-
-    /// <summary> Determines if the entity with the given ID exists. Throws a EntityNotFoundException if it does not. </summary>
-    public static async Task RequireAsync<T, TId>(this DbSet<T> dbSet, TId id, CancellationToken cancellationToken = default)
-        where T : class, IEntity<TId>
-        where TId : struct
-    {
-        if (!await ExistsAsync(dbSet, id, cancellationToken))
-            throw new EntityNotFoundException(typeof(T), id);
-    }
 }

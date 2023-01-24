@@ -9,5 +9,5 @@ public class TestDbContext : DbContext
 {
     public TestDbContext(DbContextOptions<TestDbContext> options) : base(options) { }
 
-    public DbSet<SampleDomainEntity> SampleDomainEntities { get; set; } = null!;
+    public DbSet<SampleDomainEntity> SampleDomainEntities => Set<SampleDomainEntity>();
 }

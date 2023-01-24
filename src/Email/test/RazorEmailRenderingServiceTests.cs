@@ -57,7 +57,7 @@ public partial class RazorEmailRenderingServiceTests : TestBase
         var (subject, _) = await emailRenderingService.RenderAsync(new CultureTestEmailViewModel(), culture, subjectKey: subjectKey);
         subject.Should().Be(subjectKey);
 
-        var localizer = Container.GetInstance<Func<IViewLocalizer>>()();
+        var localizer = GetInstance<Func<IViewLocalizer>>()();
         localizer.GetString(subjectKey).Returns(new LocalizedString(subjectKey, "My fancy subject localized"));
 
         (subject, _) = await emailRenderingService.RenderAsync(new CultureTestEmailViewModel(), culture, subjectKey: subjectKey);

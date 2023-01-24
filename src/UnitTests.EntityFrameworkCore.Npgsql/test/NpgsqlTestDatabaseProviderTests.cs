@@ -6,11 +6,12 @@ using Microsoft.EntityFrameworkCore;
 using Npgsql;
 
 namespace Fusonic.Extensions.UnitTests.EntityFrameworkCore.Npgsql.Tests;
-public class NpgsqlTestDatabaseProviderTests : TestBase
+
+public class NpgsqlDatabasePerTestStoreTests : TestBase
 {
     private static readonly List<string> UsedDbNames = new();
 
-    public NpgsqlTestDatabaseProviderTests(TestFixture fixture) : base(fixture)
+    public NpgsqlDatabasePerTestStoreTests(TestFixture fixture) : base(fixture)
     { }
 
     [Theory]
@@ -24,7 +25,7 @@ public class NpgsqlTestDatabaseProviderTests : TestBase
         {
             ctx.AddRange(Enumerable.Range(1, entityCount).Select(i => new TestEntity { Name = "Name " + i }));
             await ctx.SaveChangesAsync();
-            return PostgreSqlUtil.GetDatabaseName(ctx.Database.GetConnectionString()!)!;
+            return new NpgsqlConnectionStringBuilder(ctx.Database.GetConnectionString()).Database!;
         });
 
         // Assert unique db names (not nice)
@@ -40,63 +41,65 @@ public class NpgsqlTestDatabaseProviderTests : TestBase
     public async Task DropDatabase_DatabaseExists_DropsDatabase()
     {
         // Arrange
-        var provider = GetInstance<NpgsqlTestDatabaseProvider>();
-        provider.CreateDatabase();
+        var store = GetStore();
+        await store.CreateDatabase();
 
         // Act
-        provider.DropDatabase();
+        await store.OnTestEnd();
 
         // Assert
         var dbNames = await GetDatabases();
-        dbNames.Should().NotContain(provider.TestDbName);
+        dbNames.Should().NotContain(store.ConnectionString);
     }
 
     [Fact]
     public async Task DropDatabase_DatabaseDoesNotExist_DoesNotThrowException()
     {
         // Arrange
-        var provider = GetInstance<NpgsqlTestDatabaseProvider>();
+        var store = GetStore();
 
         // Act
-        provider.DropDatabase();
+        await store.OnTestEnd();
 
         // Assert
         var dbNames = await GetDatabases();
-        dbNames.Should().NotContain(provider.TestDbName);
+        dbNames.Should().NotContain(GetDbName(store));
     }
 
     [Fact]
     public async Task CreateDatabase_CreatesTestDb()
     {
         // Arrange
-        var provider = GetInstance<NpgsqlTestDatabaseProvider>();
+        var store = GetStore();
 
         // Act
-        provider.CreateDatabase();
+        await store.CreateDatabase();
 
         // Assert
         var dbNames = await GetDatabases();
-        dbNames.Should().Contain(provider.TestDbName);
+        dbNames.Should().Contain(GetDbName(store));
     }
 
     [Fact]
     public void TestDbName_IsDifferentThanTemplate()
     {
-        var provider = GetInstance<NpgsqlTestDatabaseProvider>();
-        var settings = GetInstance<NpgsqlTestDatabaseProviderSettings>();
-        var dbName = new NpgsqlConnectionStringBuilder(settings.TemplateConnectionString).Database;
-
-        provider.TestDbName.Should().NotBe(dbName);
+        var store = GetStore();
+        var settings = GetInstance<NpgsqlDatabasePerTestStoreOptions>();
+        GetDbName(settings.ConnectionString!).Should().NotBe(GetDbName(store));
     }
 
     private async Task<List<string>> GetDatabases()
     {
-        var settings = GetInstance<NpgsqlTestDatabaseProviderSettings>();
-        var builder = new NpgsqlConnectionStringBuilder(settings.TemplateConnectionString);
+        var settings = GetInstance<NpgsqlDatabasePerTestStoreOptions>();
+        var builder = new NpgsqlConnectionStringBuilder(settings.ConnectionString);
         builder.Database = "postgres";
 
         await using var connection = new NpgsqlConnection(builder.ConnectionString);
         var dbNames = (await connection.QueryAsync<string>("SELECT datname FROM pg_database")).ToList();
         return dbNames;
     }
+
+    private NpgsqlDatabasePerTestStore GetStore() => (NpgsqlDatabasePerTestStore)GetInstance<ITestStore>();
+    private static string GetDbName(NpgsqlDatabasePerTestStore store) => GetDbName(store.ConnectionString);
+    private static string GetDbName(string connectionString) => new NpgsqlConnectionStringBuilder(connectionString).Database!;
 }

@@ -27,7 +27,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\UnitTests\src\UnitTests.csproj" />
+        <ProjectReference Include="..\..\UnitTests.SimpleInjector\src\UnitTests.SimpleInjector.csproj" />
         <ProjectReference Include="..\src\Email.csproj" />
     </ItemGroup>
 

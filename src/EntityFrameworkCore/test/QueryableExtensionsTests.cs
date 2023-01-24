@@ -2,7 +2,7 @@
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
 using FluentAssertions;
-using Fusonic.Extensions.EntityFrameworkCore.Abstractions;
+using Fusonic.Extensions.Common.Entities;
 using Fusonic.Extensions.EntityFrameworkCore.Tests.Data;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
@@ -25,7 +25,7 @@ public class QueryableExtensionsTests : IDisposable
     }
 
     [Fact]
-    public async Task IsRequired_Succeeds()
+    public async Task IsRequired_Entity_Succeeds()
     {
         // Arrange
         var sampleEntity = await CreateSampleEntity();
@@ -38,7 +38,7 @@ public class QueryableExtensionsTests : IDisposable
     }
 
     [Fact]
-    public void IsRequired_ThrowsException()
+    public void IsRequired_Entity_ThrowsException()
     {
         // Act
         var errorAction = () => testDbContext.SampleDomainEntities.SingleOrDefault(s => s.Id == Guid.NewGuid()).IsRequired();
@@ -50,7 +50,7 @@ public class QueryableExtensionsTests : IDisposable
     }
 
     [Fact]
-    public async Task IsRequiredAsync_Succeeds()
+    public async Task IsRequiredAsync_Task_Succeeds()
     {
         // Arrange
         var sampleEntity = await CreateSampleEntity();
@@ -63,7 +63,7 @@ public class QueryableExtensionsTests : IDisposable
     }
 
     [Fact]
-    public async Task IsRequiredAsync_ThrowsException()
+    public async Task IsRequiredAsync_Task_ThrowsException()
     {
         // Act
         var errorAction = () => testDbContext.SampleDomainEntities.SingleOrDefaultAsync(s => s.Id == Guid.Empty).IsRequiredAsync();
@@ -72,6 +72,58 @@ public class QueryableExtensionsTests : IDisposable
         await errorAction.Should()
                          .ThrowAsync<EntityNotFoundException>()
                          .WithMessage($"Could not find entity of type '{nameof(SampleDomainEntity)}'.");
+    }
+
+    [Fact]
+    public async Task IsRequiredAsync_DbSet_Succeeds()
+    {
+        // Arrange
+        var sampleEntity = await CreateSampleEntity();
+
+        // Act
+        await testDbContext.SampleDomainEntities.IsRequiredAsync(sampleEntity.Id);
+
+        // Assert, throws no exception
+    }
+
+    [Fact]
+    public async Task IsRequiredAsync_DbSet_ThrowsException()
+    {
+        // Arrange
+        var guid = Guid.NewGuid();
+
+        // Act
+        var errorAction = () => testDbContext.SampleDomainEntities.IsRequiredAsync(guid);
+
+        // Assert
+        (await errorAction.Should().ThrowAsync<EntityNotFoundException>())
+           .WithMessage($"Could not find entity of type '{nameof(SampleDomainEntity)}' with id {guid}.");
+    }
+
+    [Fact]
+    public async Task IsRequiredAsync_Queryable_Succeeds()
+    {
+        // Arrange
+        var sampleEntity = await CreateSampleEntity();
+
+        // Act
+        await testDbContext.SampleDomainEntities.Where(e => e.Id == sampleEntity.Id).IsRequiredAsync();
+
+        // Assert, throws no exception
+    }
+
+    [Fact]
+    public async Task IsRequiredAsync_Queryable_ThrowsException()
+    {
+        // Arrange
+        var guid = Guid.NewGuid();
+
+        // Act
+        var errorAction = () => testDbContext.SampleDomainEntities.Where(e => e.Id == guid).IsRequiredAsync();
+
+        // Assert
+        (await errorAction.Should().ThrowAsync<EntityNotFoundException>())
+           .WithMessage($"Could not find entity of type '{nameof(SampleDomainEntity)}'.");
     }
 
     [Fact]
@@ -212,32 +264,6 @@ public class QueryableExtensionsTests : IDisposable
 
         // Assert
         result.Should().BeFalse();
-    }
-
-    [Fact]
-    public async Task RequireAsync_Succeeds()
-    {
-        // Arrange
-        var sampleEntity = await CreateSampleEntity();
-
-        // Act
-        await testDbContext.SampleDomainEntities.RequireAsync(sampleEntity.Id);
-
-        // Assert, throws no exception
-    }
-
-    [Fact]
-    public async Task RequireAsync_ThrowsException()
-    {
-        // Arrange
-        var guid = Guid.NewGuid();
-
-        // Act
-        var errorAction = () => testDbContext.SampleDomainEntities.RequireAsync(guid);
-
-        // Assert
-        (await errorAction.Should().ThrowAsync<EntityNotFoundException>())
-           .WithMessage($"Could not find entity of type '{nameof(SampleDomainEntity)}' with id {guid}.");
     }
 
     private async Task<SampleDomainEntity> CreateSampleEntity()
