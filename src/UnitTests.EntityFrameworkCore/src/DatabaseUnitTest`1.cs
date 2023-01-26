@@ -62,5 +62,5 @@ public abstract class DatabaseUnitTest<TFixture> : DependencyInjectionUnitTest<T
         });
 
     public virtual Task InitializeAsync() => Task.CompletedTask;
-    public virtual async Task DisposeAsync() => await GetInstance<ITestStore>().OnTestEnd();
+    public virtual async Task DisposeAsync() => await GetInstance<ITestStore>().OnTestEnd().ConfigureAwait(false);
 }
