@@ -24,7 +24,7 @@ internal static class DatabaseHelper
         if (templateCreated)
             return;
 
-        await CreationSync.WaitAsync();
+        await CreationSync.WaitAsync().ConfigureAwait(false);
         try
         {
             if (templateCreated)
@@ -35,14 +35,14 @@ internal static class DatabaseHelper
 
             if (!alwaysCreateTemplate)
             {
-                templateCreated = await PostgreSqlUtil.CheckDatabaseExists(connectionString);
+                templateCreated = await PostgreSqlUtil.CheckDatabaseExists(connectionString).ConfigureAwait(false);
                 if (templateCreated)
                     return;
             }
 
             try
             {
-                await createTemplate(connectionString);
+                await createTemplate(connectionString).ConfigureAwait(false);
             }
             catch (Exception e)
             {

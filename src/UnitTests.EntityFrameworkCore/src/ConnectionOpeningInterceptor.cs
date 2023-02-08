@@ -18,7 +18,7 @@ public sealed class ConnectionOpeningInterceptor : DbConnectionInterceptor
     public override InterceptionResult ConnectionOpening(DbConnection connection, ConnectionEventData eventData, InterceptionResult result)
     {
         // Need to force onOpening to run outside of XUnits synchronization context to avoid deadlocks (XUnit thread pool may be exhausted already)
-        Task.Run(onOpening).Wait();
+        Task.Run(onOpening).ConfigureAwait(false).GetAwaiter().GetResult();
         return base.ConnectionOpening(connection, eventData, result);
     }
 

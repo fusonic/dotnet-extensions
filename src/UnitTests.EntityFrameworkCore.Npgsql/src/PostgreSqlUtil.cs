@@ -37,22 +37,23 @@ public static class PostgreSqlUtil
 
         // Open connection to the postgres-DB (for drop, create, alter)
         csBuilder.Database = "postgres";
-        await using (var connection = new NpgsqlConnection(csBuilder.ConnectionString))
+        var connection = new NpgsqlConnection(csBuilder.ConnectionString);
+        await using (connection.ConfigureAwait(false))
         {
-            await connection.OpenAsync();
+            await connection.OpenAsync().ConfigureAwait(false);
 
             // Drop existing Test-DB
-            if (await CheckDatabaseExists(connection, dbName))
+            if (await CheckDatabaseExists(connection, dbName).ConfigureAwait(false))
             {
                 logger.LogInformation("Dropping database {Database}", dbName);
 
-                await connection.ExecuteAsync($@"ALTER DATABASE ""{dbName}"" IS_TEMPLATE false");
-                await connection.ExecuteAsync($@"DROP DATABASE ""{dbName}"" WITH (FORCE)");
+                await connection.ExecuteAsync($@"ALTER DATABASE ""{dbName}"" IS_TEMPLATE false").ConfigureAwait(false);
+                await connection.ExecuteAsync($@"DROP DATABASE ""{dbName}"" WITH (FORCE)").ConfigureAwait(false);
             }
 
             // Create database
             logger.LogInformation("Creating database {Database}", dbName);
-            await connection.ExecuteAsync($@"CREATE DATABASE ""{dbName}"" TEMPLATE template0 IS_TEMPLATE true");
+            await connection.ExecuteAsync($@"CREATE DATABASE ""{dbName}"" TEMPLATE template0 IS_TEMPLATE true").ConfigureAwait(false);
 
             // Migrate & run seed
             var options = new DbContextOptionsBuilder<TDbContext>()
@@ -62,21 +63,22 @@ public static class PostgreSqlUtil
                               eventData => logger.Log(eventData.LogLevel, eventData.EventId, "[EF] {Message}", eventData.ToString()))
                          .Options;
 
-            await using (var dbContext = dbContextFactory(options))
+            var dbContext = dbContextFactory(options);
+            await using (dbContext.ConfigureAwait(false))
             {
                 logger.LogInformation("Running migrations");
-                await dbContext.Database.MigrateAsync();
+                await dbContext.Database.MigrateAsync().ConfigureAwait(false);
 
                 if (seed != null)
                 {
                     logger.LogInformation("Running seed");
-                    await seed(dbContext);
+                    await seed(dbContext).ConfigureAwait(false);
                 }
             }
 
             //Convert to template
             logger.LogInformation("Setting connection limit on template");
-            await connection.ExecuteAsync($@"ALTER DATABASE ""{dbName}"" CONNECTION LIMIT 0");
+            await connection.ExecuteAsync($@"ALTER DATABASE ""{dbName}"" CONNECTION LIMIT 0").ConfigureAwait(false);
         }
 
         NpgsqlConnection.ClearAllPools();
@@ -89,9 +91,10 @@ public static class PostgreSqlUtil
         var dbName = csBuilder.Database!;
 
         csBuilder.Database = "postgres";
-        await using var connection = new NpgsqlConnection(csBuilder.ConnectionString);
+        var connection = new NpgsqlConnection(csBuilder.ConnectionString);
+        await using var _ = connection.ConfigureAwait(false);
         connection.Open();
-        var exists = await CheckDatabaseExists(connection, dbName);
+        var exists = await CheckDatabaseExists(connection, dbName).ConfigureAwait(false);
 
         return exists;
     }
@@ -102,7 +105,7 @@ public static class PostgreSqlUtil
         cmd.CommandText = "SELECT EXISTS(SELECT * FROM pg_database WHERE datname=@dbName)";
         cmd.Parameters.Add("@dbName", NpgsqlDbType.Varchar).Value = dbName;
 
-        var result = await cmd.ExecuteScalarAsync();
+        var result = await cmd.ExecuteScalarAsync().ConfigureAwait(false);
         return result != null && (bool)result;
     }
 

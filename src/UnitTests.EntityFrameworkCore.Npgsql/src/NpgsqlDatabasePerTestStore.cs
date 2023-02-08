@@ -44,9 +44,10 @@ public class NpgsqlDatabasePerTestStore : ITestStore
         if (!isDbCreated)
             return;
 
-        await using var connection = new NpgsqlConnection(postgresConnectionString);
-        await connection.OpenAsync();
-        await connection.ExecuteAsync($@"DROP DATABASE IF EXISTS ""{connectionStringBuilder.Database}"" WITH (FORCE)");
+        var connection = new NpgsqlConnection(postgresConnectionString);
+        await using var _ = connection.ConfigureAwait(false);
+        await connection.OpenAsync().ConfigureAwait(false);
+        await connection.ExecuteAsync($@"DROP DATABASE IF EXISTS ""{connectionStringBuilder.Database}"" WITH (FORCE)").ConfigureAwait(false);
     }
 
     public async Task CreateDatabase()
@@ -55,7 +56,7 @@ public class NpgsqlDatabasePerTestStore : ITestStore
             return;
 
         if (options.TemplateCreator != null)
-            await DatabaseHelper.EnsureCreated(options.ConnectionString!, options.TemplateCreator, options.AlwaysCreateTemplate);
+            await DatabaseHelper.EnsureCreated(options.ConnectionString!, options.TemplateCreator, options.AlwaysCreateTemplate).ConfigureAwait(false);
 
         // Creating a DB from a template can cause an exception when done in parallel.
         // The lock usually prevents this, however, we still encounter race conditions
@@ -63,16 +64,17 @@ public class NpgsqlDatabasePerTestStore : ITestStore
         // 55006: source database "test_template" is being accessed by other users
         await Policy.Handle<NpgsqlException>(e => e.SqlState == "55006")
                     .WaitAndRetryAsync(30, _ => TimeSpan.FromMilliseconds(500))
-                    .ExecuteAsync(CreateDb);
+                    .ExecuteAsync(CreateDb).ConfigureAwait(false);
 
         async Task CreateDb()
         {
             if (isDbCreated)
                 return;
 
-            await using var connection = new NpgsqlConnection(postgresConnectionString);
-            await connection.OpenAsync();
-            await connection.ExecuteAsync($@"CREATE DATABASE ""{connectionStringBuilder.Database}"" TEMPLATE ""{templateDatabaseName}""");
+            var connection = new NpgsqlConnection(postgresConnectionString);
+            await using var _ = connection.ConfigureAwait(false);
+            await connection.OpenAsync().ConfigureAwait(false);
+            await connection.ExecuteAsync($@"CREATE DATABASE ""{connectionStringBuilder.Database}"" TEMPLATE ""{templateDatabaseName}""").ConfigureAwait(false);
 
             isDbCreated = true;
         }

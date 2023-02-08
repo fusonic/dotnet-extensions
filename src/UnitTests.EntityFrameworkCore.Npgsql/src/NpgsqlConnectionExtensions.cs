@@ -9,8 +9,9 @@ internal static class NpgsqlConnectionExtensions
 {
     public static async Task ExecuteAsync(this NpgsqlConnection connection, string sql)
     {
-        await using var cmd = connection.CreateCommand();
+        var cmd = connection.CreateCommand();
+        await using var _ = cmd.ConfigureAwait(false);
         cmd.CommandText = sql;
-        await cmd.ExecuteNonQueryAsync();
+        await cmd.ExecuteNonQueryAsync().ConfigureAwait(false);
     }
 }
