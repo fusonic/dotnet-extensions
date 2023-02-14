@@ -13,7 +13,6 @@
     <PackageVersion Include="Hangfire.Core" Version="1.7.32" />
     <PackageVersion Include="MailKit" Version="3.4.3" />
     <PackageVersion Include="MediatR" Version="11.1.0" />
-    <PackageVersion Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.2" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.InMemory" Version="7.0.2" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.2" />

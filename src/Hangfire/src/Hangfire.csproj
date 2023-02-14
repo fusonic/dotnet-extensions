@@ -13,7 +13,6 @@
 
     <ItemGroup>
         <PackageReference Include="Hangfire.Core" />
-        <PackageReference Include="Microsoft.CSharp" />
         <PackageReference Include="SimpleInjector" />
     </ItemGroup>
     <ItemGroup>

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <AssemblyName>Fusonic.Extensions.Common.Tests</AssemblyName>
         <RootNamespace>Fusonic.Extensions.Common.Tests</RootNamespace>
@@ -18,7 +18,6 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.CSharp" />
     </ItemGroup>
 
     <ItemGroup>
