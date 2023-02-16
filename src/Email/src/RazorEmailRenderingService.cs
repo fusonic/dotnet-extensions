@@ -37,7 +37,12 @@ public class RazorEmailRenderingService : IEmailRenderingService
     }
 
     /// <inheritdoc />
-    public async Task<(string Subject, string Body)> RenderAsync(object model, CultureInfo culture, string? subjectKey, Action<ViewContext>? beforeRender = null)
+    public async Task<(string Subject, string Body)> RenderAsync(
+        object model,
+        CultureInfo culture,
+        string? subjectKey,
+        object[]? subjectFormatParameters = null,
+        Action<ViewContext>? beforeRender = null)
     {
         var modelType = model.GetType();
         var emailViewAttribute = modelType.GetCustomAttribute<EmailViewAttribute>();
@@ -63,13 +68,11 @@ public class RazorEmailRenderingService : IEmailRenderingService
         {
             beforeRender?.Invoke(viewContext);
 
-            //Get the view localizer and initialize it with the view context, so it knows where to take the resources from
-            //The view localizer is always IViewContextAware when running in the app.
-            //When coming from the tests it isn't, but the mocked localizer doesn't need the resources.
+            //Get the view localizer and initialize it with the view context, so it knows where to take the resources from.
             var viewLocalizer = viewLocalizerFactory();
             (viewLocalizer as IViewContextAware)?.Contextualize(viewContext);
 
-            subject = viewLocalizer.GetString(subjectKey) ?? subjectKey;
+            subject = viewLocalizer.GetString(subjectKey, subjectFormatParameters ?? Array.Empty<object>()) ?? subjectKey;
         }
     }
 

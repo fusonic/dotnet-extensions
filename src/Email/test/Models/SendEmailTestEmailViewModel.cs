@@ -3,8 +3,8 @@
 
 namespace Fusonic.Extensions.Email.Tests.Models;
 
-[EmailView("Emails/RenderTest")]
-public class RenderTestEmailViewModel
+[EmailView("Emails/SendEmailTest")]
+public class SendEmailTestEmailViewModel
 {
     public required string SomeField { get; set; }
 }

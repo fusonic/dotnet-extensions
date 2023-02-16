@@ -18,6 +18,7 @@ namespace Fusonic.Extensions.Email;
 /// <param name="SubjectKey">Subject key to get the subject of the email from the ViewLocalizer. If null, the SubjectKey from the EmailViewAttribute will be used.</param>
 /// <param name="BccRecipient">Email-address of the BCC recipient. Optional.</param>
 /// <param name="Attachments">Attachments for the email.</param>
+/// <param name="SubjectFormatParameters">String formatting parameters for the translated subject. <code>subject = string.Format(subject, SubjectFormatParameters)</code></param>
 public record SendEmail(
     string Recipient,
     string RecipientDisplayName,
@@ -25,7 +26,8 @@ public record SendEmail(
     object ViewModel,
     string? SubjectKey = null,
     string? BccRecipient = null,
-    Attachment[]? Attachments = null) : ICommand
+    Attachment[]? Attachments = null,
+    object[]? SubjectFormatParameters = null) : ICommand
 {
     [OutOfBand]
     public class Handler : AsyncRequestHandler<SendEmail>, IAsyncDisposable
@@ -47,7 +49,7 @@ public record SendEmail(
 
         protected override async Task Handle(SendEmail request, CancellationToken cancellationToken)
         {
-            var (subject, body) = await emailRenderingService.RenderAsync(request.ViewModel, request.Culture, request.SubjectKey);
+            var (subject, body) = await emailRenderingService.RenderAsync(request.ViewModel, request.Culture, request.SubjectKey, request.SubjectFormatParameters);
             if (emailOptions.SubjectPrefix != null)
                 subject = emailOptions.SubjectPrefix + subject;
 

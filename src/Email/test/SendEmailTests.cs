@@ -7,10 +7,7 @@ using System.Text.RegularExpressions;
 using FluentAssertions;
 using Fusonic.Extensions.Email.Tests.Models;
 using MailKit.Net.Smtp;
-using Microsoft.AspNetCore.Mvc.Localization;
-using Microsoft.Extensions.Localization;
 using netDumbster.smtp;
-using NSubstitute;
 using SimpleInjector;
 using Xunit;
 
@@ -26,13 +23,14 @@ public partial class SendEmailTests : TestBase<SendEmailTests.SendEmailFixture>
     {
         Fixture.SmtpServer!.ClearReceivedEmail();
 
-        var model = new RenderTestEmailViewModel { SomeField = "Some field." };
+        var model = new SendEmailTestEmailViewModel { SomeField = "Some field." };
         await SendAsync(new SendEmail("recipient@fusonic.net", "The Recipient", new CultureInfo("de-AT"), model));
 
         Fixture.SmtpServer.ReceivedEmailCount.Should().Be(1);
         var email = Fixture.SmtpServer.ReceivedEmail.Single();
         email.ToAddresses
-             .Should().HaveCount(1)
+             .Should()
+             .HaveCount(1)
              .And.Contain(a => a.Address == "recipient@fusonic.net");
 
         email.FromAddress.Address.Should().Be("test@fusonic.net");
@@ -40,10 +38,12 @@ public partial class SendEmailTests : TestBase<SendEmailTests.SendEmailFixture>
         email.Headers["Subject"].Should().Be("The subject");
 
         email.MessageParts.Should().HaveCount(1);
-        email.MessageParts[0].BodyData.Should().Be(
-            "<html><head><title>Render Test</title></head>" + Environment.NewLine
-          + "<body style=\"color: red\"><p>Some field.</p>" + Environment.NewLine
-          + "</body></html>");
+        email.MessageParts[0]
+             .BodyData.Should()
+             .Be(
+                  "<html><head><title>Render Test</title></head>" + Environment.NewLine
+                                                                  + "<body style=\"color: red\"><p>Some field.</p>" + Environment.NewLine
+                                                                  + "</body></html>");
     }
 
     [Fact]
@@ -51,13 +51,14 @@ public partial class SendEmailTests : TestBase<SendEmailTests.SendEmailFixture>
     {
         Fixture.SmtpServer!.ClearReceivedEmail();
 
-        var model = new RenderTestEmailViewModel { SomeField = "Some field." };
+        var model = new SendEmailTestEmailViewModel { SomeField = "Some field." };
         await SendAsync(new SendEmail("recipient@fusonic.net", "The Recipient", new CultureInfo("de-AT"), model, BccRecipient: "bcc@fusonic.net"));
 
         Fixture.SmtpServer.ReceivedEmailCount.Should().Be(1);
         var email = Fixture.SmtpServer.ReceivedEmail.Single();
         email.ToAddresses
-             .Should().HaveCount(2)
+             .Should()
+             .HaveCount(2)
              .And.Contain(a => a.Address == "recipient@fusonic.net")
              .And.Contain(a => a.Address == "bcc@fusonic.net");
 
@@ -66,10 +67,12 @@ public partial class SendEmailTests : TestBase<SendEmailTests.SendEmailFixture>
         email.Headers["Subject"].Should().Be("The subject");
 
         email.MessageParts.Should().HaveCount(1);
-        email.MessageParts[0].BodyData.Should().Be(
-            "<html><head><title>Render Test</title></head>" + Environment.NewLine
-          + "<body style=\"color: red\"><p>Some field.</p>" + Environment.NewLine
-          + "</body></html>");
+        email.MessageParts[0]
+             .BodyData.Should()
+             .Be(
+                  "<html><head><title>Render Test</title></head>" + Environment.NewLine
+                                                                  + "<body style=\"color: red\"><p>Some field.</p>" + Environment.NewLine
+                                                                  + "</body></html>");
     }
 
     [Theory]
@@ -81,7 +84,7 @@ public partial class SendEmailTests : TestBase<SendEmailTests.SendEmailFixture>
         var attachmentPath = Path.Combine(Path.GetDirectoryName(typeof(TestFixture).Assembly.Location)!, "email.css");
         Fixture.SmtpServer!.ClearReceivedEmail();
 
-        var model = new RenderTestEmailViewModel { SomeField = "Some field." };
+        var model = new SendEmailTestEmailViewModel { SomeField = "Some field." };
         var attachments = new Attachment[]
         {
             new(
@@ -113,7 +116,7 @@ public partial class SendEmailTests : TestBase<SendEmailTests.SendEmailFixture>
     [Fact]
     public async Task SendEmail_InvalidBccEmailAddress_ThrowsException()
     {
-        var model = new RenderTestEmailViewModel { SomeField = "Some field." };
+        var model = new SendEmailTestEmailViewModel { SomeField = "Some field." };
 
         Func<Task> act = async () => await SendAsync(new SendEmail("recipient@fusonic.net", "The Recipient", new CultureInfo("de-AT"), model, BccRecipient: "invalidEmailAddress"));
 
@@ -123,7 +126,7 @@ public partial class SendEmailTests : TestBase<SendEmailTests.SendEmailFixture>
     [Fact]
     public async Task SendEmail_UnsupportedAttachmentUri_ThrowsException()
     {
-        var model = new RenderTestEmailViewModel { SomeField = "Some field." };
+        var model = new SendEmailTestEmailViewModel { SomeField = "Some field." };
 
         Func<Task> act = async () => await SendAsync(new SendEmail("recipient@fusonic.net", "The Recipient", new CultureInfo("de-AT"), model, Attachments: new[]
         {
@@ -133,6 +136,20 @@ public partial class SendEmailTests : TestBase<SendEmailTests.SendEmailFixture>
         await act.Should().ThrowAsync<InvalidOperationException>();
     }
 
+    [Fact]
+    public async Task SendEmail_SubjectFormatParameters_GetPassedToRenderer()
+    {
+        Fixture.SmtpServer!.ClearReceivedEmail();
+        var model = new SendEmailTestEmailViewModel { SomeField = "Some field." };
+
+        var formatParams = new object[] { 1, "Test" };
+        await SendAsync(new SendEmail("recipient@fusonic.net", "The Recipient", new CultureInfo("de-AT"), model, SubjectKey: "SubjectFormat", SubjectFormatParameters: formatParams));
+
+        Fixture.SmtpServer.ReceivedEmailCount.Should().Be(1);
+        var email = Fixture.SmtpServer.ReceivedEmail.Single();
+        email.Subject.Should().Be("The formatted subject 1 Test");
+    }
+
     public class SendEmailFixture : TestFixture
     {
         public SimpleSmtpServer? SmtpServer { get; private set; }
@@ -140,10 +157,6 @@ public partial class SendEmailTests : TestBase<SendEmailTests.SendEmailFixture>
         protected override void RegisterDependencies(Container container)
         {
             base.RegisterDependencies(container);
-
-            var localizer = Substitute.For<IViewLocalizer>();
-            localizer.GetString(Arg.Any<string>()).ReturnsForAnyArgs(_ => new LocalizedString("Subject", "The subject"));
-            container.RegisterInstance(localizer);
 
             SmtpServer = SimpleSmtpServer.Start();
 

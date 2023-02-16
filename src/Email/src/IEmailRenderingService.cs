@@ -1,4 +1,4 @@
-﻿// Copyright (c) Fusonic GmbH. All rights reserved.
+// Copyright (c) Fusonic GmbH. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
 using System.Globalization;
@@ -16,9 +16,10 @@ public interface IEmailRenderingService
     /// <param name="model">Model to render. Must have the EmailViewAttribute.</param>
     /// <param name="culture">Culture to render the model in.</param>
     /// <param name="subjectKey">Subject key to get the subject of the email from the ViewLocalizer. If null, the SubjectKey from the EmailViewAttribute will be used.</param>
+    /// <param name="subjectFormatParameters">String formatting parameters for the translated subject.</param>
     /// <param name="beforeRender">A chance to modify or use the view context before rendering.</param>
     /// <returns>The email subject and the rendered body.</returns>
-    Task<(string Subject, string Body)> RenderAsync(object model, CultureInfo culture, string? subjectKey, Action<ViewContext>? beforeRender = null);
+    Task<(string Subject, string Body)> RenderAsync(object model, CultureInfo culture, string? subjectKey, object[]? subjectFormatParameters = null, Action<ViewContext>? beforeRender = null);
 
     /// <summary>
     /// Renders a view based on the provided view path.

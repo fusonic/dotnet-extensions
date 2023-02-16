@@ -6,9 +6,6 @@ using System.Text.RegularExpressions;
 using System.Web;
 using FluentAssertions;
 using Fusonic.Extensions.Email.Tests.Models;
-using Microsoft.AspNetCore.Mvc.Localization;
-using Microsoft.Extensions.Localization;
-using NSubstitute;
 using Xunit;
 
 namespace Fusonic.Extensions.Email.Tests;
@@ -44,24 +41,38 @@ public partial class RazorEmailRenderingServiceTests : TestBase
     [Fact]
     public async Task ValidView_ReturnRenderedResults()
     {
-        var (subject, body) = await emailRenderingService.RenderAsync(new CultureTestEmailViewModel(), culture, subjectKey: null);
-        subject.Should().Be("Subject");
+        var (subject, body) = await emailRenderingService.RenderAsync(new RazorRenderingTestEmailViewModel(), culture, subjectKey: null);
+        subject.Should().Be("This is the default subject");
         body.Should()
             .Contain("body style=\"color: red\"");
     }
 
     [Fact]
-    public async Task ReturnsSubjectFromResource_OrCustomSubjectAsFallback()
+    public async Task Subject_NotSet_FallsBackToDefaultKey_Subject()
     {
-        const string subjectKey = "CustomSubjectKey";
-        var (subject, _) = await emailRenderingService.RenderAsync(new CultureTestEmailViewModel(), culture, subjectKey: subjectKey);
-        subject.Should().Be(subjectKey);
+        var (subject, _) = await emailRenderingService.RenderAsync(new RazorRenderingTestEmailViewModel(), culture, subjectKey: null);
+        subject.Should().Be("This is the default subject");
+    }
 
-        var localizer = GetInstance<Func<IViewLocalizer>>()();
-        localizer.GetString(subjectKey).Returns(new LocalizedString(subjectKey, "My fancy subject localized"));
+    [Fact]
+    public async Task Subject_KeyExistsInResource_ReturnsLocalizedSubject()
+    {
+        var (subject, _) = await emailRenderingService.RenderAsync(new RazorRenderingTestEmailViewModel(), culture, subjectKey: "FancySubject");
+        subject.Should().Be("This is a fancy subject");
+    }
 
-        (subject, _) = await emailRenderingService.RenderAsync(new CultureTestEmailViewModel(), culture, subjectKey: subjectKey);
-        subject.Should().Be("My fancy subject localized");
+    [Fact]
+    public async Task Subject_KeyDoesNotExistInResource_ReturnsKey()
+    {
+        var (subject, _) = await emailRenderingService.RenderAsync(new RazorRenderingTestEmailViewModel(), culture, subjectKey: "Some custom title");
+        subject.Should().Be("Some custom title");
+    }
+
+    [Fact]
+    public async Task Subject_ValueHasFormatParameters_Formats()
+    {
+        var (subject, _) = await emailRenderingService.RenderAsync(new RazorRenderingTestEmailViewModel(), culture, subjectKey: "FormattedSubject", subjectFormatParameters: new object[] { "Oh hi", new DateTime(2020, 2, 3), Guid.Empty });
+        subject.Should().Be("This is a formatted subject Oh hi 2020-02-03 00000000000000000000000000000000");
     }
 
     [Theory]
@@ -75,7 +86,7 @@ public partial class RazorEmailRenderingServiceTests : TestBase
         var cultureInfo = new CultureInfo(culture);
 
         var emailRenderingService = GetInstance<RazorEmailRenderingService>();
-        var viewModel = new CultureTestEmailViewModel();
+        var viewModel = new RazorRenderingTestEmailViewModel();
 
         var expectedDate = ToString($"{viewModel.Date:d}");
         var expectedMonth = ToString($"{viewModel.Date:MMMM}");
