@@ -64,7 +64,8 @@ public class NpgsqlDatabasePerTestStore : ITestStore
         // 55006: source database "test_template" is being accessed by other users
         await Policy.Handle<NpgsqlException>(e => e.SqlState == "55006")
                     .WaitAndRetryAsync(30, _ => TimeSpan.FromMilliseconds(500))
-                    .ExecuteAsync(CreateDb).ConfigureAwait(false);
+                    .ExecuteAsync(CreateDb)
+                    .ConfigureAwait(false);
 
         async Task CreateDb()
         {

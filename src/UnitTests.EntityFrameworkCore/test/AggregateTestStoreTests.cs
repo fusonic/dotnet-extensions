@@ -1,16 +1,11 @@
 // Copyright (c) Fusonic GmbH. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using NSubstitute;
-using NSubstitute.Core;
 using NSubstitute.ExceptionExtensions;
 
 namespace Fusonic.Extensions.UnitTests.EntityFrameworkCore.Tests;
+
 public class AggregateTestStoreTests
 {
     [Fact]

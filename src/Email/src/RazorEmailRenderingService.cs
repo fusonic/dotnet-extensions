@@ -45,9 +45,8 @@ public class RazorEmailRenderingService : IEmailRenderingService
         Action<ViewContext>? beforeRender = null)
     {
         var modelType = model.GetType();
-        var emailViewAttribute = modelType.GetCustomAttribute<EmailViewAttribute>();
-        if (emailViewAttribute == null)
-            throw new ArgumentNullException($"The Model {modelType.Name} is missing an EmailViewAttribute.");
+        var emailViewAttribute = modelType.GetCustomAttribute<EmailViewAttribute>()
+                              ?? throw new ArgumentNullException($"The Model {modelType.Name} is missing an EmailViewAttribute.");
 
         subjectKey ??= emailViewAttribute.SubjectKey;
         var subject = subjectKey;

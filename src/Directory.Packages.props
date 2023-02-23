@@ -1,22 +1,21 @@
 <Project>
-
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <EnablePackageVersionOverride>false</EnablePackageVersionOverride>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageVersion Include="coverlet.collector" Version="3.2.0" />
     <PackageVersion Include="Dapper" Version="2.0.123" />
-    <PackageVersion Include="FluentAssertions" Version="6.9.0" />
-    <PackageVersion Include="Hangfire.Core" Version="1.7.32" />
-    <PackageVersion Include="MailKit" Version="3.4.3" />
-    <PackageVersion Include="MediatR" Version="11.1.0" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.2" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.InMemory" Version="7.0.2" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.2" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.2" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="7.0.2" />
+    <PackageVersion Include="FluentAssertions" Version="6.10.0" />
+    <PackageVersion Include="Hangfire.Core" Version="1.7.33" />
+    <PackageVersion Include="MailKit" Version="3.5.0" />
+    <PackageVersion Include="MediatR" Version="[11.1.0,12.0.0)" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.3" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.InMemory" Version="7.0.3" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.3" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.3" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="7.0.3" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.3" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="7.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.FileExtensions" Version="7.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
@@ -26,11 +25,11 @@
     <PackageVersion Include="Microsoft.Extensions.Http" Version="7.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="7.0.0" />
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.4.1" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
     <PackageVersion Include="Microsoft.SourceLink.Github" Version="1.1.1" />
     <PackageVersion Include="netDumbster" Version="3.0.1" />
-    <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.1" />
-    <PackageVersion Include="NSubstitute" Version="4.4.0" />
+    <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.3" />
+    <PackageVersion Include="NSubstitute" Version="5.0.0" />
     <PackageVersion Include="Polly" Version="7.2.3" />
     <PackageVersion Include="PreMailer.Net" Version="2.4.0" />
     <PackageVersion Include="SimpleInjector.Integration.AspNetCore.Mvc.Core" Version="5.4.0" />
@@ -40,5 +39,4 @@
     <PackageVersion Include="xunit.runner.visualstudio" Version="2.4.5" />
     <PackageVersion Include="xunit" Version="2.4.2" />
   </ItemGroup>
-
 </Project>

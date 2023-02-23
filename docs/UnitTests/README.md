@@ -10,7 +10,9 @@
     - [PostgreSQL - Template](#postgresql---template)
       - [PostgreSQL template option: Create it in the fixture](#postgresql-template-option-create-it-in-the-fixture)
       - [PostgreSQL template option: Console application](#postgresql-template-option-console-application)
+    - [Microsoft SQL Server - Configure DbContext](#microsoft-sql-server---configure-dbcontext)
     - [Configuring any other database](#configuring-any-other-database)
+    - [Support mulitple databases in a test](#support-mulitple-databases-in-a-test)
     - [Database test concurrency](#database-test-concurrency)
 
 ## Introduction
@@ -219,11 +221,82 @@ With that, the database given in the connection string is getting force dropped,
 ```sh
 dotnet run --project <pathToCsProject> "<connectionString>"
 ```
+
+### Microsoft SQL Server - Configure DbContext
+
+A `TestStore` is used for handling the test databases. For Microsoft SQL Server, you can use the `SqlServerDatabasePerTestStore`, which creates a separate database for each test. You have to pass the connection string to the database and a method to create the test database. Register it as follows:
+
+```cs
+public class TestFixture : ServiceProviderTestFixture
+{
+    protected sealed override void RegisterCoreDependencies(ServiceCollection services)
+    {
+        var options = new SqlServerDatabasePerTestStoreOptions
+        {
+            ConnectionString = Configuration.GetConnectionString("SqlServer")!,
+            CreateDatabase = CreateSqlServerDatabase
+        };
+        var testStore = new SqlServerDatabasePerTestStore(options);
+        services.AddSingleton<ITestStore>(testStore);
+        services.AddDbContext<AppDbContext>(b => b.UseSqlServerDatabasePerTest(testStore));
+    }
+
+    private static async Task CreateSqlServerDatabase(string connectionString)
+    {
+        await using var dbContext = new AppDbContext(connectionString);
+        await dbContext.Database.EnsureCreatedAsync();
+    }
+}
+```
+
 ### Configuring any other database
 
 The database support is not limited to PostgreSql. You just have to implement and register the `ITestStore`.
 
 For a simple example with SqLite, check `Fusonic.Extensions.UnitTests.EntityFrameworkCore.Tests` -> `SqliteTestStore` and `TestFixture`.
+
+### Support mulitple databases in a test
+
+You can test with multiple, different database systems at once. The setup stays basically the same, but instead of registering the test stores one by one, use the `AggregateTestStore`. Example:
+
+```cs
+public class TestFixture : ServiceProviderTestFixture
+{
+    private void RegisterDatabase(IServiceCollection services)
+    {
+        // Register Npgsql (PostgreSQL)
+        var npgsqlSettings = new NpgsqlDatabasePerTestStoreOptions
+        {
+            ConnectionString = Configuration.GetConnectionString("Npgsql"),
+            TemplateCreator = CreatePostgresTemplate
+        };
+
+        var npgsqlTestStore = new NpgsqlDatabasePerTestStore(npgsqlSettings);
+        services.AddDbContext<NpgsqlDbContext>(b => b.UseNpgsqlDatabasePerTest(npgsqlTestStore));
+
+        // Register SQL Server
+        var sqlServerSettings = new SqlServerDatabasePerTestStoreOptions
+        {
+            ConnectionString = Configuration.GetConnectionString("SqlServer")!,
+            CreateDatabase = CreateSqlServerDatabase
+        };
+        var sqlServerTestStore = new SqlServerDatabasePerTestStore(sqlServerSettings);
+        services.AddDbContext<SqlServerDbContext>(b => b.UseSqlServerDatabasePerTest(sqlServerTestStore));
+
+        // Combine the test stores in the AggregateTestStore
+        services.AddSingleton<ITestStore>(new AggregateTestStore(npgsqlTestStore, sqlServerTestStore));
+    }
+
+    private static Task CreatePostgresTemplate(string connectionString)
+        => PostgreSqlUtil.CreateTestDbTemplate<NpgsqlDbContext>(connectionString, o => new NpgsqlDbContext(o), seed: ctx => new TestDataSeed(ctx).Seed());
+
+    private static async Task CreateSqlServerDatabase(string connectionString)
+    {
+        await using var dbContext = new SqlServerDbContext(connectionString);
+        await dbContext.Database.EnsureCreatedAsync();
+    }
+}
+```
 
 ### Database test concurrency
 
