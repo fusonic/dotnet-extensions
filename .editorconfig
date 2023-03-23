@@ -81,6 +81,7 @@ dotnet_diagnostic.CA1848.severity = none # CA1848: Use the LoggerMessage delegat
 dotnet_diagnostic.IDE0010.severity = suggestion # IDE0010: Add missing cases
 dotnet_diagnostic.IDE0042.severity = suggestion # IDE0042: Variable declaration can be deconstructed
 dotnet_diagnostic.IDE0072.severity = suggestion # IDE0072: Add missing cases
+dotnet_diagnostic.IDE0078.severity = suggestion # IDE0078: Use pattern matching
 
 ##########################################
 # Language Rules
@@ -160,7 +161,7 @@ dotnet_diagnostic.IDE0061.severity = suggestion # IDE0061: Use expression body f
 csharp_style_pattern_matching_over_is_with_cast_check = true:warning
 csharp_style_pattern_matching_over_as_with_null_check = true:warning
 csharp_style_prefer_switch_expression = true:warning
-csharp_style_prefer_pattern_matching = true:warning
+csharp_style_prefer_pattern_matching = true:suggestion
 csharp_style_prefer_not_pattern = true:warning
 # Expression-level preferences
 csharp_style_inlined_variable_declaration = true:warning

@@ -15,17 +15,20 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-    <WarningsAsErrors />
-    <NoWarn>1701;1702;1591;CA1716;CA1848</NoWarn>
     <Nullable>enable</Nullable>
     <Features>strict</Features>
     <ImplicitUsings>enable</ImplicitUsings>
+    <NoWarn>CS1591</NoWarn>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+  
   <PropertyGroup Condition="$(MSBuildProjectName.EndsWith('.Tests'))">
-    <NoWarn>1701;1702;1591;CA1716;CA1848;CA1707</NoWarn>
+    <!-- Disabled CA1707 to allow underscores in identifiers like test method names -->
+    <NoWarn>CA1707</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(GITLAB_CI)' == 'true'">
