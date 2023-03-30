@@ -47,6 +47,19 @@ internal static class DatabaseHelper
             catch (Exception e)
             {
                 creationFailedException = e;
+
+                // Try to drop the template database. It is in a corrupt state and should be recreated in the next run.
+                try
+                {
+                    NpgsqlConnection.ClearAllPools();
+                    await PostgreSqlUtil.DropDatabase(connectionString).ConfigureAwait(false);
+                }
+                catch (Exception ex)
+                {
+                    creationFailedException = new AggregateException(e, ex);
+                    throw creationFailedException;
+                }
+
                 throw;
             }
 

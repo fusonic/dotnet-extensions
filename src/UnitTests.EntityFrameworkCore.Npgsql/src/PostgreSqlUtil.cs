@@ -43,13 +43,8 @@ public static class PostgreSqlUtil
             await connection.OpenAsync().ConfigureAwait(false);
 
             // Drop existing Test-DB
-            if (await CheckDatabaseExists(connection, dbName).ConfigureAwait(false))
-            {
-                logger.LogInformation("Dropping database {Database}", dbName);
-
-                await connection.ExecuteAsync($@"ALTER DATABASE ""{dbName}"" IS_TEMPLATE false").ConfigureAwait(false);
-                await connection.ExecuteAsync($@"DROP DATABASE ""{dbName}"" WITH (FORCE)").ConfigureAwait(false);
-            }
+            logger.LogInformation("Dropping database {Database}", dbName);
+            await DropDatabase(connection, dbName).ConfigureAwait(false);
 
             // Create database
             logger.LogInformation("Creating database {Database}", dbName);
@@ -83,6 +78,28 @@ public static class PostgreSqlUtil
 
         NpgsqlConnection.ClearAllPools();
         logger.LogInformation("Done");
+    }
+
+    public static async Task DropDatabase(string connectionString)
+    {
+        var csBuilder = new NpgsqlConnectionStringBuilder(connectionString);
+        var dbName = csBuilder.Database;
+        AssertNotPostgres(dbName);
+
+        csBuilder.Database = "postgres";
+        var connection = new NpgsqlConnection(csBuilder.ConnectionString);
+        await using var _ = connection.ConfigureAwait(false);
+        connection.Open();
+        await DropDatabase(connection, dbName).ConfigureAwait(false);
+    }
+
+    private static async Task DropDatabase(NpgsqlConnection connection, string dbName)
+    {
+        if (await CheckDatabaseExists(connection, dbName).ConfigureAwait(false))
+        {
+            await connection.ExecuteAsync($@"ALTER DATABASE ""{dbName}"" IS_TEMPLATE false").ConfigureAwait(false);
+            await connection.ExecuteAsync($@"DROP DATABASE ""{dbName}"" WITH (FORCE)").ConfigureAwait(false);
+        }
     }
 
     public static async Task<bool> CheckDatabaseExists(string connectionString)
