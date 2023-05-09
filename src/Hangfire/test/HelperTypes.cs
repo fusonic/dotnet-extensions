@@ -1,8 +1,6 @@
 // Copyright (c) Fusonic GmbH. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
-using System.Security.Claims;
-using Fusonic.Extensions.Common.Security;
 using Fusonic.Extensions.MediatR;
 using MediatR;
 
@@ -28,42 +26,6 @@ public class CommandHandler : IRequestHandler<Command>
 {
     public Task<Unit> Handle(Command request, CancellationToken cancellationToken)
         => Unit.Task;
-}
-
-public class CommandWithCulture : ICommand { }
-
-public class CommandHandlerWithCulture : IRequestHandler<CommandWithCulture>
-{
-    private readonly Action callback;
-
-    public CommandHandlerWithCulture(Action callback)
-        => this.callback = callback;
-
-    public Task<Unit> Handle(CommandWithCulture request, CancellationToken cancellationToken)
-    {
-        callback();
-        return Unit.Task;
-    }
-}
-
-public class CommandWithUser : ICommand { }
-
-public class CommandHandlerWithUser : IRequestHandler<CommandWithUser>
-{
-    private readonly Action<ClaimsPrincipal> callback;
-    private readonly IUserAccessor userAccessor;
-
-    public CommandHandlerWithUser(Action<ClaimsPrincipal> callback, IUserAccessor userAccessor)
-    {
-        this.callback = callback;
-        this.userAccessor = userAccessor;
-    }
-
-    public Task<Unit> Handle(CommandWithUser request, CancellationToken cancellationToken)
-    {
-        callback(userAccessor.User);
-        return Unit.Task;
-    }
 }
 
 public class Notification : INotification { }

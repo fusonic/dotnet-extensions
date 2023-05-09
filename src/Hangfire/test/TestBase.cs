@@ -1,42 +1,19 @@
 // Copyright (c) Fusonic GmbH. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
-using Fusonic.Extensions.Common.Security;
-using Hangfire;
-using MediatR;
-using NSubstitute;
-using SimpleInjector;
-using SimpleInjector.Lifestyles;
+using Fusonic.Extensions.UnitTests.EntityFrameworkCore;
 
 namespace Fusonic.Extensions.Hangfire.Tests;
 
-public abstract class TestBase : IDisposable
+public abstract class TestBase : TestBase<TestFixture>
 {
-    private Scope Scope { get; }
-    protected IBackgroundJobClient JobClient { get; }
-    protected IUserAccessor UserAccessor { get; }
-    protected Container Container { get; } = new Container();
+    protected TestBase(TestFixture fixture) : base(fixture)
+    { }
+}
 
-    protected TestBase()
-    {
-        Container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
-        Container.Options.ResolveUnregisteredConcreteTypes = false;
-
-        Container.Register(typeof(IRequestHandler<,>), new[] { typeof(CommandHandler), typeof(RequestHandler), typeof(SyncRequestHandler), typeof(OutOfBandCommandHandler) });
-        Container.Collection.Register(typeof(INotificationHandler<>), new[] { typeof(NotificationHandler), typeof(SyncNotificationHandler), typeof(OutOfBandNotificationHandler), typeof(OutOfBandNotificationHandlerWithoutAttribute) });
-        Container.RegisterOutOfBandDecorators();
-
-        JobClient = Substitute.For<IBackgroundJobClient>();
-        Container.RegisterInstance(JobClient);
-        UserAccessor = Substitute.For<IUserAccessor>();
-        Container.RegisterInstance(UserAccessor);
-
-        Scope = AsyncScopedLifestyle.BeginScope(Container);
-    }
-
-    public void Dispose()
-    {
-        Scope.Dispose();
-        GC.SuppressFinalize(this);
-    }
+public abstract class TestBase<TFixture> : DatabaseUnitTest<TestDbContext, TFixture>
+    where TFixture : TestFixture
+{
+    protected TestBase(TFixture fixture) : base(fixture)
+    { }
 }

@@ -10,8 +10,13 @@
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="Dapper" />
+        <PackageReference Include="FluentAssertions" />
+        <PackageReference Include="Hangfire" />
+        <PackageReference Include="Hangfire.PostgreSql" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" />
         <PackageReference Include="NSubstitute" />
+        <PackageReference Include="SimpleInjector.Integration.ServiceCollection" />
         <PackageReference Include="xunit" />
         <PackageReference Include="xunit.runner.visualstudio">
             <PrivateAssets>all</PrivateAssets>
@@ -22,6 +27,16 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\UnitTests.EntityFrameworkCore.Npgsql\src\UnitTests.EntityFrameworkCore.Npgsql.csproj" />
+        <ProjectReference Include="..\..\UnitTests.EntityFrameworkCore\src\UnitTests.EntityFrameworkCore.csproj" />
+        <ProjectReference Include="..\..\UnitTests.SimpleInjector\src\UnitTests.SimpleInjector.csproj" />
+        <ProjectReference Include="..\..\UnitTests\src\UnitTests.csproj" />
         <ProjectReference Include="..\src\Hangfire.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="testsettings.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 </Project>

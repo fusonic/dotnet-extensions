@@ -1,7 +1,7 @@
 include:
   - project: 'fusonic/devops/images/gitlab-ci-tools'
     file: 'dotnet_test.yml'
-    ref: '3.1'
+    ref: '4.0'
 
 stages:
   - build
@@ -36,10 +36,8 @@ test:
     POSTGRES_PASSWORD: postgres
     BACKEND_SRC_DIR: src/**
     SLN_PATH: Extensions.sln
-    ConnectionString: Host=postgres;Database=test;Username=postgres;Password=postgres
-  environment:
-    name: review/$CI_COMMIT_REF_SLUG
-    url: https://fusonic.gitlab.io/-/devops/dotnet/extensions/-/jobs/${CI_JOB_ID}/artifacts/reports/dotnetcoverage/index.html
+    ConnectionStrings__Npgsql: Host=postgres;Database=test_npgsql;Username=postgres;Password=postgres
+    ConnectionStrings__Hangfire: Host=postgres;Database=test_hangfire;Username=postgres;Password=postgres
     
 publish:
   image: mcr.microsoft.com/dotnet/sdk:7.0

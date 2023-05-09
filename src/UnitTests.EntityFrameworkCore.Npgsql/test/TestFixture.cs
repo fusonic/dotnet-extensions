@@ -12,8 +12,11 @@ public class TestFixture : ServiceProviderTestFixture
 {
     protected override void RegisterCoreDependencies(IServiceCollection services)
     {
-        var testStoreOptions = Configuration.Get<NpgsqlDatabasePerTestStoreOptions>()!;
-        testStoreOptions.TemplateCreator = CreateDatabase;
+        var testStoreOptions = new NpgsqlDatabasePerTestStoreOptions
+        {
+            TemplateCreator = CreateDatabase,
+            ConnectionString = Configuration.GetConnectionString("Npgsql")
+        };
 
         var testStore = new NpgsqlDatabasePerTestStore(testStoreOptions);
         services.AddSingleton<ITestStore>(testStore);
