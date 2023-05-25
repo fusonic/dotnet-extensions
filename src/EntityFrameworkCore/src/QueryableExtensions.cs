@@ -31,7 +31,7 @@ public static class QueryableExtensions
     /// <summary> Determines if the entity with the given ID exists. Throws a EntityNotFoundException if it does not. </summary>
     public static async Task IsRequiredAsync<T, TId>(this DbSet<T> dbSet, TId id, CancellationToken cancellationToken = default)
         where T : class, IEntity<TId>
-        where TId : struct
+        where TId : notnull
     {
         if (!await ExistsAsync(dbSet, id, cancellationToken))
             throw new EntityNotFoundException(typeof(T), id);
@@ -50,7 +50,7 @@ public static class QueryableExtensions
     /// <exception cref="EntityNotFoundException">when the entity is not available</exception>
     public static async Task<T> FindRequiredAsync<T, TId>(this DbSet<T> dbSet, TId id, CancellationToken cancellationToken = default)
         where T : class, IEntity
-        where TId : struct
+        where TId : notnull
         => (await dbSet.FindAsync(new object[] { id }, cancellationToken)).IsRequired();
 
     /// <summary>
@@ -91,7 +91,7 @@ public static class QueryableExtensions
     /// </summary>
     public static async Task<T> SingleRequiredAsync<T, TId>(this IQueryable<T> query, TId id, CancellationToken cancellationToken = default)
         where T : class, IEntity<TId>
-        where TId : struct
+        where TId : notnull
     {
         try
         {
@@ -106,5 +106,5 @@ public static class QueryableExtensions
     /// <summary> Determines if the entity with the given ID exists.</summary>
     public static async Task<bool> ExistsAsync<T, TId>(this DbSet<T> dbSet, TId id, CancellationToken cancellationToken = default)
         where T : class, IEntity<TId>
-        where TId : struct => await dbSet.AnyAsync(d => Equals(d.Id, id), cancellationToken);
+        where TId : notnull => await dbSet.AnyAsync(d => Equals(d.Id, id), cancellationToken);
 }

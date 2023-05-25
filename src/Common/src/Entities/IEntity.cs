@@ -7,7 +7,7 @@ public interface IEntity
 { }
 
 public interface IEntity<out T> : IEntity
-    where T : struct
+    where T : notnull
 {
     T Id { get; }
 }
