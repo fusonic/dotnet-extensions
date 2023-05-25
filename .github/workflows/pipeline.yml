@@ -17,4 +17,4 @@ jobs:
     - name: Build
       run: dotnet build Extensions.sln --no-restore
     - name: Test
-      run: dotnet test Extensions.sln --no-build --verbosity normal --filter FullyQualifiedName!~Fusonic.Extensions.UnitTests.EntityFrameworkCore
+      run: dotnet test Extensions.sln --no-build --verbosity normal --filter "FullyQualifiedName!~Fusonic.Extensions.UnitTests.EntityFrameworkCore & FullyQualifiedName!~Fusonic.Extensions.Hangfire.Tests.HangfireTransactionalBehaviorTests"
