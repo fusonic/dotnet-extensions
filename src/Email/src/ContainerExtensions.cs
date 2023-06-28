@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
 using System.Reflection;
+using Fusonic.Extensions.AspNetCore.Razor;
 using MediatR;
 using Microsoft.AspNetCore.Mvc.Localization;
 using SimpleInjector;
@@ -32,6 +33,7 @@ public static class ContainerExtensions
 
         container.RegisterInstance(new CssInliner(options));
         container.Register<IEmailRenderingService, RazorEmailRenderingService>();
+        container.Register<IRazorViewRenderingService, RazorViewRenderingService>();
         container.RegisterInstance(container.GetInstance<IViewLocalizer>);
 
         container.Register<ISmtpClient, SmtpClient>();

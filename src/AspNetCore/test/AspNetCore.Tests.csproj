@@ -1,8 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk.Razor">
     <PropertyGroup>
         <IsPackable>false</IsPackable>
         <AssemblyName>Fusonic.Extensions.AspNetCore.Tests</AssemblyName>
         <RootNamespace>Fusonic.Extensions.AspNetCore.Tests</RootNamespace>
+        <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
     </PropertyGroup>
 
     <ItemGroup>
@@ -22,10 +23,29 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="SimpleInjector" />
+        <PackageReference Include="SimpleInjector.Integration.AspNetCore" />
+        <PackageReference Include="SimpleInjector.Integration.AspNetCore.Mvc.Core" />
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\..\Common\src\Common.csproj" />
+        <ProjectReference Include="..\..\UnitTests.SimpleInjector\src\UnitTests.SimpleInjector.csproj" />
         <ProjectReference Include="..\src\AspNetCore.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Resources\Views.Tests.RazorRenderingTest.Designer.cs">
+        <DependentUpon>Views.Tests.RazorRenderingTest.resx</DependentUpon>
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+      </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Update="Resources\Views.Tests.RazorRenderingTest.resx">
+        <LastGenOutput>Views.Tests.RazorRenderingTest.Designer.cs</LastGenOutput>
+        <Generator>ResXFileCodeGenerator</Generator>
+      </EmbeddedResource>
     </ItemGroup>
 </Project>

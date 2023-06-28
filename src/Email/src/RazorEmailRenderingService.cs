@@ -3,36 +3,23 @@
 
 using System.Globalization;
 using System.Reflection;
-using Microsoft.AspNetCore.Http;
+using Fusonic.Extensions.AspNetCore.Razor;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Localization;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewEngines;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Microsoft.AspNetCore.Routing;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Fusonic.Extensions.Email;
 
 public class RazorEmailRenderingService : IEmailRenderingService
 {
-    private readonly IRazorViewEngine viewEngine;
-    private readonly IServiceScope serviceScope;
-    private readonly ITempDataProvider tempDataProvider;
+    private readonly IRazorViewRenderingService razorViewRenderingService;
     private readonly Func<IViewLocalizer> viewLocalizerFactory;
 
-    public RazorEmailRenderingService(
-        IRazorViewEngine viewEngine,
-        IServiceScope serviceScope,
-        ITempDataProvider tempDataProvider,
-        Func<IViewLocalizer> viewLocalizerFactory)
+    public RazorEmailRenderingService(IRazorViewRenderingService razorViewRenderingService, Func<IViewLocalizer> viewLocalizerFactory)
     {
-        this.viewEngine = viewEngine;
-        this.serviceScope = serviceScope;
-        this.tempDataProvider = tempDataProvider;
+        this.razorViewRenderingService = razorViewRenderingService;
         this.viewLocalizerFactory = viewLocalizerFactory;
     }
 
@@ -46,22 +33,18 @@ public class RazorEmailRenderingService : IEmailRenderingService
     {
         var modelType = model.GetType();
         var emailViewAttribute = modelType.GetCustomAttribute<EmailViewAttribute>()
-                              ?? throw new ArgumentNullException($"The Model {modelType.Name} is missing an EmailViewAttribute.");
+                              ?? throw new ArgumentNullException($"The Model {modelType.Name} is missing an {nameof(EmailViewAttribute)}.");
 
         subjectKey ??= emailViewAttribute.SubjectKey;
         var subject = subjectKey;
-        var body = await RenderAsync(model, culture, FindView, SetSubject);
+
+        var body = await RenderAsync(
+            model,
+            culture,
+            findView: ctx => razorViewRenderingService.FindViewByPath(ctx, emailViewAttribute.ViewPath),
+            beforeRender: SetSubject);
 
         return (subject, body);
-
-        IView FindView(ActionContext actionContext)
-        {
-            var viewResult = viewEngine.FindView(actionContext, emailViewAttribute!.ViewPath, false);
-            if (!viewResult.Success)
-                throw new FileNotFoundException($"The view {emailViewAttribute.ViewPath} could not be found. Searched locations: {string.Join(", ", viewResult.SearchedLocations)}");
-
-            return viewResult.View;
-        }
 
         void SetSubject(ViewContext viewContext)
         {
@@ -77,39 +60,8 @@ public class RazorEmailRenderingService : IEmailRenderingService
 
     public async Task<string> RenderAsync(object model, CultureInfo culture, Func<ActionContext, IView> findView, Action<ViewContext>? beforeRender = null)
     {
-        var currentCulture = (CultureInfo.CurrentCulture, CultureInfo.CurrentUICulture);
-        var httpContext = new DefaultHttpContext { RequestServices = serviceScope.ServiceProvider };
-        var actionContext = new ActionContext(httpContext, new RouteData(), new ActionDescriptor());
-        var view = findView(actionContext);
-
-        var viewDictionary = new ViewDataDictionary(new EmptyModelMetadataProvider(), new ModelStateDictionary()) { Model = model };
-
-        try
-        {
-            //the razor renderer takes the culture from the current thread culture.
-            CultureInfo.CurrentCulture = CultureInfo.CurrentUICulture = culture;
-
-            await using var writer = new StringWriter();
-            var viewContext = new ViewContext(
-                actionContext,
-                view,
-                viewDictionary,
-                new TempDataDictionary(actionContext.HttpContext, tempDataProvider),
-                writer,
-                new HtmlHelperOptions())
-            {
-                Html5DateRenderingMode = Html5DateRenderingMode.CurrentCulture
-            };
-
-            beforeRender?.Invoke(viewContext);
-
-            await view.RenderAsync(viewContext);
-            var compiled = writer.ToString();
-            return CssInliner.Inline(compiled);
-        }
-        finally
-        {
-            (CultureInfo.CurrentCulture, CultureInfo.CurrentUICulture) = currentCulture;
-        }
+        var content = await razorViewRenderingService.RenderAsync(model, culture, findView, beforeRender);
+        content = CssInliner.Inline(content);
+        return content;
     }
 }
