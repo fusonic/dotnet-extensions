@@ -7,10 +7,15 @@
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <Description>Adds support for database tests using EF Core with SqlServer.</Description>
-    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    <DocumentationFile>$(ArtifactsPath)\bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
 
     <IsTestProject>false</IsTestProject>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\..\docs\UnitTests\README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\UnitTests.EntityFrameworkCore\src\UnitTests.EntityFrameworkCore.csproj" />

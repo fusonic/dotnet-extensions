@@ -3,11 +3,8 @@
 
 namespace Fusonic.Extensions.UnitTests.EntityFrameworkCore.Tests;
 
-public class CreateDatabaseInterceptorTests : TestBase
+public class CreateDatabaseInterceptorTests(TestFixture fixture) : TestBase(fixture)
 {
-    public CreateDatabaseInterceptorTests(TestFixture fixture) : base(fixture)
-    { }
-
     [Fact]
     public void NoDatabaseAccessInTest_DoesNotCreateDatabase()
     {

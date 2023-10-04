@@ -7,13 +7,9 @@ using Fusonic.Extensions.Common.Security;
 
 namespace Fusonic.Extensions.Hangfire;
 
-public class HangfireUserAccessorDecorator : IUserAccessor
+public class HangfireUserAccessorDecorator(IUserAccessor userAccessor) : IUserAccessor
 {
-    private readonly IUserAccessor userAccessor;
     private ClaimsPrincipal? user;
-
-    public HangfireUserAccessorDecorator(IUserAccessor userAccessor)
-        => this.userAccessor = userAccessor;
 
     public ClaimsPrincipal User
     {

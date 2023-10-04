@@ -18,11 +18,8 @@ namespace Fusonic.Extensions.Hangfire.Tests;
 
 // "Do not test external libraries, they should be already tested by themselves." does not count here as Hangfire has introduced
 // bugs in core usage scenarios multiple times, mainly transaction handling. To avoid surprises when updating hangfire, we test those scenarios here.
-public class HangfireTransactionalBehaviorTests : TestBase<HangfireTransactionalBehaviorTests.HangfireFixture>
+public class HangfireTransactionalBehaviorTests(HangfireTransactionalBehaviorTests.HangfireFixture fixture) : TestBase<HangfireTransactionalBehaviorTests.HangfireFixture>(fixture)
 {
-    public HangfireTransactionalBehaviorTests(HangfireFixture fixture) : base(fixture)
-    { }
-
     public override async Task InitializeAsync()
     {
         await base.InitializeAsync();

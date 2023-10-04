@@ -5,10 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Fusonic.Extensions.UnitTests.EntityFrameworkCore.Npgsql.Tests;
 
-public class TestDbContext : DbContext
+public class TestDbContext(DbContextOptions<TestDbContext> options) : DbContext(options)
 {
-    public TestDbContext(DbContextOptions<TestDbContext> options) : base(options)
-    { }
-
     public DbSet<TestEntity> TestEntities => Set<TestEntity>();
 }

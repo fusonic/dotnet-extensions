@@ -8,23 +8,10 @@ using MediatR;
 
 namespace Fusonic.Extensions.Hangfire;
 
-public class OutOfBandRequestHandlerDecorator<TRequest, TProcessor> : IRequestHandler<TRequest, Unit>
+public class OutOfBandRequestHandlerDecorator<TRequest, TProcessor>(IRequestHandler<TRequest, Unit> inner, IBackgroundJobClient client, RuntimeOptions runtimeOptions, IUserAccessor userAccessor) : IRequestHandler<TRequest, Unit>
     where TRequest : IRequest<Unit>
     where TProcessor : class, IJobProcessor
 {
-    private readonly IRequestHandler<TRequest, Unit> inner;
-    private readonly IBackgroundJobClient client;
-    private readonly RuntimeOptions runtimeOptions;
-    private readonly IUserAccessor userAccessor;
-
-    public OutOfBandRequestHandlerDecorator(IRequestHandler<TRequest, Unit> inner, IBackgroundJobClient client, RuntimeOptions runtimeOptions, IUserAccessor userAccessor)
-    {
-        this.inner = inner;
-        this.client = client;
-        this.runtimeOptions = runtimeOptions;
-        this.userAccessor = userAccessor;
-    }
-
     public Task<Unit> Handle(TRequest request, CancellationToken cancellationToken)
     {
         if (runtimeOptions.SkipOutOfBandDecorators)

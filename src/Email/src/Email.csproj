@@ -5,9 +5,14 @@
         <PackageProjectUrl>https://github.com/fusonic/dotnet-extensions</PackageProjectUrl>
         <IncludeSymbols>true</IncludeSymbols>
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-        <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+        <DocumentationFile>$(ArtifactsPath)\bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
         <Description>Contains common functionality for rendering email templates using razor engine and sending emails via MailKit.</Description>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
+
+    <ItemGroup>
+      <None Include="..\..\..\docs\Email\README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
 
     <ItemGroup>
         <FrameworkReference Include="Microsoft.AspNetCore.App" Version="3.1.1" />

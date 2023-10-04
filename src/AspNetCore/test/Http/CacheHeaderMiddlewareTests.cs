@@ -30,7 +30,7 @@ public class CacheHeaderMiddlewareTests
         Assert.Equal(defaultHeader, httpContext.Response.GetTypedHeaders().CacheControl);
         Assert.True(nextCalled);
 
-        // Does not override exisiting header
+        // Does not override existing header
         nextCalled = false;
         var newHeader = new CacheControlHeaderValue { NoCache = false, MaxAge = TimeSpan.FromDays(10) };
         await middleware.Invoke(httpContext);
@@ -61,14 +61,14 @@ public class CacheHeaderMiddlewareTests
 
         nextCalled = false;
         httpContext = new DefaultHttpContext();
-        httpContext.Request.Path = "/MyFancyRoute/xyz/asdf";
+        httpContext.Request.Path = "/MyFancyRoute/xyz/random";
         await middleware.Invoke(httpContext);
         Assert.Equal(routeHeader, httpContext.Response.GetTypedHeaders().CacheControl);
         Assert.True(nextCalled);
 
         // Check route matching ignores case (Ordinal ignore case)
         httpContext = new DefaultHttpContext();
-        httpContext.Request.Path = "/myfancyroute/xyz/asdf";
+        httpContext.Request.Path = "/myFancyRoute/xyz/random";
         await middleware.Invoke(httpContext);
         Assert.Equal(routeHeader, httpContext.Response.GetTypedHeaders().CacheControl);
     }
@@ -78,7 +78,7 @@ public class CacheHeaderMiddlewareTests
     {
         var options = new CacheHeaderOptions();
         var value = new CacheControlHeaderValue();
-        options.ConfigureValueForRoutes(value, new[] { "/a", "/b" });
+        options.ConfigureValueForRoutes(value, ["/a", "/b"]);
 
         Assert.Equal(2, options.Routes.Count);
         Assert.Equal(options.Routes["/a"], value);
@@ -90,7 +90,7 @@ public class CacheHeaderMiddlewareTests
     public void ConfigureNoCacheForRoutes()
     {
         var options = new CacheHeaderOptions();
-        options.ConfigureNoCacheForRoutes(new[] { "/a", "/b" });
+        options.ConfigureNoCacheForRoutes(["/a", "/b"]);
 
         var noCache = new CacheControlHeaderValue { NoStore = true, NoCache = true };
         Assert.Equal(2, options.Routes.Count);

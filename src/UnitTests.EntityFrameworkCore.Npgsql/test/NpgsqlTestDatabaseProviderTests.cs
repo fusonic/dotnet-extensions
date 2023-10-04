@@ -7,12 +7,9 @@ using Npgsql;
 
 namespace Fusonic.Extensions.UnitTests.EntityFrameworkCore.Npgsql.Tests;
 
-public class NpgsqlDatabasePerTestStoreTests : TestBase
+public class NpgsqlDatabasePerTestStoreTests(TestFixture fixture) : TestBase(fixture)
 {
     private static readonly List<string> UsedDbNames = new();
-
-    public NpgsqlDatabasePerTestStoreTests(TestFixture fixture) : base(fixture)
-    { }
 
     [Theory]
     [InlineData(1)]

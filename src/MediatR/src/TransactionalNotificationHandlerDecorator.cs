@@ -12,18 +12,9 @@ namespace Fusonic.Extensions.MediatR;
 /// Configuration with SimpleInjector:
 /// Container.RegisterDecorator(typeof(INotificationHandler{}), typeof(TransactionNotificationHandlerDecorator{}));
 /// </summary>
-public class TransactionalNotificationHandlerDecorator<TNotification> : INotificationHandler<TNotification>
+public class TransactionalNotificationHandlerDecorator<TNotification>(INotificationHandler<TNotification> notificationHandler, ITransactionScopeHandler transactionScopeHandler) : INotificationHandler<TNotification>
     where TNotification : INotification
 {
-    private readonly INotificationHandler<TNotification> notificationHandler;
-    private readonly ITransactionScopeHandler transactionScopeHandler;
-
-    public TransactionalNotificationHandlerDecorator(INotificationHandler<TNotification> notificationHandler, ITransactionScopeHandler transactionScopeHandler)
-    {
-        this.notificationHandler = notificationHandler;
-        this.transactionScopeHandler = transactionScopeHandler;
-    }
-
     public Task Handle(TNotification notification, CancellationToken cancellationToken)
         => transactionScopeHandler.RunInTransactionScope(() => notificationHandler.Handle(notification, cancellationToken));
 }

@@ -5,11 +5,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Fusonic.Extensions.UnitTests.EntityFrameworkCore.Tests;
 
-public class DatabaseUnitTestTests : TestBase
+public class DatabaseUnitTestTests(TestFixture fixture) : TestBase(fixture)
 {
-    public DatabaseUnitTestTests(TestFixture fixture) : base(fixture)
-    { }
-
     [Fact]
     public void Query_ActsAndReturnsResult()
     {

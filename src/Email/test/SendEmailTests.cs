@@ -13,11 +13,8 @@ using Xunit;
 
 namespace Fusonic.Extensions.Email.Tests;
 
-public partial class SendEmailTests : TestBase<SendEmailTests.SendEmailFixture>
+public partial class SendEmailTests(SendEmailTests.SendEmailFixture fixture) : TestBase<SendEmailTests.SendEmailFixture>(fixture)
 {
-    public SendEmailTests(SendEmailFixture fixture) : base(fixture)
-    { }
-
     [Fact]
     public async Task SendEmail()
     {
@@ -118,7 +115,7 @@ public partial class SendEmailTests : TestBase<SendEmailTests.SendEmailFixture>
     {
         var model = new SendEmailTestEmailViewModel { SomeField = "Some field." };
 
-        Func<Task> act = async () => await SendAsync(new SendEmail("recipient@fusonic.net", "The Recipient", new CultureInfo("de-AT"), model, BccRecipient: "invalidEmailAddress"));
+        var act = async () => await SendAsync(new SendEmail("recipient@fusonic.net", "The Recipient", new CultureInfo("de-AT"), model, BccRecipient: "invalidEmailAddress"));
 
         await act.Should().ThrowAsync<SmtpCommandException>();
     }
@@ -128,10 +125,9 @@ public partial class SendEmailTests : TestBase<SendEmailTests.SendEmailFixture>
     {
         var model = new SendEmailTestEmailViewModel { SomeField = "Some field." };
 
-        Func<Task> act = async () => await SendAsync(new SendEmail("recipient@fusonic.net", "The Recipient", new CultureInfo("de-AT"), model, Attachments: new[]
-        {
+        var act = async () => await SendAsync(new SendEmail("recipient@fusonic.net", "The Recipient", new CultureInfo("de-AT"), model, Attachments: [
             new Attachment("foo", new Uri("soso://over.there/file.txt"))
-        }));
+        ]));
 
         await act.Should().ThrowAsync<InvalidOperationException>();
     }

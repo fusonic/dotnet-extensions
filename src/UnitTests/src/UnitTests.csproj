@@ -6,10 +6,15 @@
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <Description>Xunit-based testing base classes with support for dependency injection. Libraries supporting specific DI containers (SimpleInjector, ServiceProvider) are in separate packages.</Description>
-    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    <DocumentationFile>$(ArtifactsPath)\bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
 
     <IsTestProject>false</IsTestProject>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\..\docs\UnitTests\README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="MediatR" />

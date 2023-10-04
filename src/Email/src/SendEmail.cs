@@ -30,22 +30,9 @@ public record SendEmail(
     object[]? SubjectFormatParameters = null) : ICommand
 {
     [OutOfBand]
-    public class Handler : AsyncRequestHandler<SendEmail>, IAsyncDisposable
+    public class Handler(EmailOptions emailOptions, ISmtpClient smtpClient, IEmailRenderingService emailRenderingService, IEnumerable<IEmailAttachmentResolver> emailAttachmentResolvers) : AsyncRequestHandler<SendEmail>, IAsyncDisposable
     {
-        private readonly EmailOptions emailOptions;
-        private readonly ISmtpClient smtpClient;
-        private readonly IEmailRenderingService emailRenderingService;
-        private readonly IEnumerable<IEmailAttachmentResolver> emailAttachmentResolvers;
-
         private readonly List<Stream> openedStreams = new();
-
-        public Handler(EmailOptions emailOptions, ISmtpClient smtpClient, IEmailRenderingService emailRenderingService, IEnumerable<IEmailAttachmentResolver> emailAttachmentResolvers)
-        {
-            this.emailOptions = emailOptions;
-            this.smtpClient = smtpClient;
-            this.emailRenderingService = emailRenderingService;
-            this.emailAttachmentResolvers = emailAttachmentResolvers;
-        }
 
         protected override async Task Handle(SendEmail request, CancellationToken cancellationToken)
         {

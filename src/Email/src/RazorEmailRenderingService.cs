@@ -12,16 +12,8 @@ using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 namespace Fusonic.Extensions.Email;
 
-public class RazorEmailRenderingService : IEmailRenderingService
+public class RazorEmailRenderingService(IRazorViewRenderingService razorViewRenderingService, Func<IViewLocalizer> viewLocalizerFactory) : IEmailRenderingService
 {
-    private readonly IRazorViewRenderingService razorViewRenderingService;
-    private readonly Func<IViewLocalizer> viewLocalizerFactory;
-
-    public RazorEmailRenderingService(IRazorViewRenderingService razorViewRenderingService, Func<IViewLocalizer> viewLocalizerFactory)
-    {
-        this.razorViewRenderingService = razorViewRenderingService;
-        this.viewLocalizerFactory = viewLocalizerFactory;
-    }
 
     /// <inheritdoc />
     public async Task<(string Subject, string Body)> RenderAsync(
@@ -54,7 +46,7 @@ public class RazorEmailRenderingService : IEmailRenderingService
             var viewLocalizer = viewLocalizerFactory();
             (viewLocalizer as IViewContextAware)?.Contextualize(viewContext);
 
-            subject = viewLocalizer.GetString(subjectKey, subjectFormatParameters ?? Array.Empty<object>()) ?? subjectKey;
+            subject = viewLocalizer.GetString(subjectKey, subjectFormatParameters ?? []) ?? subjectKey;
         }
     }
 

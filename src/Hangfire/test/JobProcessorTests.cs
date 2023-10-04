@@ -16,11 +16,8 @@ using Xunit;
 
 namespace Fusonic.Extensions.Hangfire.Tests;
 
-public class JobProcessorTests : TestBase
+public class JobProcessorTests(TestFixture testFixture) : TestBase(testFixture)
 {
-    public JobProcessorTests(TestFixture testFixture) : base(testFixture)
-    { }
-
     protected JobProcessor GetJobProcessor() => GetInstance<JobProcessor>();
 
     [Fact]
@@ -141,12 +138,8 @@ public class JobProcessorTests : TestBase
 
     public record CommandWithUser : ICommand
     {
-        public class Handler : IRequestHandler<CommandWithUser>
+        public class Handler(IUserAccessor userAccessor) : IRequestHandler<CommandWithUser>
         {
-            private readonly IUserAccessor userAccessor;
-
-            public Handler(IUserAccessor userAccessor) => this.userAccessor = userAccessor;
-
             public Task<Unit> Handle(CommandWithUser request, CancellationToken cancellationToken)
             {
                 var user = userAccessor.User;

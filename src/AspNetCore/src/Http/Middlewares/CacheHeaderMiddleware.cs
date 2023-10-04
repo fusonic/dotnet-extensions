@@ -1,4 +1,4 @@
-﻿// Copyright (c) Fusonic GmbH. All rights reserved.
+// Copyright (c) Fusonic GmbH. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
 using Microsoft.AspNetCore.Http;
@@ -6,17 +6,8 @@ using Microsoft.Net.Http.Headers;
 
 namespace Fusonic.Extensions.AspNetCore.Http.Middlewares;
 
-public class CacheHeaderMiddleware
+public class CacheHeaderMiddleware(RequestDelegate next, CacheHeaderOptions options)
 {
-    private readonly RequestDelegate next;
-    private readonly CacheHeaderOptions options;
-
-    public CacheHeaderMiddleware(RequestDelegate next, CacheHeaderOptions options)
-    {
-        this.next = next;
-        this.options = options;
-    }
-
     public Task Invoke(HttpContext context)
     {
         if (context.Response.Headers[HeaderNames.CacheControl].Count == 0)

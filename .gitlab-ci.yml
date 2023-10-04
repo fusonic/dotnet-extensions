@@ -1,19 +1,22 @@
 include:
   - project: 'fusonic/devops/images/gitlab-ci-tools'
     file: 'dotnet_test.yml'
-    ref: '4.0'
+    ref: '5.3'
 
 stages:
   - build
   - test
   - publish
 
+variables:
+  BUILD_IMAGE: mcr.microsoft.com/dotnet/sdk:8.0
+
 default:
   interruptible: true
 
 build:
   stage: build
-  image: mcr.microsoft.com/dotnet/sdk:7.0
+  image: ${BUILD_IMAGE}
   before_script:
     # Workaround for SourceLink: See: https://github.com/dotnet/sourcelink/issues/689
     - git config url."https://github.com/fusonic/dotnet-extensions".insteadOf https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.com/fusonic/devops/dotnet/extensions
@@ -22,31 +25,43 @@ build:
   artifacts:
     when: on_success
     paths:
-      - ./src/*/src/bin/Release/*.nupkg
-      - ./src/*/src/bin/Release/*.snupkg
+      - ./.artifacts/package/release/*.nupkg
+      - ./.artifacts/package/release/*.snupkg
+  rules:
+    - when: always
 
 test:
   stage: test
-  image: mcr.microsoft.com/dotnet/sdk:7.0
+  image: ${BUILD_IMAGE}
   extends: .dotnet-test
   services:
-    - name: postgres:14.6
+    - name: postgres:15.4
       alias: postgres
   variables:
-    POSTGRES_PASSWORD: postgres
+    POSTGRES_PASSWORD: admin
     BACKEND_SRC_DIR: src/**
     SLN_PATH: Extensions.sln
-    ConnectionStrings__Npgsql: Host=postgres;Database=test_npgsql;Username=postgres;Password=postgres
-    ConnectionStrings__Hangfire: Host=postgres;Database=test_hangfire;Username=postgres;Password=postgres
+    ConnectionStrings__Npgsql: Host=postgres;Database=test_npgsql;Username=postgres;Password=admin
+    ConnectionStrings__Hangfire: Host=postgres;Database=test_hangfire;Username=postgres;Password=admin
+  rules:
+    - when: always
+
+dotnet:check-warnings:
+  stage: test
+  extends: .dotnet:check-warnings
+  image: ${BUILD_IMAGE}
+  variables:
+    SLN_PATH: Extensions.sln
     
 publish:
-  image: mcr.microsoft.com/dotnet/sdk:7.0
+  image: ${BUILD_IMAGE}
   stage: publish
   variables:
     GIT_STRATEGY: none
   script:
-    - dotnet nuget push "src/**/src/bin/Release/*.nupkg" -k $Nuget_Key -s https://api.nuget.org/v3/index.json --skip-duplicate
+    - dotnet nuget push ".artifacts/package/release/*.nupkg" -k $Nuget_Key -s https://api.nuget.org/v3/index.json --skip-duplicate
   when: manual
-  only:
-    - /^release\/.*$/
-    - main
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main" || $CI_COMMIT_TAG
+      when: manual
+    - when: never

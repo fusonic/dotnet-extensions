@@ -71,7 +71,7 @@ public partial class RazorEmailRenderingServiceTests : TestBase
     [Fact]
     public async Task Subject_ValueHasFormatParameters_Formats()
     {
-        var (subject, _) = await emailRenderingService.RenderAsync(new RazorRenderingTestEmailViewModel(), culture, subjectKey: "FormattedSubject", subjectFormatParameters: new object[] { "Oh hi", new DateTime(2020, 2, 3), Guid.Empty });
+        var (subject, _) = await emailRenderingService.RenderAsync(new RazorRenderingTestEmailViewModel(), culture, subjectKey: "FormattedSubject", subjectFormatParameters: ["Oh hi", new DateTime(2020, 2, 3), Guid.Empty]);
         subject.Should().Be("This is a formatted subject Oh hi 2020-02-03 00000000000000000000000000000000");
     }
 

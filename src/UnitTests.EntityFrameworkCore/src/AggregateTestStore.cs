@@ -36,7 +36,7 @@ public class AggregateTestStore : ITestStore
             }
         }
 
-        if (exceptions.Any())
+        if (exceptions.Count != 0)
             throw new AggregateException(exceptions);
     }
 }

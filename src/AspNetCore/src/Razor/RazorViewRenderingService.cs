@@ -16,21 +16,11 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Fusonic.Extensions.AspNetCore.Razor;
 
-public class RazorViewRenderingService : IRazorViewRenderingService
+public class RazorViewRenderingService(
+    IRazorViewEngine viewEngine,
+    IServiceScope serviceScope,
+    ITempDataProvider tempDataProvider) : IRazorViewRenderingService
 {
-    private readonly IRazorViewEngine viewEngine;
-    private readonly IServiceScope serviceScope;
-    private readonly ITempDataProvider tempDataProvider;
-
-    public RazorViewRenderingService(
-        IRazorViewEngine viewEngine,
-        IServiceScope serviceScope,
-        ITempDataProvider tempDataProvider)
-    {
-        this.viewEngine = viewEngine;
-        this.serviceScope = serviceScope;
-        this.tempDataProvider = tempDataProvider;
-    }
 
     /// <inheritdoc />
     public async Task<string> RenderAsync(object model, CultureInfo culture, Action<ViewContext>? beforeRender = null)

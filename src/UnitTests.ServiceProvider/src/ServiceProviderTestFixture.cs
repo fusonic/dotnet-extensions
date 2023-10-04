@@ -8,7 +8,7 @@ namespace Fusonic.Extensions.UnitTests.ServiceProvider;
 
 public abstract class ServiceProviderTestFixture : DependencyInjectionTestFixture<AsyncServiceScope>, IDisposable
 {
-    private readonly IServiceProvider serviceProvider;
+    private readonly Microsoft.Extensions.DependencyInjection.ServiceProvider serviceProvider;
 
     protected virtual ServiceProviderOptions ServiceProviderOptions { get; } = new()
     {
@@ -27,7 +27,7 @@ public abstract class ServiceProviderTestFixture : DependencyInjectionTestFixtur
     [DebuggerStepThrough]
     public override object GetInstance(AsyncServiceScope scope, Type serviceType) => scope.ServiceProvider.GetRequiredService(serviceType);
 
-    private IServiceProvider BuildServiceProvider()
+    private Microsoft.Extensions.DependencyInjection.ServiceProvider BuildServiceProvider()
     {
         var services = new ServiceCollection();
         RegisterCoreDependencies(services);

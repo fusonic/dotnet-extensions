@@ -11,8 +11,7 @@ public static class PropertyUtil
     /// <summary> Returns the name of the property used in the given expression. </summary>
     public static string GetName<T, TResult>(Expression<Func<T, TResult>> propertyExpression)
     {
-        if (propertyExpression == null)
-            throw new ArgumentNullException(nameof(propertyExpression));
+        ArgumentNullException.ThrowIfNull(propertyExpression);
 
         return GetPropertyMember(propertyExpression.Body).Name;
     }
@@ -20,8 +19,7 @@ public static class PropertyUtil
     /// <summary> Returns the name of the property used in the given expression. </summary>
     public static string GetName<T>(Expression<Func<T, object>> propertyExpression)
     {
-        if (propertyExpression == null)
-            throw new ArgumentNullException(nameof(propertyExpression));
+        ArgumentNullException.ThrowIfNull(propertyExpression);
 
         return GetPropertyMember(propertyExpression.Body).Name;
     }
@@ -29,8 +27,7 @@ public static class PropertyUtil
     /// <summary> Returns the type of the property used in the given expression. </summary>
     public static Type GetType<T>(Expression<Func<T, object>> propertyExpression)
     {
-        if (propertyExpression == null)
-            throw new ArgumentNullException(nameof(propertyExpression));
+        ArgumentNullException.ThrowIfNull(propertyExpression);
 
         var propertyMember = GetPropertyMember(propertyExpression.Body);
         return propertyMember.DeclaringType!.GetProperty(propertyMember.Name)!.PropertyType;

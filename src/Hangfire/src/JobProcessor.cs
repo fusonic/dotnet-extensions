@@ -9,11 +9,9 @@ using SimpleInjector;
 
 namespace Fusonic.Extensions.Hangfire;
 
-public class JobProcessor : IJobProcessor
+public class JobProcessor(Container container) : IJobProcessor
 {
-    private readonly Container container;
-
-    public JobProcessor(Container container) => this.container = container;
+    private readonly Container container = container;
 
     public virtual Task ProcessAsync(MediatorHandlerContext context, PerformContext performContext)
     {
@@ -43,7 +41,7 @@ public class JobProcessor : IJobProcessor
         }
         else if (message is IRequest<Unit>)
         {
-            var handlerType = typeof(IRequestHandler<,>).MakeGenericType(new[] { messageType, typeof(Unit) });
+            var handlerType = typeof(IRequestHandler<,>).MakeGenericType([messageType, typeof(Unit)]);
             var handler = container.GetInstance(handlerType);
             return InvokeAsync((dynamic)handler, (dynamic)message);
         }
@@ -53,7 +51,7 @@ public class JobProcessor : IJobProcessor
         }
     }
 
-    private static Task InvokeAsync<TRequest>(IRequestHandler<TRequest, Unit> handler, TRequest request) where TRequest : IRequest<Unit>
+    private static Task<Unit> InvokeAsync<TRequest>(IRequestHandler<TRequest, Unit> handler, TRequest request) where TRequest : IRequest<Unit>
         => handler.Handle(request, CancellationToken.None);
 
     private static Task InvokeAsync<TRequest>(NotificationDispatcher<TRequest> dispatcher, Type handlerType, TRequest request) where TRequest : INotification

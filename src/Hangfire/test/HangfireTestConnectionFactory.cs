@@ -6,10 +6,7 @@ using Npgsql;
 
 namespace Fusonic.Extensions.Hangfire.Tests;
 
-public class HangfireTestConnectionFactory : IConnectionFactory
+public class HangfireTestConnectionFactory(Func<string> getConnectionString) : IConnectionFactory
 {
-    private readonly Func<string> getConnectionString;
-    public HangfireTestConnectionFactory(Func<string> getConnectionString) => this.getConnectionString = getConnectionString;
-
     public NpgsqlConnection GetOrCreateConnection() => new(getConnectionString());
 }

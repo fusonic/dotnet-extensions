@@ -82,10 +82,8 @@ public class ContainerExtensionsTests : IDisposable
         Assert.IsType<HangfireUserAccessorDecorator>(Container.GetInstance<IUserAccessor>());
     }
 
-    private sealed class CustomJobProcessor : JobProcessor
+    private sealed class CustomJobProcessor(Container container) : JobProcessor(container)
     {
-        public CustomJobProcessor(Container container) : base(container)
-        { }
     }
 
     public void Dispose()

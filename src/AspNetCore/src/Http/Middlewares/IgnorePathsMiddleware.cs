@@ -1,4 +1,4 @@
-﻿// Copyright (c) Fusonic GmbH. All rights reserved.
+// Copyright (c) Fusonic GmbH. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
 using System.Net;
@@ -10,22 +10,13 @@ namespace Fusonic.Extensions.AspNetCore.Http.Middlewares;
 /// Returns 404 for all configured paths.
 /// This is useful if you, for example, want to avoid a SPA to handle a path. A typo in an API-Url should result in 404 and should not be handled by the SPA.
 /// </summary>
-public class IgnorePathsMiddleware
+public class IgnorePathsMiddleware(RequestDelegate next, List<PathString> ignoredNormalizedPaths)
 {
-    private readonly RequestDelegate next;
-    private readonly List<PathString> ignoredPaths;
-
-    public IgnorePathsMiddleware(RequestDelegate next, List<PathString> ignoredNormalizedPaths)
-    {
-        this.next = next;
-        ignoredPaths = ignoredNormalizedPaths;
-    }
-
     public Task Invoke(HttpContext context)
     {
         var requestPath = context.Request.Path;
 
-        foreach (var ignoredPath in ignoredPaths)
+        foreach (var ignoredPath in ignoredNormalizedPaths)
         {
             if (requestPath.StartsWithSegments(ignoredPath))
             {

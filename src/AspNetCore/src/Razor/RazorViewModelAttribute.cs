@@ -4,13 +4,12 @@
 namespace Fusonic.Extensions.AspNetCore.Razor;
 
 [AttributeUsage(AttributeTargets.Class, Inherited = false)]
-public sealed class RazorViewModelAttribute : Attribute
+public sealed class RazorViewModelAttribute(string viewPath) : Attribute
 {
-    public RazorViewModelAttribute(string viewPath) => ViewPath = viewPath;
 
     /// <summary>
     /// Path to the view within the razor search paths.
     /// Example: A value of "Feature/FancyPage" usually finds the View "Views/Feature/FancyPage.cshtml"
     /// </summary>
-    public string ViewPath { get; }
+    public string ViewPath => viewPath;
 }

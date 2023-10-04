@@ -1,4 +1,4 @@
-﻿// Copyright (c) Fusonic GmbH. All rights reserved.
+// Copyright (c) Fusonic GmbH. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
 using System.Diagnostics.CodeAnalysis;
@@ -8,13 +8,8 @@ using Microsoft.AspNetCore.Http;
 
 namespace Fusonic.Extensions.AspNetCore.Http;
 
-public class HttpContextUserAccessor : IUserAccessor
+public class HttpContextUserAccessor(IHttpContextAccessor contextAccessor) : IUserAccessor
 {
-    private readonly IHttpContextAccessor contextAccessor;
-
-    public HttpContextUserAccessor(IHttpContextAccessor contextAccessor)
-        => this.contextAccessor = contextAccessor;
-
     public ClaimsPrincipal User
         => (contextAccessor.HttpContext ?? throw new InvalidOperationException("No HttpContext available.")).User;
 

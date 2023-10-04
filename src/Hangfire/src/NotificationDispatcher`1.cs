@@ -6,14 +6,9 @@ using SimpleInjector;
 
 namespace Fusonic.Extensions.Hangfire;
 
-internal sealed class NotificationDispatcher<T> where T : INotification
+internal sealed class NotificationDispatcher<T>(IList<DependencyMetadata<INotificationHandler<T>>> metadata) where T : INotification
 {
-    private readonly Dictionary<Type, DependencyMetadata<INotificationHandler<T>>> metadataDictionary;
-
-    public NotificationDispatcher(IList<DependencyMetadata<INotificationHandler<T>>> metadata)
-    {
-        metadataDictionary = metadata.ToDictionary(p => p.ImplementationType);
-    }
+    private readonly Dictionary<Type, DependencyMetadata<INotificationHandler<T>>> metadataDictionary = metadata.ToDictionary(p => p.ImplementationType);
 
     public Task Dispatch(T message, Type handlerType, CancellationToken cancellationToken)
     {

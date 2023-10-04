@@ -1,11 +1,9 @@
 // Copyright (c) Fusonic GmbH. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
-using System.Runtime.Serialization;
 
 namespace Fusonic.Extensions.Common.Entities;
 
-[Serializable]
 public sealed class EntityNotFoundException : Exception
 {
     public Type? EntityType { get; private set; }
@@ -22,6 +20,4 @@ public sealed class EntityNotFoundException : Exception
     public EntityNotFoundException(Type entityType, object entityId, string message) : this(entityType, message) => EntityId = entityId;
 
     public EntityNotFoundException(Type entityType, object entityId) : this(entityType, entityId, $"Could not find entity of type '{entityType.Name}' with id {entityId}.") { }
-
-    private EntityNotFoundException(SerializationInfo info, StreamingContext context) : base(info, context) { }
 }

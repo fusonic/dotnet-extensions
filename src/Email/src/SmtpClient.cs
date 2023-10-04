@@ -7,12 +7,8 @@ using MimeKit;
 
 namespace Fusonic.Extensions.Email;
 
-public class SmtpClient : ISmtpClient
+public class SmtpClient(EmailOptions options) : ISmtpClient
 {
-    private readonly EmailOptions options;
-
-    public SmtpClient(EmailOptions options) => this.options = options;
-
     public async Task SendMailAsync(MimeMessage message)
     {
         if (!string.IsNullOrWhiteSpace(options.StoreInDirectory))

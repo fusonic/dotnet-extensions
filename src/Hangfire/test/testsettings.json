@@ -1,5 +1,5 @@
 {
   "ConnectionStrings": {
-    "Hangfire": "Host=127.0.0.1;Port=5433;Database=fusonic_extensions_hangfire_test;Username=postgres;Password=developer"
+    "Hangfire": "Host=127.0.0.1;Port=5432;Database=fusonic_extensions_hangfire_test;Username=postgres;Password=admin"
   }
 }
