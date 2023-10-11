@@ -19,6 +19,7 @@ namespace Fusonic.Extensions.Email;
 /// <param name="BccRecipient">Email-address of the BCC recipient. Optional.</param>
 /// <param name="Attachments">Attachments for the email.</param>
 /// <param name="SubjectFormatParameters">String formatting parameters for the translated subject. <code>subject = string.Format(subject, SubjectFormatParameters)</code></param>
+/// <param name="Headers">Adds the specified Headers to the email and overrides all default headers from the <seealso cref="EmailOptions.DefaultHeaders"/>.</param>
 public record SendEmail(
     string Recipient,
     string RecipientDisplayName,
@@ -27,7 +28,8 @@ public record SendEmail(
     string? SubjectKey = null,
     string? BccRecipient = null,
     Attachment[]? Attachments = null,
-    object[]? SubjectFormatParameters = null) : ICommand
+    object[]? SubjectFormatParameters = null,
+    IReadOnlyDictionary<string, string>? Headers = null) : ICommand
 {
     [OutOfBand]
     public class Handler(EmailOptions emailOptions, ISmtpClient smtpClient, IEmailRenderingService emailRenderingService, IEnumerable<IEmailAttachmentResolver> emailAttachmentResolvers) : AsyncRequestHandler<SendEmail>, IAsyncDisposable
@@ -47,6 +49,16 @@ public record SendEmail(
                 To = { new MailboxAddress(request.RecipientDisplayName, request.Recipient) },
                 Subject = subject
             };
+
+            var headers = request.Headers ?? emailOptions.DefaultHeaders;
+
+            if (headers != null)
+            {
+                foreach (var (field, value) in headers)
+                {
+                    message.Headers.Add(field, value);
+                }
+            }
 
             if (!string.IsNullOrWhiteSpace(request.BccRecipient))
             {
