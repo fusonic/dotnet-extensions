@@ -32,7 +32,7 @@ public class IgnorePathsMiddlewareTests
                 nextCalled = true;
                 return Task.CompletedTask;
             },
-            new List<PathString> { "/ignore", "/api" });
+            ["/ignore", "/api"]);
 
         httpContext.Request.Path = path;
         await middleware.Invoke(httpContext);

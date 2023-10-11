@@ -9,7 +9,7 @@ namespace Fusonic.Extensions.UnitTests.EntityFrameworkCore.Npgsql.Tests;
 
 public class NpgsqlDatabasePerTestStoreTests(TestFixture fixture) : TestBase(fixture)
 {
-    private static readonly List<string> UsedDbNames = new();
+    private static readonly List<string> UsedDbNames = [];
 
     [Theory]
     [InlineData(1)]

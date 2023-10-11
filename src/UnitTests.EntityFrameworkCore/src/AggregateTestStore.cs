@@ -10,8 +10,8 @@ public class AggregateTestStore : ITestStore
 {
     private readonly List<ITestStore> testStores;
 
-    public AggregateTestStore(params ITestStore[] testStores) => this.testStores = testStores.ToList();
-    public AggregateTestStore(ICollection<ITestStore> testStores) => this.testStores = testStores.ToList();
+    public AggregateTestStore(params ITestStore[] testStores) => this.testStores = [.. testStores];
+    public AggregateTestStore(ICollection<ITestStore> testStores) => this.testStores = [.. testStores];
 
     public void OnTestConstruction()
     {

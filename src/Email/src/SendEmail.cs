@@ -34,7 +34,7 @@ public record SendEmail(
     [OutOfBand]
     public class Handler(EmailOptions emailOptions, ISmtpClient smtpClient, IEmailRenderingService emailRenderingService, IEnumerable<IEmailAttachmentResolver> emailAttachmentResolvers) : AsyncRequestHandler<SendEmail>, IAsyncDisposable
     {
-        private readonly List<Stream> openedStreams = new();
+        private readonly List<Stream> openedStreams = [];
 
         protected override async Task Handle(SendEmail request, CancellationToken cancellationToken)
         {
