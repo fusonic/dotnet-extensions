@@ -48,5 +48,5 @@ publish:
     - dotnet nuget push "src/**/src/bin/Release/*.nupkg" -k $Nuget_Key -s https://api.nuget.org/v3/index.json --skip-duplicate
   when: manual
   only:
-    - /^release\/.*$/
+    - 7.x
     - main
