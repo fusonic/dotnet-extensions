@@ -1,4 +1,4 @@
-﻿// Copyright (c) Fusonic GmbH. All rights reserved.
+// Copyright (c) Fusonic GmbH. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
 using System.ComponentModel.DataAnnotations;
@@ -40,8 +40,8 @@ public class EmailOptions
     public string? SubjectPrefix { get; set; }
 
     /// <summary>
-    ///    Instead of sending the email, it gets written to this directory. For debugging/development purposes only.
-    ///    If this property is set, all Smtp-Properties are ignored.
+    /// Instead of sending the email, it gets written to this directory. For debugging/development purposes only.
+    /// If this property is set, all Smtp-Properties are ignored.
     /// </summary>
     public string? StoreInDirectory { get; set; }
 
@@ -50,6 +50,11 @@ public class EmailOptions
     /// Note: This is currently expected to be a file, not an embedded resource.
     /// </summary>
     public string? CssPath { get; set; } = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!, "wwwroot/assets/emails/email.css");
+
+    /// <summary>
+    /// Sets the default headers for all emails being sent.
+    /// </summary>
+    public IReadOnlyDictionary<string, string>? DefaultHeaders { get; set; }
 
     internal void Validate()
     {

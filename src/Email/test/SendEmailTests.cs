@@ -114,6 +114,61 @@ public partial class SendEmailTests : TestBase<SendEmailTests.SendEmailFixture>
     }
 
     [Fact]
+    public async Task SendEmail_HeadersAdded()
+    {
+        Fixture.SmtpServer!.ClearReceivedEmail();
+
+        var model = new SendEmailTestEmailViewModel { SomeField = "Some field." };
+        await SendAsync(new SendEmail("recipient@fusonic.net", "The Recipient", new CultureInfo("de-AT"), model, Headers: new Dictionary<string, string> { ["my-header"] = "value" }));
+
+        Fixture.SmtpServer.ReceivedEmailCount.Should().Be(1);
+        var email = Fixture.SmtpServer.ReceivedEmail.Single();
+
+        email.Headers.AllKeys.Should().Contain("my-header");
+        email.Headers["my-header"].Should().Be("value");
+    }
+
+    [Fact]
+    public async Task SendEmail_DefaultHeadersAdded()
+    {
+        Fixture.SmtpServer!.ClearReceivedEmail();
+
+        var options = GetInstance<EmailOptions>();
+
+        options.DefaultHeaders = new Dictionary<string, string> { ["my-header"] = "value" };
+
+        var model = new SendEmailTestEmailViewModel { SomeField = "Some field." };
+        await SendAsync(new SendEmail("recipient@fusonic.net", "The Recipient", new CultureInfo("de-AT"), model));
+
+        Fixture.SmtpServer.ReceivedEmailCount.Should().Be(1);
+        var email = Fixture.SmtpServer.ReceivedEmail.Single();
+
+        email.Headers.AllKeys.Should().Contain("my-header");
+        email.Headers["my-header"].Should().Be("value");
+    }
+
+    [Fact]
+    public async Task SendEmail_DefaultHeadersOverridden()
+    {
+        Fixture.SmtpServer!.ClearReceivedEmail();
+
+        var options = GetInstance<EmailOptions>();
+
+        options.DefaultHeaders = new Dictionary<string, string> { ["my-header"] = "value" };
+
+        var model = new SendEmailTestEmailViewModel { SomeField = "Some field." };
+        await SendAsync(new SendEmail("recipient@fusonic.net", "The Recipient", new CultureInfo("de-AT"), model, Headers: new Dictionary<string, string> { ["new-header"] = "new-value" }));
+
+        Fixture.SmtpServer.ReceivedEmailCount.Should().Be(1);
+        var email = Fixture.SmtpServer.ReceivedEmail.Single();
+
+        email.Headers.AllKeys.Should().NotContain("my-header");
+        email.Headers.AllKeys.Should().Contain("new-header");
+        email.Headers["new-header"].Should().Be("new-value");
+    }
+
+
+    [Fact]
     public async Task SendEmail_InvalidBccEmailAddress_ThrowsException()
     {
         var model = new SendEmailTestEmailViewModel { SomeField = "Some field." };
