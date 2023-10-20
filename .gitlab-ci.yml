@@ -2,6 +2,9 @@ include:
   - project: 'fusonic/devops/images/gitlab-ci-tools'
     file: 'dotnet_test.yml'
     ref: '5.3'
+  - project: "fusonic/devops/images/gitlab-ci-tools"
+    file: "release_tool.yml"
+    ref: "5.3"
 
 stages:
   - build
@@ -52,7 +55,21 @@ dotnet:check-warnings:
   image: ${BUILD_IMAGE}
   variables:
     SLN_PATH: Extensions.sln
-    
+
+release:lint-merge-request:
+  stage: test
+
+release:create:
+  stage: publish
+  extends: .release-script
+  needs: []
+  dependencies: []
+  before_script:
+    - export RELEASE_VERSION=`sed -n 's/.*<Version>\(.*\)<\/Version>.*/\1/p' ./src/Directory.Build.props`
+  rules:
+    - if: '$RELEASE_NOTES_SLACK_WEBHOOK_URL && $CI_COMMIT_REF_SLUG == "main"'
+      when: manual
+
 publish:
   image: ${BUILD_IMAGE}
   stage: publish
