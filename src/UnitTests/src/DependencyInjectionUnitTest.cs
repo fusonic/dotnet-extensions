@@ -2,22 +2,15 @@
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
 using System.Diagnostics;
-using MediatR;
 using Xunit;
 
 namespace Fusonic.Extensions.UnitTests;
 
-public abstract class DependencyInjectionUnitTest<TFixture> : IDisposable, IClassFixture<TFixture>
+public abstract class DependencyInjectionUnitTest<TFixture>(TFixture fixture) : IDisposable, IClassFixture<TFixture>
     where TFixture : class, IDependencyInjectionTestFixture
 {
-    private object currentScope;
-    protected TFixture Fixture { get; }
-
-    protected DependencyInjectionUnitTest(TFixture fixture)
-    {
-        Fixture = fixture;
-        currentScope = fixture.BeginScope();
-    }
+    private object currentScope = fixture.BeginScope();
+    protected TFixture Fixture { get; } = fixture;
 
     /// <summary> Gets an instance of the requested service. </summary>
     [DebuggerStepThrough]
@@ -27,11 +20,6 @@ public abstract class DependencyInjectionUnitTest<TFixture> : IDisposable, IClas
     /// <summary> Gets an instance of the requested service type. </summary>
     [DebuggerStepThrough]
     protected object GetInstance(Type serviceType) => Fixture.GetInstance(currentScope, serviceType);
-
-    /// <summary> Runs a mediator command in its own scope. Used to reduce possible side effects from test data creation and the like. </summary>
-    [DebuggerStepThrough]
-    protected Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> request)
-        => ScopedAsync(() => GetInstance<IMediator>().Send(request));
 
     /// <summary> <see cref="ScopedAsync{TResult}"/> </summary>
     [DebuggerStepThrough]

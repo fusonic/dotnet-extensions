@@ -1,7 +1,9 @@
 // Copyright (c) Fusonic GmbH. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
+using System.Diagnostics;
 using Fusonic.Extensions.UnitTests.EntityFrameworkCore;
+using MediatR;
 
 namespace Fusonic.Extensions.Hangfire.Tests;
 
@@ -16,4 +18,9 @@ public abstract class TestBase<TFixture> : DatabaseUnitTest<TestDbContext, TFixt
 {
     protected TestBase(TFixture fixture) : base(fixture)
     { }
+
+    /// <summary> Runs a mediator command in its own scope. Used to reduce possible side effects from test data creation and the like. </summary>
+    [DebuggerStepThrough]
+    protected Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> request)
+        => ScopedAsync(() => GetInstance<IMediator>().Send(request));
 }
