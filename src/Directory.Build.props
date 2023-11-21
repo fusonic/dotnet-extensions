@@ -1,6 +1,6 @@
 <Project>
   <PropertyGroup>
-    <Version>8.0.0-preview1</Version>
+    <Version>8.0.0</Version>
     <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
 
@@ -22,7 +22,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <NoWarn>$(NoWarn),CS1591</NoWarn>
-    <ArtifactsPath>$(MSBuildThisFileDirectory)../.artifacts</ArtifactsPath>
+    <ArtifactsPath>$(MSBuildThisFileDirectory)../artifacts</ArtifactsPath>
     <AccelerateBuildsInVisualStudio>true</AccelerateBuildsInVisualStudio>
   </PropertyGroup>
   

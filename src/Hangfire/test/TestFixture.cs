@@ -87,7 +87,7 @@ public class TestFixture : SimpleInjectorTestFixture
         // Hangfire
         var connectionFactory = new HangfireTestConnectionFactory(() => ((NpgsqlDatabasePerTestStore)Container.GetInstance<ITestStore>()).ConnectionString);
         services.AddSingleton(connectionFactory);
-        services.AddHangfire(c => c.UsePostgreSqlStorage(connectionFactory, new PostgreSqlStorageOptions
+        services.AddHangfire(c => c.UsePostgreSqlStorage(options => options.UseConnectionFactory(connectionFactory), new PostgreSqlStorageOptions
         {
             EnableTransactionScopeEnlistment = true,
             PrepareSchemaIfNecessary = false // If true, Hangfire runs its scripts directly here on the not yet existing DB.
