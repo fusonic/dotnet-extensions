@@ -67,7 +67,7 @@ release:create:
   before_script:
     - export RELEASE_VERSION=`sed -n 's/.*<Version>\(.*\)<\/Version>.*/\1/p' ./src/Directory.Build.props`
   rules:
-    - if: '$RELEASE_NOTES_SLACK_WEBHOOK_URL && $CI_COMMIT_REF_SLUG == "main"'
+    - if: '$CI_COMMIT_REF_SLUG == "main"'
       when: manual
 
 publish:
