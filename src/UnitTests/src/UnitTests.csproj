@@ -13,6 +13,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectCapability Remove="TestContainer" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="..\..\..\docs\UnitTests\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
