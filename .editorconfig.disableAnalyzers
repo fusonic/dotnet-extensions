@@ -2,4 +2,6 @@
 
 [*.cs]
 
+generated_code = true
 dotnet_analyzer_diagnostic.category-Style.severity = silent
+dotnet_analyzer_diagnostic.severity = suggestion
