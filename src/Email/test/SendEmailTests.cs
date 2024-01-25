@@ -148,25 +148,40 @@ public partial class SendEmailTests : TestBase<SendEmailTests.SendEmailFixture>
     }
 
     [Fact]
-    public async Task SendEmail_DefaultHeadersOverridden()
+    public async Task SendEmail_DefaultHeadersOverriddenIfSetTwice()
     {
         Fixture.SmtpServer!.ClearReceivedEmail();
 
         var options = GetInstance<EmailOptions>();
 
-        options.DefaultHeaders = new Dictionary<string, string> { ["my-header"] = "value" };
+        options.DefaultHeaders = new Dictionary<string, string> { ["replaced"] = "value", ["default"] = "value" };
 
         var model = new SendEmailTestEmailViewModel { SomeField = "Some field." };
-        await SendAsync(new SendEmail("recipient@fusonic.net", "The Recipient", new CultureInfo("de-AT"), model, Headers: new Dictionary<string, string> { ["new-header"] = "new-value" }));
+        await SendAsync(new SendEmail("recipient@fusonic.net", "The Recipient", new CultureInfo("de-AT"), model, Headers: new Dictionary<string, string> { ["replaced"] = "new-value" }));
 
         Fixture.SmtpServer.ReceivedEmailCount.Should().Be(1);
         var email = Fixture.SmtpServer.ReceivedEmail.Single();
 
-        email.Headers.AllKeys.Should().NotContain("my-header");
-        email.Headers.AllKeys.Should().Contain("new-header");
-        email.Headers["new-header"].Should().Be("new-value");
+        email.Headers.AllKeys.Should().Contain("replaced");
+        email.Headers["replaced"].Should().Be("new-value");
+        email.Headers.AllKeys.Should().Contain("default");
+        email.Headers["default"].Should().Be("value");
     }
 
+    [Fact]
+    public async Task SendEmail_ReplyToAdded()
+    {
+        Fixture.SmtpServer!.ClearReceivedEmail();
+
+        var model = new SendEmailTestEmailViewModel { SomeField = "Some field." };
+        await SendAsync(new SendEmail("recipient@fusonic.net", "The Recipient", new CultureInfo("de-AT"), model, ReplyTo: "reply@mail.com"));
+
+        Fixture.SmtpServer.ReceivedEmailCount.Should().Be(1);
+        var email = Fixture.SmtpServer.ReceivedEmail.Single();
+
+        email.Headers.AllKeys.Should().Contain("Reply-To");
+        email.Headers["Reply-To"].Should().Be("reply@mail.com");
+    }
 
     [Fact]
     public async Task SendEmail_InvalidBccEmailAddress_ThrowsException()
