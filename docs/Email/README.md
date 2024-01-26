@@ -47,5 +47,5 @@ container.Collections.Append<IEmailAttachmentResolver, YourResolver>()
 
 ## Headers
 
-No special Headers are sent per default, however with the `Headers` overload on `SendEmail`, `MimeKit.Header`s can be added to the email (overrides all Headers defined in `EmailOptions.DefaultHeaders`). With `EmailOptions.DefaultHeaders` default headers can be set for all emails. Predefined sets of headers can be found in `EmailHeaders`:
-- `DiscourageAutoReplies` includes [`Precedence:list`](https://www.rfc-editor.org/rfc/rfc3834), [`AutoSubmitted:generated`](https://www.rfc-editor.org/rfc/rfc3834), and [`X-Auto-Response-Suppress:All`](https://learn.microsoft.com/en-us/openspecs/exchange_server_protocols/ms-oxcmail/e489ffaf-19ed-4285-96d9-c31c42cab17f). They discourage email servers to sent auto replies.
+No special Headers are sent per default, however with the `Headers` parameter on `SendEmail`, `MimeKit.Header`s can be added to the email (overrides all Headers defined in `EmailOptions.DefaultHeaders`). With `EmailOptions.DefaultHeaders` default headers can be set for all emails. Predefined sets of headers can be found in `EmailHeaders`:
+- `DiscourageAutoReplies` includes [`Precedence:list`](https://www.rfc-editor.org/rfc/rfc3834#section-3.1.8), [`AutoSubmitted:generated`](https://www.rfc-editor.org/rfc/rfc3834#section-3.1.7), and [`X-Auto-Response-Suppress:All`](https://learn.microsoft.com/en-us/openspecs/exchange_server_protocols/ms-oxcmail/e489ffaf-19ed-4285-96d9-c31c42cab17f). They discourage email servers to sent auto replies.

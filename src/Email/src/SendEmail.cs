@@ -11,15 +11,16 @@ namespace Fusonic.Extensions.Email;
 /// <summary>
 /// Sends an email in the background.
 /// </summary>
-/// <param name="Recipient">Email-address of the recipient</param>
-/// <param name="RecipientDisplayName">Display name of the recipient</param>
-/// <param name="Culture">Culture to render the email in</param>
+/// <param name="Recipient">Email-address of the recipient.</param>
+/// <param name="RecipientDisplayName">Display name of the recipient.</param>
+/// <param name="Culture">Culture to render the email in.</param>
 /// <param name="ViewModel">View model for the email. The model must have an [EmailView]-attribute, providing the path to the email to render (cshtml).</param>
 /// <param name="SubjectKey">Subject key to get the subject of the email from the ViewLocalizer. If null, the SubjectKey from the EmailViewAttribute will be used.</param>
 /// <param name="BccRecipient">Email-address of the BCC recipient. Optional.</param>
 /// <param name="Attachments">Attachments for the email.</param>
 /// <param name="SubjectFormatParameters">String formatting parameters for the translated subject. <code>subject = string.Format(subject, SubjectFormatParameters)</code></param>
-/// <param name="Headers">Adds the specified Headers to the email and overrides all default headers from the <seealso cref="EmailOptions.DefaultHeaders"/>.</param>
+/// <param name="Headers">Adds the specified headers to the email and overrides the default headers from the <seealso cref="EmailOptions.DefaultHeaders"/>.</param>
+/// <param name="ReplyTo">Sets the value as the Reply-To header in the email.</param>
 public record SendEmail(
     string Recipient,
     string RecipientDisplayName,
@@ -29,7 +30,8 @@ public record SendEmail(
     string? BccRecipient = null,
     Attachment[]? Attachments = null,
     object[]? SubjectFormatParameters = null,
-    IReadOnlyDictionary<string, string>? Headers = null) : ICommand
+    IReadOnlyDictionary<string, string>? Headers = null,
+    string? ReplyTo = null) : ICommand
 {
     [OutOfBand]
     public class Handler(EmailOptions emailOptions, ISmtpClient smtpClient, IEmailRenderingService emailRenderingService, IEnumerable<IEmailAttachmentResolver> emailAttachmentResolvers) : AsyncRequestHandler<SendEmail>, IAsyncDisposable
@@ -65,6 +67,14 @@ public record SendEmail(
                 message.Bcc.Add(new MailboxAddress(request.BccRecipient, request.BccRecipient));
             }
 
+            if (!string.IsNullOrWhiteSpace(request.ReplyTo))
+            {
+                message.ReplyTo.Add(new MailboxAddress(string.Empty, request.ReplyTo));
+            }
+
+            SetHeaders(emailOptions.DefaultHeaders);
+            SetHeaders(request.Headers);
+
             try
             {
                 await smtpClient.SendMailAsync(message);
@@ -72,6 +82,17 @@ public record SendEmail(
             finally
             {
                 await DisposeStreams();
+            }
+
+            void SetHeaders(IReadOnlyDictionary<string, string>? headers)
+            {
+                if (headers == null)
+                    return;
+
+                foreach (var (field, value) in headers)
+                {
+                    message.Headers[field] = value;
+                }
             }
         }
 
