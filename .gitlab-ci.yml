@@ -46,7 +46,6 @@ publish:
     GIT_STRATEGY: none
   script:
     - dotnet nuget push "src/**/src/bin/Release/*.nupkg" -k $Nuget_Key -s https://api.nuget.org/v3/index.json --skip-duplicate
-  when: manual
-  only:
-    - 7.x
-    - main
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH =~ /^release\// || $CI_COMMIT_TAG
+      when: manual
