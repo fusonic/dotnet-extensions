@@ -236,11 +236,10 @@ public partial class SendEmailTests(SendEmailTests.SendEmailFixture fixture) : T
             });
         }
 
-        public override void Dispose()
+        public override async ValueTask DisposeAsync()
         {
-            base.Dispose();
             SmtpServer?.Dispose();
-            GC.SuppressFinalize(this);
+            await base.DisposeAsync();
         }
     }
 

@@ -40,13 +40,8 @@ public abstract class SimpleInjectorTestFixture : DependencyInjectionTestFixture
     [DebuggerStepThrough]
     public override object GetInstance(Scope scope, Type serviceType) => scope.Container!.GetInstance(serviceType);
 
-    // TODO: Remove with v9
-    public virtual void Dispose()
-    { }
-
     public virtual async ValueTask DisposeAsync()
     {
-        Dispose();
         await container.DisposeAsync();
         GC.SuppressFinalize(this);
     }
