@@ -7,7 +7,7 @@ using SimpleInjector.Lifestyles;
 
 namespace Fusonic.Extensions.UnitTests.SimpleInjector;
 
-public abstract class SimpleInjectorTestFixture : DependencyInjectionTestFixture<Scope>, IDisposable
+public abstract class SimpleInjectorTestFixture : DependencyInjectionTestFixture<Scope>, IAsyncDisposable
 {
     private readonly Container container = new();
     protected virtual bool VerifyContainer => true;
@@ -40,9 +40,14 @@ public abstract class SimpleInjectorTestFixture : DependencyInjectionTestFixture
     [DebuggerStepThrough]
     public override object GetInstance(Scope scope, Type serviceType) => scope.Container!.GetInstance(serviceType);
 
+    // TODO: Remove with v9
     public virtual void Dispose()
+    { }
+
+    public virtual async ValueTask DisposeAsync()
     {
-        container.Dispose();
+        Dispose();
+        await container.DisposeAsync();
         GC.SuppressFinalize(this);
     }
 }
