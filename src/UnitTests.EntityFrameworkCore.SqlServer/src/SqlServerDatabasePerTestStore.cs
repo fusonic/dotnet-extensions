@@ -28,7 +28,7 @@ public class SqlServerDatabasePerTestStore : ITestStore
 
     public void OnTestConstruction()
     {
-        connectionStringBuilder.InitialCatalog = Convert.ToBase64String(Guid.NewGuid().ToByteArray()).TrimEnd('=');
+        connectionStringBuilder.InitialCatalog = string.Concat(options.DatabasePrefix, Convert.ToBase64String(Guid.NewGuid().ToByteArray()).TrimEnd('='));
         isDbCreated = false;
     }
 

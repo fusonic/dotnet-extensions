@@ -14,6 +14,7 @@ public class SqlServerDatabasePerTestStoreOptions
     {
         ConnectionString = copyFrom.ConnectionString;
         CreateDatabase = copyFrom.CreateDatabase;
+        DatabasePrefix = copyFrom.DatabasePrefix;
     }
 
     /// <summary> Connection string to the master database. </summary>
@@ -21,4 +22,7 @@ public class SqlServerDatabasePerTestStoreOptions
 
     /// <summary> Action to create the database on first connect. </summary>
     public required Func<string, Task> CreateDatabase { get; set; }
+
+    // <summaty> Prefix to use for database naming </summary>
+    public string? DatabasePrefix { get; set; } = null;
 }
