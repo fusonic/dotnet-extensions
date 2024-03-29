@@ -20,10 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MediatR" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\Common\src\Common.csproj" />
+    <ProjectReference Include="..\..\Mediator\src\Mediator.csproj" />
   </ItemGroup>
 </Project>

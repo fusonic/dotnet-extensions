@@ -1,7 +1,7 @@
 ﻿// Copyright (c) Fusonic GmbH. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
-namespace Fusonic.Extensions.MediatR;
+namespace Fusonic.Extensions.Mediator;
 
 /// <summary>
 /// Indicates that the decorated class can run out-of-band of the current flow.

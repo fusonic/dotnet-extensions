@@ -37,7 +37,7 @@ Provides Hangfire extensions, especially suited for CQRS developement. (Out of b
 Provides services and extensions for hosting. See the [documentation](docs/Hosting/README.md) for more details.
 
 [![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.MediatR.svg?label=Fusonic.Extensions.MediatR&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.MediatR/)
-Provides abstractions for MediatR. See the [documentation](docs/MediatR/README.md) for more details.
+Provides simple mediator implementation. See the [documentation](docs/Mediator/README.md) for more details.
 
 [![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.UnitTests.svg?label=Fusonic.Extensions.UnitTests&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.UnitTests/)
 Xunit-based testing base classes with support for dependency injection. Libraries supporting specific DI containers (SimpleInjector, ServiceProvider) are in separate packages. See the [unit test documentation](docs/UnitTests/README.md) for more details.

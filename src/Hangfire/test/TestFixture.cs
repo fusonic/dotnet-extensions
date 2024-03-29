@@ -3,19 +3,18 @@
 
 using Fusonic.Extensions.Common.Security;
 using Fusonic.Extensions.Common.Transactions;
-using Fusonic.Extensions.UnitTests.EntityFrameworkCore.Npgsql;
+using Fusonic.Extensions.Mediator;
 using Fusonic.Extensions.UnitTests.EntityFrameworkCore;
+using Fusonic.Extensions.UnitTests.EntityFrameworkCore.Npgsql;
 using Fusonic.Extensions.UnitTests.SimpleInjector;
 using Hangfire;
-using MediatR;
+using Hangfire.PostgreSql;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Npgsql;
 using NSubstitute;
 using SimpleInjector;
-using Hangfire.PostgreSql;
-using MediatR.Pipeline;
-using Npgsql;
 
 namespace Fusonic.Extensions.Hangfire.Tests;
 
@@ -46,19 +45,9 @@ public class TestFixture : SimpleInjectorTestFixture
     private static void RegisterMediator(Container container)
     {
         var mediatorAssemblies = new[] { typeof(IMediator).Assembly, typeof(TestFixture).Assembly };
-        container.Register(() => new ServiceFactory(container.GetInstance), Lifestyle.Singleton);
-        container.RegisterSingleton<IMediator, Mediator>();
+        container.RegisterSingleton<IMediator, SimpleInjectorMediator>();
         container.Register(typeof(IRequestHandler<,>), mediatorAssemblies);
         container.Collection.Register(typeof(INotificationHandler<>), mediatorAssemblies);
-
-        container.Collection.Register(typeof(IPipelineBehavior<,>), new[]
-        {
-            typeof(RequestPreProcessorBehavior<,>),
-            typeof(RequestPostProcessorBehavior<,>)
-        });
-
-        container.Collection.Register(typeof(IRequestPreProcessor<>), mediatorAssemblies);
-        container.Collection.Register(typeof(IRequestPostProcessor<,>), mediatorAssemblies);
     }
 
     private void RegisterDatabase(IServiceCollection services)

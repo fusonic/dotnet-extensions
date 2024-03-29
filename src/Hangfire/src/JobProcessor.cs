@@ -3,8 +3,8 @@
 
 using System.Globalization;
 using Fusonic.Extensions.Common.Security;
+using Fusonic.Extensions.Mediator;
 using Hangfire.Server;
-using MediatR;
 using SimpleInjector;
 
 namespace Fusonic.Extensions.Hangfire;

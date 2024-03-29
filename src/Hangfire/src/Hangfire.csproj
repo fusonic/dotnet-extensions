@@ -22,6 +22,6 @@
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\..\Common\src\Common.csproj" />
-        <ProjectReference Include="..\..\MediatR\src\MediatR.csproj" />
+        <ProjectReference Include="..\..\Mediator\src\Mediator.csproj" />
     </ItemGroup>
 </Project>

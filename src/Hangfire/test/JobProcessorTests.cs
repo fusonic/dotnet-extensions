@@ -5,11 +5,10 @@ using System.Globalization;
 using System.Security.Claims;
 using FluentAssertions;
 using Fusonic.Extensions.Common.Security;
-using Fusonic.Extensions.MediatR;
+using Fusonic.Extensions.Mediator;
 using Hangfire;
 using Hangfire.Server;
 using Hangfire.Storage;
-using MediatR;
 using NSubstitute;
 using NSubstitute.ClearExtensions;
 using Xunit;
@@ -33,21 +32,9 @@ public class JobProcessorTests(TestFixture testFixture) : TestBase(testFixture)
     }
 
     [Fact]
-    public async Task CanProcessNotificationSync()
-    {
-        await GetJobProcessor().ProcessAsync(new MediatorHandlerContext(new Notification(), typeof(SyncNotificationHandler).AssemblyQualifiedName!), CreatePerformContext());
-    }
-
-    [Fact]
     public async Task CanProcessRequest()
     {
         await GetJobProcessor().ProcessAsync(new MediatorHandlerContext(new Request(), typeof(RequestHandler).AssemblyQualifiedName!), CreatePerformContext());
-    }
-
-    [Fact]
-    public async Task CanProcessRequestSync()
-    {
-        await GetJobProcessor().ProcessAsync(new MediatorHandlerContext(new SyncRequest(), typeof(SyncRequestHandler).AssemblyQualifiedName!), CreatePerformContext());
     }
 
     [Fact]

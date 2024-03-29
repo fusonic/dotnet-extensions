@@ -2,8 +2,7 @@
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
 using System.Globalization;
-using Fusonic.Extensions.MediatR;
-using MediatR;
+using Fusonic.Extensions.Mediator;
 using MimeKit;
 
 namespace Fusonic.Extensions.Email;

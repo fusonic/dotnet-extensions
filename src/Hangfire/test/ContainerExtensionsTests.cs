@@ -2,8 +2,8 @@
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
 using Fusonic.Extensions.Common.Security;
+using Fusonic.Extensions.Mediator;
 using Hangfire;
-using MediatR;
 using NSubstitute;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;

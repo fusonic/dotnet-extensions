@@ -2,10 +2,9 @@
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
 using System.Reflection;
-using Fusonic.Extensions.MediatR;
 using Fusonic.Extensions.Common.Security;
-using MediatR;
 using SimpleInjector;
+using Fusonic.Extensions.Mediator;
 
 namespace Fusonic.Extensions.Hangfire;
 

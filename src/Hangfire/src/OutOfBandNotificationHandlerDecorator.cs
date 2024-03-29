@@ -3,8 +3,8 @@
 
 using System.Globalization;
 using Fusonic.Extensions.Common.Security;
+using Fusonic.Extensions.Mediator;
 using Hangfire;
-using MediatR;
 
 namespace Fusonic.Extensions.Hangfire;
 

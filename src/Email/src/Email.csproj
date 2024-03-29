@@ -17,7 +17,7 @@
     <ItemGroup>
         <FrameworkReference Include="Microsoft.AspNetCore.App" Version="3.1.1" />
         <ProjectReference Include="..\..\AspNetCore\src\AspNetCore.csproj" />
-        <ProjectReference Include="..\..\MediatR\src\MediatR.csproj" />
+        <ProjectReference Include="..\..\Mediator\src\Mediator.csproj" />
     </ItemGroup>
 
     <ItemGroup>

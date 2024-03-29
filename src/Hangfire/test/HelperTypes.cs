@@ -1,8 +1,7 @@
 // Copyright (c) Fusonic GmbH. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
-using Fusonic.Extensions.MediatR;
-using MediatR;
+using Fusonic.Extensions.Mediator;
 
 namespace Fusonic.Extensions.Hangfire.Tests;
 
@@ -63,22 +62,10 @@ public class OutOfBandNotificationHandlerWithoutAttribute : INotificationHandler
     }
 }
 
-public class SyncNotificationHandler : NotificationHandler<Notification>
-{
-    protected override void Handle(Notification notification) { }
-}
-
 public class Request : IRequest { }
 
 public class RequestHandler : AsyncRequestHandler<Request>
 {
     protected override Task Handle(Request request, CancellationToken cancellationToken)
         => Task.CompletedTask;
-}
-
-public class SyncRequest : IRequest { }
-
-public class SyncRequestHandler : RequestHandler<SyncRequest>
-{
-    protected override void Handle(SyncRequest request) { }
 }

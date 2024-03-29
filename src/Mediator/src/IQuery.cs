@@ -1,9 +1,7 @@
-﻿// Copyright (c) Fusonic GmbH. All rights reserved.
+// Copyright (c) Fusonic GmbH. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
-using MediatR;
-
-namespace Fusonic.Extensions.MediatR;
+namespace Fusonic.Extensions.Mediator;
 
 /// <summary>
 /// Marks a query object. A query only responds with data. It never changes state and is consequently idempotent.

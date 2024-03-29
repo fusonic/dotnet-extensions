@@ -3,9 +3,8 @@
 
 using System.Diagnostics;
 using System.Reflection;
+using Fusonic.Extensions.Mediator;
 using Fusonic.Extensions.UnitTests.SimpleInjector;
-using MediatR;
-using MediatR.Pipeline;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.Mvc.Localization;
@@ -33,20 +32,10 @@ public class TestFixture : SimpleInjectorTestFixture
         container.Register<RazorEmailRenderingService>();
 
         var mediatorAssemblies = new[] { typeof(IMediator).Assembly, typeof(SendEmail).Assembly };
-        container.Register(() => new ServiceFactory(container.GetInstance), Lifestyle.Singleton);
-        container.RegisterSingleton<IMediator, Mediator>();
+        container.RegisterSingleton<IMediator, SimpleInjectorMediator>();
         container.Register(typeof(IRequestHandler<,>), mediatorAssemblies);
 
         container.Collection.Register(typeof(INotificationHandler<>), mediatorAssemblies);
-        container.Collection.Register(typeof(IPipelineBehavior<,>),
-            new[]
-            {
-                    typeof(RequestPreProcessorBehavior<,>),
-                    typeof(RequestPostProcessorBehavior<,>)
-            });
-
-        container.Collection.Register(typeof(IRequestPreProcessor<>), mediatorAssemblies);
-        container.Collection.Register(typeof(IRequestPostProcessor<,>), mediatorAssemblies);
 
         var services = new ServiceCollection();
         services.AddRazorPages()

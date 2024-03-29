@@ -3,7 +3,7 @@
 
 using FluentAssertions;
 using Fusonic.Extensions.AspNetCore.Validation;
-using MediatR;
+using Fusonic.Extensions.Mediator;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using NSubstitute;

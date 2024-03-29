@@ -3,7 +3,7 @@
 
 using System.Reflection;
 using Fusonic.Extensions.AspNetCore.Razor;
-using MediatR;
+using Fusonic.Extensions.Mediator;
 using Microsoft.AspNetCore.Mvc.Localization;
 using SimpleInjector;
 

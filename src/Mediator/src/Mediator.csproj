@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <AssemblyName>Fusonic.Extensions.MediatR</AssemblyName>
-        <RootNamespace>Fusonic.Extensions.MediatR</RootNamespace>
+        <AssemblyName>Fusonic.Extensions.Mediator</AssemblyName>
+        <RootNamespace>Fusonic.Extensions.Mediator</RootNamespace>
         <PackageProjectUrl>https://github.com/fusonic/dotnet-extensions</PackageProjectUrl>
         <IncludeSymbols>true</IncludeSymbols>
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
@@ -11,11 +11,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <None Include="..\..\..\docs\MediatR\README.md" Pack="true" PackagePath="\" />
+      <None Include="..\..\..\docs\Mediator\README.md" Pack="true" PackagePath="\" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="MediatR" />
+      <PackageReference Include="SimpleInjector" />
     </ItemGroup>
 
     <ItemGroup>
