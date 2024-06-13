@@ -1,0 +1,19 @@
+@using Fusonic.Extensions.AspNetCore.Razor
+
+<html>
+<head>
+    <meta charset="UTF-8" />
+</head>
+<body>
+    <p>@($"{Model.Date:d}")</p>
+    <p>@($"{Model.Date:MMMM}")</p>
+    <p>@($"{Model.Number:N}")</p>
+</body>
+</html>
+
+@code {
+    [Parameter]
+    public required ComponentModel Model { get; init; }
+
+    public record ComponentModel(DateTime Date, double Number) : IComponentModel<TestCultureComponent>;
+}

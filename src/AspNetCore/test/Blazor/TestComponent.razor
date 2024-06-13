@@ -1,0 +1,10 @@
+@using Fusonic.Extensions.AspNetCore.Razor
+
+<body>@Model.Name</body>
+
+@code {
+    [Parameter]
+    public required ComponentModel Model { get; init; }
+
+    public record ComponentModel(string Name) : IComponentModel<TestComponent>;
+}

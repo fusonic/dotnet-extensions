@@ -2,9 +2,11 @@
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
 using System.Reflection;
+using Fusonic.Extensions.AspNetCore.Blazor;
 using Fusonic.Extensions.AspNetCore.Razor;
 using Fusonic.Extensions.Mediator;
 using Microsoft.AspNetCore.Mvc.Localization;
+using Microsoft.Extensions.Localization;
 using SimpleInjector;
 
 namespace Fusonic.Extensions.Email;
@@ -32,9 +34,15 @@ public static class ContainerExtensions
         container.RegisterInstance(options);
 
         container.RegisterInstance(new CssInliner(options));
-        container.Register<IEmailRenderingService, RazorEmailRenderingService>();
-        container.Register<IRazorViewRenderingService, RazorViewRenderingService>();
+
         container.RegisterInstance(container.GetInstance<IViewLocalizer>);
+        container.RegisterInstance(container.GetInstance<IStringLocalizerFactory>);
+
+        container.Register<IRazorViewRenderingService, RazorViewRenderingService>();
+        container.Register<IBlazorRenderingService, BlazorRenderingService>();
+
+        container.Collection.Append<IEmailRenderingService, RazorEmailRenderingService>();
+        container.Collection.Append<IEmailRenderingService, BlazorEmailRenderingService>();
 
         container.Register<ISmtpClient, SmtpClient>();
         container.Collection.Append<IEmailAttachmentResolver, FileAttachmentResolver>(Lifestyle.Singleton);

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Razor">
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
     <PropertyGroup>
         <IsPackable>false</IsPackable>
         <AssemblyName>Fusonic.Extensions.Email.Tests</AssemblyName>
@@ -31,6 +31,21 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Compile Update="Resources\Components.Emails.RazorSubjectTest.Designer.cs">
+        <DependentUpon>Components.Emails.RazorSubjectTest.resx</DependentUpon>
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+      </Compile>
+      <Compile Update="Resources\Components.Emails.RazorRenderingTest.Designer.cs">
+        <DependentUpon>Components.Emails.RazorRenderingTest.resx</DependentUpon>
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+      </Compile>
+      <Compile Update="Resources\Components.Emails.SendEmailTest.Designer.cs">
+        <DependentUpon>Components.Emails.SendEmailTest.resx</DependentUpon>
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+      </Compile>
       <Compile Update="Resources\Views.Emails.RazorRenderingTest.Designer.cs">
         <DesignTime>True</DesignTime>
         <AutoGen>True</AutoGen>
@@ -44,6 +59,18 @@
     </ItemGroup>
 
     <ItemGroup>
+      <EmbeddedResource Update="Resources\Components.Emails.RazorSubjectTest.resx">
+        <LastGenOutput>Components.Emails.RazorSubjectTest.Designer.cs</LastGenOutput>
+        <Generator>ResXFileCodeGenerator</Generator>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Resources\Components.Emails.RazorRenderingTest.resx">
+        <LastGenOutput>Components.Emails.RazorRenderingTest.Designer.cs</LastGenOutput>
+        <Generator>ResXFileCodeGenerator</Generator>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Resources\Components.Emails.SendEmailTest.resx">
+        <LastGenOutput>Components.Emails.SendEmailTest.Designer.cs</LastGenOutput>
+        <Generator>ResXFileCodeGenerator</Generator>
+      </EmbeddedResource>
       <EmbeddedResource Update="Resources\Views.Emails.RazorRenderingTest.resx">
         <Generator>ResXFileCodeGenerator</Generator>
         <LastGenOutput>Views.Emails.RazorRenderingTest.Designer.cs</LastGenOutput>

@@ -16,7 +16,7 @@ namespace Fusonic.Extensions.Email.Tests;
 public partial class SendEmailTests(SendEmailTests.SendEmailFixture fixture) : TestBase<SendEmailTests.SendEmailFixture>(fixture)
 {
     [Fact]
-    public async Task SendEmail()
+    public async Task SendEmail_Razor()
     {
         Fixture.SmtpServer!.ClearReceivedEmail();
 
@@ -41,6 +41,33 @@ public partial class SendEmailTests(SendEmailTests.SendEmailFixture fixture) : T
                   "<html><head><title>Render Test</title></head>" + Environment.NewLine
                                                                   + "<body style=\"color: red\"><p>Some field.</p>" + Environment.NewLine
                                                                   + "</body></html>");
+    }
+
+    [Fact]
+    public async Task SendEmail_Blazor()
+    {
+        Fixture.SmtpServer!.ClearReceivedEmail();
+
+        var model = new SendEmailTestEmailComponentModel { SomeField = "Some field." };
+        await SendAsync(new SendEmail("recipient@fusonic.net", "The Recipient", new CultureInfo("de-AT"), model));
+
+        Fixture.SmtpServer.ReceivedEmailCount.Should().Be(1);
+        var email = Fixture.SmtpServer.ReceivedEmail.Single();
+        email.ToAddresses
+             .Should()
+             .HaveCount(1)
+             .And.Contain(a => a.Address == "recipient@fusonic.net");
+
+        email.FromAddress.Address.Should().Be("test@fusonic.net");
+        email.Headers.AllKeys.Should().Contain("Subject");
+        email.Headers["Subject"].Should().Be("The subject");
+
+        email.MessageParts.Should().HaveCount(1);
+        email.MessageParts[0]
+             .BodyData.Should()
+             .Be(
+                  "<html><head><title>Render Test</title></head>" + Environment.NewLine
+                                                                  + "<body style=\"color: red\"><p>Some field.</p></body></html>");
     }
 
     [Fact]

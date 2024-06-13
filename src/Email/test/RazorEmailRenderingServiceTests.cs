@@ -16,7 +16,7 @@ public partial class RazorEmailRenderingServiceTests : TestBase
     private readonly RazorEmailRenderingService emailRenderingService;
 
     public RazorEmailRenderingServiceTests(TestFixture fixture) : base(fixture)
-        => emailRenderingService = GetInstance<RazorEmailRenderingService>();
+        => emailRenderingService = GetInstance<IEnumerable<IEmailRenderingService>>().OfType<RazorEmailRenderingService>().Single();
 
     [Fact]
     public async Task MissingEmailViewAttribute_ThrowsArgumentNullException()
@@ -85,7 +85,6 @@ public partial class RazorEmailRenderingServiceTests : TestBase
     {
         var cultureInfo = new CultureInfo(culture);
 
-        var emailRenderingService = GetInstance<RazorEmailRenderingService>();
         var viewModel = new RazorRenderingTestEmailViewModel();
 
         var expectedDate = ToString($"{viewModel.Date:d}");

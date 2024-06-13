@@ -1,0 +1,18 @@
+@using Fusonic.Extensions.Email.Tests.Models
+
+<html>
+<head>
+    <meta charset="UTF-8" />
+</head>
+<body>
+    <p>@($"{Model!.Date:d}")</p>
+    <p>@($"{Model.Date:MMMM}")</p>
+    <p>@($"{Model.Number:N}")</p>
+</body>
+</html>
+
+@code 
+{
+    [Parameter]
+    public required RazorRenderingTestEmailComponentModel Model { get; init; }
+}

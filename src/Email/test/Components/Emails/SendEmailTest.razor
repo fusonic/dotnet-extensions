@@ -1,0 +1,12 @@
+@using Fusonic.Extensions.Email.Tests.Models
+
+<html>
+<head><title>Render Test</title></head>
+<body><p>@($"{Model!.SomeField}")</p></body>
+</html>
+
+@code
+{
+    [Parameter]
+    public required SendEmailTestEmailComponentModel Model { get; init; }
+}

@@ -33,13 +33,16 @@ public record SendEmail(
     string? ReplyTo = null) : ICommand
 {
     [OutOfBand]
-    public class Handler(EmailOptions emailOptions, ISmtpClient smtpClient, IEmailRenderingService emailRenderingService, IEnumerable<IEmailAttachmentResolver> emailAttachmentResolvers) : AsyncRequestHandler<SendEmail>, IAsyncDisposable
+    public class Handler(EmailOptions emailOptions, ISmtpClient smtpClient, IEnumerable<IEmailRenderingService> emailRenderingServices, IEnumerable<IEmailAttachmentResolver> emailAttachmentResolvers) : AsyncRequestHandler<SendEmail>, IAsyncDisposable
     {
         private readonly List<Stream> openedStreams = [];
 
         protected override async Task Handle(SendEmail request, CancellationToken cancellationToken)
         {
+            var emailRenderingService = GetRenderingService(request.ViewModel);
+
             var (subject, body) = await emailRenderingService.RenderAsync(request.ViewModel, request.Culture, request.SubjectKey, request.SubjectFormatParameters);
+
             if (emailOptions.SubjectPrefix != null)
                 subject = emailOptions.SubjectPrefix + subject;
 
@@ -121,6 +124,10 @@ public record SendEmail(
 
             return builder.ToMessageBody();
         }
+
+        private IEmailRenderingService GetRenderingService(object viewModel)
+            => emailRenderingServices.FirstOrDefault(r => r.Supports(viewModel))
+            ?? throw new InvalidOperationException("No email rendering service registered for view model.");
 
         private IEmailAttachmentResolver GetResolver(Uri uri)
             => emailAttachmentResolvers.FirstOrDefault(r => r.Supports(uri))

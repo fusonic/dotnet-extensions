@@ -14,18 +14,17 @@ namespace Fusonic.Extensions.Email;
 
 public class RazorEmailRenderingService(IRazorViewRenderingService razorViewRenderingService, Func<IViewLocalizer> viewLocalizerFactory) : IEmailRenderingService
 {
+    public bool Supports(object model) => GetEmailViewAttribute(model) is not null;
 
     /// <inheritdoc />
     public async Task<(string Subject, string Body)> RenderAsync(
         object model,
         CultureInfo culture,
         string? subjectKey,
-        object[]? subjectFormatParameters = null,
-        Action<ViewContext>? beforeRender = null)
+        object[]? subjectFormatParameters = null)
     {
-        var modelType = model.GetType();
-        var emailViewAttribute = modelType.GetCustomAttribute<EmailViewAttribute>()
-                              ?? throw new ArgumentNullException($"The Model {modelType.Name} is missing an {nameof(EmailViewAttribute)}.");
+        var emailViewAttribute = GetEmailViewAttribute(model)
+            ?? throw new ArgumentNullException($"The Model {model.GetType().Name} is missing an {nameof(EmailViewAttribute)}.");
 
         subjectKey ??= emailViewAttribute.SubjectKey;
         var subject = subjectKey;
@@ -40,9 +39,7 @@ public class RazorEmailRenderingService(IRazorViewRenderingService razorViewRend
 
         void SetSubject(ViewContext viewContext)
         {
-            beforeRender?.Invoke(viewContext);
-
-            //Get the view localizer and initialize it with the view context, so it knows where to take the resources from.
+            // Get the view localizer and initialize it with the view context, so it knows where to take the resources from.
             var viewLocalizer = viewLocalizerFactory();
             (viewLocalizer as IViewContextAware)?.Contextualize(viewContext);
 
@@ -50,10 +47,13 @@ public class RazorEmailRenderingService(IRazorViewRenderingService razorViewRend
         }
     }
 
-    public async Task<string> RenderAsync(object model, CultureInfo culture, Func<ActionContext, IView> findView, Action<ViewContext>? beforeRender = null)
+    private async Task<string> RenderAsync(object model, CultureInfo culture, Func<ActionContext, IView> findView, Action<ViewContext>? beforeRender = null)
     {
         var content = await razorViewRenderingService.RenderAsync(model, culture, findView, beforeRender);
         content = CssInliner.Inline(content);
         return content;
     }
+
+    private static EmailViewAttribute? GetEmailViewAttribute(object model)
+        => model.GetType().GetCustomAttribute<EmailViewAttribute>();
 }
