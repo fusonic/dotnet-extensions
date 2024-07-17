@@ -6,7 +6,7 @@
         <IncludeSymbols>true</IncludeSymbols>
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
         <DocumentationFile>$(ArtifactsPath)\bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
-        <Description>Provides abstractions for MediatR.</Description>
+        <Description>Contains a simple implementation of the common mediator pattern. </Description>
       <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
 
