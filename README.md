@@ -36,7 +36,7 @@ Provides Hangfire extensions, especially suited for CQRS developement. (Out of b
 [![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.Hosting.svg?label=Fusonic.Extensions.Hosting&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.Hosting/)
 Provides services and extensions for hosting. See the [documentation](docs/Hosting/README.md) for more details.
 
-[![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.MediatR.svg?label=Fusonic.Extensions.MediatR&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.MediatR/)
+[![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.Mediator.svg?label=Fusonic.Extensions.Mediator&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.Mediator/)
 Provides simple mediator implementation. See the [documentation](docs/Mediator/README.md) for more details.
 
 [![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.UnitTests.svg?label=Fusonic.Extensions.UnitTests&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.UnitTests/)
