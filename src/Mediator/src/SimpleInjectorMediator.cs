@@ -20,8 +20,8 @@ public class SimpleInjectorMediator(Container container) : IMediator
         return await handler.Handle(request, cancellationToken);
     }
 
-    public async Task Send<TRequest>(IRequest request, CancellationToken cancellationToken = default)
-        => await Send<IRequest>(request, cancellationToken);
+    public async Task Send<TRequest>(TRequest request, CancellationToken cancellationToken = default)
+        => await Send(request, cancellationToken);
 
     public async Task Publish<TNotification>(TNotification notification, CancellationToken cancellationToken = default)
         where TNotification : INotification
