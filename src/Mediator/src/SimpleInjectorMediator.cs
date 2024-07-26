@@ -8,27 +8,26 @@ namespace Fusonic.Extensions.Mediator;
 
 public class SimpleInjectorMediator(Container container) : IMediator
 {
-    private static readonly ConcurrentDictionary<Type, Type> HandlerCache = new();
+    private static readonly ConcurrentDictionary<Type, Type> RequestHandlerCache = [];
+    private static readonly ConcurrentDictionary<Type, Type> NotificationHandlerCache = [];
 
     public async Task<TResponse> Send<TResponse>(IRequest<TResponse> request, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        var handlerType = HandlerCache.GetOrAdd(request.GetType(), t => typeof(IRequestHandler<,>).MakeGenericType(t, typeof(TResponse)));
+        var handlerType = RequestHandlerCache.GetOrAdd(request.GetType(), static t => typeof(IRequestHandler<,>).MakeGenericType(t, typeof(TResponse)));
         var handler = (IRequestHandlerBase<TResponse>)container.GetInstance(handlerType);
 
         return await handler.Handle(request, cancellationToken);
     }
 
-    public async Task Send<TRequest>(TRequest request, CancellationToken cancellationToken = default)
-        => await Send(request, cancellationToken);
-
-    public async Task Publish<TNotification>(TNotification notification, CancellationToken cancellationToken = default)
-        where TNotification : INotification
+    public async Task Publish(INotification notification, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(notification);
 
-        foreach (var handler in container.GetAllInstances<INotificationHandler<TNotification>>())
+        var handlerType = NotificationHandlerCache.GetOrAdd(notification.GetType(), static t => typeof(INotificationHandler<>).MakeGenericType(t));
+
+        foreach (var handler in container.GetAllInstances(handlerType).Cast<INotificationHandlerBase>())
         {
             await handler.Handle(notification, cancellationToken);
         }

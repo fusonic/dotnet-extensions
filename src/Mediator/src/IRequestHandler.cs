@@ -19,8 +19,8 @@ public interface IRequestHandler<in TRequest, TResponse> : IRequestHandlerBase<T
     /// <returns>Response from the request</returns>
     Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken);
 
-    Task<TResponse> IRequestHandlerBase<TResponse>.Handle(object request, CancellationToken cancellationToken)
-        => Handle((TRequest)request, cancellationToken);
+    async Task<TResponse> IRequestHandlerBase<TResponse>.Handle(object request, CancellationToken cancellationToken)
+        => await Handle((TRequest)request, cancellationToken);
 }
 
 /// <summary>
@@ -31,7 +31,6 @@ public interface IRequestHandler<in TRequest, TResponse> : IRequestHandlerBase<T
 public interface IRequestHandler<in TRequest> : IRequestHandler<TRequest, Unit>
     where TRequest : IRequest<Unit>
 { }
-
 
 /// <summary>
 /// Base Request Handler that can be casted to, without knowing the request type

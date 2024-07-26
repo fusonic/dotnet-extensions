@@ -21,4 +21,3 @@ public record EnableStateCommand(EnableStateCommand.ApplicationState State) : IC
         public void EnableStatus() => state = true;
     }
 }
-

@@ -23,7 +23,8 @@ public interface ISender
     /// <param name="request">Request object</param>
     /// <param name="cancellationToken">Optional cancellation token</param>
     /// <returns></returns>
-    Task Send<TRequest>(TRequest request, CancellationToken cancellationToken = default);
+    async Task Send(IRequest request, CancellationToken cancellationToken = default)
+        => await Send<Unit>(request, cancellationToken);
 
     /// <summary>
     /// Create a stream via a single stream handler
