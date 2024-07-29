@@ -2,7 +2,6 @@
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
 using Fusonic.Extensions.Common.Security;
-using Fusonic.Extensions.Common.Transactions;
 using Fusonic.Extensions.Mediator;
 using Fusonic.Extensions.UnitTests.EntityFrameworkCore;
 using Fusonic.Extensions.UnitTests.EntityFrameworkCore.Npgsql;
@@ -27,12 +26,11 @@ public class TestFixture : SimpleInjectorTestFixture
     {
         var services = new ServiceCollection();
 
-        RegisterMediator(container);
+        RegisterMediator(container, services);
 
         container.RegisterOutOfBandDecorators();
 
         container.RegisterInstance(Substitute.For<IUserAccessor>());
-        container.Register<ITransactionScopeHandler, TransactionScopeHandler>();
 
         RegisterDatabase(services);
         RegisterHangfire(services);
@@ -42,12 +40,9 @@ public class TestFixture : SimpleInjectorTestFixture
         Container = container;
     }
 
-    private static void RegisterMediator(Container container)
+    private static void RegisterMediator(Container container, IServiceCollection services)
     {
-        var mediatorAssemblies = new[] { typeof(IMediator).Assembly, typeof(TestFixture).Assembly };
-        container.RegisterSingleton<IMediator, SimpleInjectorMediator>();
-        container.Register(typeof(IRequestHandler<,>), mediatorAssemblies);
-        container.Collection.Register(typeof(INotificationHandler<>), mediatorAssemblies);
+        container.RegisterMediator(services, [typeof(TestFixture).Assembly]);
     }
 
     private void RegisterDatabase(IServiceCollection services)

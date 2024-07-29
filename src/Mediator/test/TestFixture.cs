@@ -17,19 +17,14 @@ public class TestFixture : SimpleInjectorTestFixture
         services.AddSimpleInjector(container, setup =>
         {
             setup.AutoCrossWireFrameworkComponents = true;
-            RegisterMediator(container);
+            RegisterMediator(container, services);
         });
 
         services.BuildServiceProvider().UseSimpleInjector(container);
     }
 
-    private static void RegisterMediator(Container container)
+    private static void RegisterMediator(Container container, IServiceCollection services)
     {
-        var mediatorAssemblies = new[] { typeof(TestFixture).Assembly };
-
-        container.RegisterSingleton<IMediator, SimpleInjectorMediator>();
-        container.Register(typeof(IRequestHandler<,>), mediatorAssemblies);
-        container.Register(typeof(IAsyncEnumerableRequestHandler<,>), mediatorAssemblies);
-        container.Collection.Register(typeof(INotificationHandler<>), mediatorAssemblies);
+        container.RegisterMediator(services, [typeof(TestFixture).Assembly]);
     }
 }

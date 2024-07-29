@@ -33,14 +33,9 @@ public class TestFixture : SimpleInjectorTestFixture
             o.CssPath = Path.Combine(path, "email.css");
             o.StoreInDirectory = path;
         });
-
-        var mediatorAssemblies = new[] { typeof(IMediator).Assembly, typeof(SendEmail).Assembly };
-        container.RegisterSingleton<IMediator, SimpleInjectorMediator>();
-        container.Register(typeof(IRequestHandler<,>), mediatorAssemblies);
-
-        container.Collection.Register(typeof(INotificationHandler<>), mediatorAssemblies);
-
         var services = new ServiceCollection();
+        container.RegisterMediator(services, [ typeof(SendEmail).Assembly ]);
+
         services.AddRazorComponents();
         services.AddRazorPages()
                 .ConfigureApplicationPartManager(apm => apm.ApplicationParts.Add(new CompiledRazorAssemblyPart(Assembly.GetExecutingAssembly())));
