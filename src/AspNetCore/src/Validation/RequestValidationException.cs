@@ -3,7 +3,35 @@
 
 namespace Fusonic.Extensions.AspNetCore.Validation;
 
-public class RequestValidationException(IDictionary<string, List<string>> errors) : Exception("One or more validation errors occurred.")
+public class RequestValidationException : Exception
 {
-    public IDictionary<string, List<string>> Errors { get; } = errors;
+    public RequestValidationException(IDictionary<string, List<string>> errors) 
+        : base($"""
+                One or more validation errors occurred.
+                {GetErrorMessage(errors)}
+                """)
+    {
+        Errors = errors;
+    }
+
+    public RequestValidationException(Type requestType, IDictionary<string, List<string>> errors) 
+        : base($"""
+                One or more validation errors occurred.
+                Request type: {requestType.FullName}.
+                {GetErrorMessage(errors)}
+                """)
+    {
+        RequestType = requestType;
+        Errors = errors;
+    }
+
+    public IDictionary<string, List<string>> Errors { get; }
+    public Type? RequestType { get; }
+
+    private static string GetErrorMessage(IDictionary<string, List<string>> errors)
+    {
+        var messages = errors.SelectMany(err => err.Value.Select(e => $"{err.Key}: {e}"));
+        var message = string.Join(Environment.NewLine, messages);
+        return message;
+    }
 }

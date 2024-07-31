@@ -25,6 +25,6 @@ public class RequestValidationDecorator<TCommand, TResult>(IRequestHandler<TComm
                                     kv => kv.Key,
                                     kv => kv.Value!.Errors.Select(e => e.ErrorMessage).ToList());
 
-        throw new RequestValidationException(errors);
+        throw new RequestValidationException(typeof(TCommand), errors);
     }
 }
