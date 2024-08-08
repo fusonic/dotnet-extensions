@@ -3,6 +3,7 @@
 
 using System.Reflection;
 using Fusonic.Extensions.Common.Transactions;
+using Fusonic.Extensions.Mediator.SimpleInjector;
 using Microsoft.Extensions.DependencyInjection;
 using SimpleInjector;
 

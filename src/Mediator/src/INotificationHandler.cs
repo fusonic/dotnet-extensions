@@ -7,7 +7,7 @@ namespace Fusonic.Extensions.Mediator;
 /// Defines a handler for a notification
 /// </summary>
 /// <typeparam name="TNotification">The type of notification being handled</typeparam>
-public interface INotificationHandler<in TNotification> : INotificationHandlerBase
+public interface INotificationHandler<in TNotification>
     where TNotification : INotification
 {
     /// <summary>
@@ -16,15 +16,4 @@ public interface INotificationHandler<in TNotification> : INotificationHandlerBa
     /// <param name="notification">The notification</param>
     /// <param name="cancellationToken">Cancellation token</param>
     Task Handle(TNotification notification, CancellationToken cancellationToken);
-
-    async Task INotificationHandlerBase.Handle(object notification, CancellationToken cancellationToken)
-        => await Handle((TNotification)notification, cancellationToken);
-}
-
-/// <summary>
-/// Base Notification Handler that can be casted to, without knowing the request type
-/// </summary>
-public interface INotificationHandlerBase
-{
-    Task Handle(object notification, CancellationToken cancellationToken);
 }

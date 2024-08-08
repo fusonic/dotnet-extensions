@@ -8,7 +8,7 @@ namespace Fusonic.Extensions.Mediator;
 /// </summary>
 /// <typeparam name="TRequest">The type of request being handled</typeparam>
 /// <typeparam name="TResponse">The type of response from the handler</typeparam>
-public interface IRequestHandler<in TRequest, TResponse> : IRequestHandlerBase<TResponse>
+public interface IRequestHandler<in TRequest, TResponse>
     where TRequest : IRequest<TResponse>
 {
     /// <summary>
@@ -18,9 +18,6 @@ public interface IRequestHandler<in TRequest, TResponse> : IRequestHandlerBase<T
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Response from the request</returns>
     Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken);
-
-    async Task<TResponse> IRequestHandlerBase<TResponse>.Handle(object request, CancellationToken cancellationToken)
-        => await Handle((TRequest)request, cancellationToken);
 }
 
 /// <summary>
@@ -31,15 +28,6 @@ public interface IRequestHandler<in TRequest, TResponse> : IRequestHandlerBase<T
 public interface IRequestHandler<in TRequest> : IRequestHandler<TRequest, Unit>
     where TRequest : IRequest<Unit>
 { }
-
-/// <summary>
-/// Base Request Handler that can be casted to, without knowing the request type
-/// </summary>
-/// <typeparam name="TResponse">The type of the response</typeparam>
-public interface IRequestHandlerBase<TResponse>
-{
-    Task<TResponse> Handle(object request, CancellationToken cancellationToken);
-}
 
 /// <summary>
 /// Wrapper class for a handler that asynchronously handles a request and does not return a response
