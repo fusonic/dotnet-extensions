@@ -3,6 +3,8 @@
 
 using Microsoft.AspNetCore.Components;
 
+namespace Fusonic.Extensions.AspNetCore.Blazor;
+
 public interface IComponentModel<T> : IComponentModel where T : IComponent
 {
     Type IComponentModel.ComponentType => typeof(T);

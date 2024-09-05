@@ -1,6 +1,7 @@
 // Copyright (c) Fusonic GmbH. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
+using Fusonic.Extensions.AspNetCore.Blazor;
 using Fusonic.Extensions.Email.Tests.Components.Emails;
 
 namespace Fusonic.Extensions.Email.Tests.Models;
