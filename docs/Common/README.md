@@ -3,6 +3,8 @@
 - [Common](#common)
   - [PropertyUtil](#propertyutil)
   - [PathUtil](#pathutil)
+  - [TempFileStream](#tempfilestream)
+  - [TransactionScopeHandler](#transactionscopehandler)
 
 This project contains general, framework independent utilities and abstractions.
 
@@ -43,4 +45,27 @@ await using (var fs = new TempFileStream())
     // Upload file
 }
 // File was deleted at this point.
+```
+
+## TransactionScopeHandler
+
+The `TransactionScopeHandler` provides an easy way to run code within a transaction. The transaction optios are 
+```cs
+IsolationLevel = IsolationLevel.ReadCommitted
+Timeout = TransactionManager.MaximumTimeout
+```
+
+Example:
+```cs
+// Runs async method FooMethod in a transaction. An ambient transaction gets used if it exists, otherwise a new one will be created.
+await transactionScopeHandler.RunInTransactionScope(FooMethod)
+
+// Runs async method BarMethod in a new transaction.
+await transactionScopeHandler.RunInTransactionScope(async () => { await BarMethod(); return 42; }, TransactionScopeOptions.RequiresNew);
+
+// Runs LogMethod and supresses any ambient transaction.
+await transactionScopeHandler.RunInTransactionScope(LogMethod, TransactionScopeOptions.Suppress);
+
+// Shortcut for supressing the transaction
+await transactionScopeHandler.SuppressTransaction(LogMethod);
 ```
