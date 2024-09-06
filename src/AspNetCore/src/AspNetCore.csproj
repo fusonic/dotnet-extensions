@@ -20,6 +20,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="OpenTelemetry.Api" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\Common\src\Common.csproj" />
     <ProjectReference Include="..\..\Mediator\src\Mediator.csproj" />
   </ItemGroup>

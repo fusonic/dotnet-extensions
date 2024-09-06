@@ -5,6 +5,8 @@
   - [CultureUtil](#cultureutil)
   - [Ignore paths Middleware](#ignore-paths-middleware)
 - [Validation of Mediator requests](#validation-of-mediator-requests)
+- [OpenTelemetry](#opentelemetry)
+  - [Mediator tracing](#mediator-tracing)
 
 ## ServiceCollection extensions
 
@@ -86,3 +88,17 @@ public class GetSomething : IValidatableObject
 ```
 
 This also works with records.
+
+## OpenTelemetry
+
+### Mediator tracing
+
+To easily trace every request and notification sent by our Mediator-package, simply register the tracing decorators:
+
+```cs
+container.RegisterMediatorTracingDecorators();
+
+container.RegisterMediator( /* Mediator configuration */ );
+```
+
+Note that the order matters. You must register the tracing decorators before mediator.
