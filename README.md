@@ -74,7 +74,7 @@ Non-Goals
 --------------------
 
 - We do not implement **framework-code** but focus on **re-usable class libraries**
-- No DI abstractions necessary (SimpleInjector or MediatR are committed core libraries used in Fusonic Extensions)
+- No DI abstractions necessary (SimpleInjector is a committed core library used in Fusonic Extensions)
 
 
 Naming
@@ -107,7 +107,6 @@ If possible, only .NET BCL libraries should be referenced. Especially with abstr
 However, we agree on the following core technologies, if absolutely necessary for the meaningfulness of the package:
 
 * SimpleInjector
-* MediatR
 * Entity FrameworkCore
 
 

@@ -4,7 +4,7 @@
   - [ServiceCollection extensions](#servicecollection-extensions)
   - [CultureUtil](#cultureutil)
   - [Ignore paths Middleware](#ignore-paths-middleware)
-- [Validation of MediatR requests](#validation-of-mediatr-requests)
+- [Validation of Mediator requests](#validation-of-mediator-requests)
 
 ## ServiceCollection extensions
 
@@ -48,11 +48,11 @@ Usage:
 app.UseIgnorePaths("/api", "/swagger", "/hangfire");
 ```
 
-# Validation of MediatR requests
+# Validation of Mediator requests
 
-MediatR requests can be validated with a simple decorator. Internally it uses the same validator that is used by ASP.NET Core for the request validation.  
+Mediator requests can be validated with a simple decorator. Internally it uses the same validator that is used by ASP.NET Core for the request validation.  
 
-To enable MediatR request validation, simply add the decorator `RequestValidationDecorator` to `IRequestHandler`:
+To enable Mediator request validation, simply add the decorator `RequestValidationDecorator` to `IRequestHandler`:
 
 ```cs
 // SimpleInjector

@@ -32,7 +32,7 @@ To add new emails, following steps need to be done:
 2) Add a new ViewModel in the same namespace as the business logic that needs to send the mail.
 3) Add the `EmailView` attribute to the ViewModel. The constructor argument is path to the view, relative to the `Views` directory without the `.cshtml` extension. Example: `[EmailView("Emails/Registration")]` points to `Views/Emails/Registration.cshtml`.
 4) Extend the `EmailController` with a new method to render the view file and return the contents.
-5) To send the mail in the business logic use the MediatR-command `SendEmail` and supply it with the view model. SendEmail renders the mail based on the view model and the `EmailViewAttribute`.
+5) To send the mail in the business logic use the Mediator-command `SendEmail` and supply it with the view model. SendEmail renders the mail based on the view model and the `EmailViewAttribute`.
 
 To check the visuals of the view file, use the [Swagger API](./api.md) to access the methods of the `EmailController`.
 
@@ -59,7 +59,7 @@ To add new emails, following steps need to be done:
 2) Add a new ComponentModel in the same namespace as the business logic that needs to send the mail.
 3) Implement the `IComponentModel<T>` interface in the ComponentModel, where `T` is the type of the Component.
 4) Extend the `EmailController` with a new method to render the razor file and return the contents.
-5) To send the mail in the business logic use the MediatR-command `SendEmail` and supply it with the view model. SendEmail renders the mail based on the component model and the `IComponentModel<T>`.
+5) To send the mail in the business logic use the Mediator-command `SendEmail` and supply it with the view model. SendEmail renders the mail based on the component model and the `IComponentModel<T>`.
 
 To check the visuals of the view file, use the [Swagger API](./api.md) to access the methods of the `EmailController`.
 

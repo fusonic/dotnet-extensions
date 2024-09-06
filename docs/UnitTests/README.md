@@ -22,7 +22,6 @@ The unit test framwork tries to provide the following features & design goals:
 - **Simplicity:** The unit test base classes provide several helper methods targeted to support you using our currently used default architectural structures and libraries. To reduce reading and writing overhead (clutter) the methods tend have short, less descriptive names. For example, `Scoped` instead of `RunInSeparateLifetimeScope`, but they aren't that much and are easy to learn.
   - **Resolving types:** Can be done using `GetInstance<T>()`
   - **Scope separation:** In reality, creating data and consuming that data is not done in the same scope. In order to be able to see issues when using different scopes in the unit tests you can run your code in the provided `Scoped` and `ScopedAsync` methods. They run your code in separate lifetime scopes of the DI-Container. Within the tests you usually want to run your data preparations and your queries in different scopes.
-  - **MediatR support:** Send your MediatR-requests in a separate scope by simply calling `SendAsync<TResponse>`.
 
 - **Dependency injection:** The test base is layed out to be support dependency injection. Use `Fusonic.Extensions.UnitTests.ServiceProvider` to use Microsofts dependency injection, or `Fusonic.Extensions.UnitTests.SimpleInjector` for SimpleInjector support.
 
@@ -42,7 +41,7 @@ The `TestFixture` is used for registering your depdendencies. Override `ServiceP
 
 The `TestBase` is used for tying up the test base from the extensions and your test fixture.
 
-The setup of the `TestBase` and the `TestFixture` is quick and easy. In `RegisterCoreDependencies` you register those dependencies that you usually need for your tests (MediatR, Services, ASP.Net services and the like). It should not be overwritten in your specific tests, so consider to make it `sealed`. For your test specific fixtures use `RegisterDependencies` instead.
+The setup of the `TestBase` and the `TestFixture` is quick and easy. In `RegisterCoreDependencies` you register those dependencies that you usually need for your tests (Mediator, Services, ASP.Net services and the like). It should not be overwritten in your specific tests, so consider to make it `sealed`. For your test specific fixtures use `RegisterDependencies` instead.
 
 ```cs
 public class TestFixture : SimpleInjectorTestFixture
@@ -68,6 +67,13 @@ public abstract class TestBase : TestBase<TestFixture>
 {
     protected TestBase(TestFixture fixture) : base(fixture)
     { }
+
+    // Also add common helper methods and properties to this class, eg.
+
+    /// <summary> Runs a mediator command in its own scope. Used to reduce possible side effects from test data creation and the like. </summary>
+    [DebuggerStepThrough]
+    protected Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> request)
+        => ScopedAsync(() => GetInstance<IMediator>().Send(request));
 }
 ```
 
