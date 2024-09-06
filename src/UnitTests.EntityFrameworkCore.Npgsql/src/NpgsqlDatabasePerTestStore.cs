@@ -11,9 +11,6 @@ public class NpgsqlDatabasePerTestStore : ITestStore
     private readonly NpgsqlDatabasePerTestStoreOptions options;
     private readonly NpgsqlConnectionStringBuilder connectionStringBuilder;
 
-    private readonly string templateDatabaseName;
-    private readonly string postgresConnectionString;
-
     public string ConnectionString => connectionStringBuilder.ConnectionString;
 
     private bool isDbCreated;
@@ -21,16 +18,19 @@ public class NpgsqlDatabasePerTestStore : ITestStore
     public NpgsqlDatabasePerTestStore(NpgsqlDatabasePerTestStoreOptions options)
     {
         this.options = new NpgsqlDatabasePerTestStoreOptions(options);
-
         connectionStringBuilder = new NpgsqlConnectionStringBuilder(options.ConnectionString);
 
-        templateDatabaseName = connectionStringBuilder.Database
-                            ?? throw new ArgumentException("Missing template database in connection string.");
-
-        connectionStringBuilder.Database = "postgres";
-        postgresConnectionString = connectionStringBuilder.ConnectionString;
-
+        ValidateConnectionString();
         OnTestConstruction();
+    }
+
+    private void ValidateConnectionString()
+    {
+        var templateDatabaseName = connectionStringBuilder.Database
+                                ?? throw new ArgumentException("Missing database in connection string.");
+
+        if (templateDatabaseName == "postgres")
+            throw new ArgumentException("Connection string cannot use postgres as database. It should provide the name of the template database, even if it does not exist.");
     }
 
     public void OnTestConstruction()
@@ -41,13 +41,8 @@ public class NpgsqlDatabasePerTestStore : ITestStore
 
     public async Task OnTestEnd()
     {
-        if (!isDbCreated)
-            return;
-
-        var connection = new NpgsqlConnection(postgresConnectionString);
-        await using var _ = connection.ConfigureAwait(false);
-        await connection.OpenAsync().ConfigureAwait(false);
-        await connection.ExecuteAsync($@"DROP DATABASE IF EXISTS ""{connectionStringBuilder.Database}"" WITH (FORCE)").ConfigureAwait(false);
+        if (isDbCreated)
+            await PostgreSqlUtil.DropDatabase(ConnectionString).ConfigureAwait(false);
     }
 
     public async Task CreateDatabase()
@@ -56,7 +51,14 @@ public class NpgsqlDatabasePerTestStore : ITestStore
             return;
 
         if (options.TemplateCreator != null)
-            await DatabaseHelper.EnsureCreated(options.ConnectionString!, options.TemplateCreator, options.AlwaysCreateTemplate).ConfigureAwait(false);
+        {
+            await PostgreSqlUtil
+                 .EnsureTemplateDbCreated(
+                      options.ConnectionString,
+                      options.TemplateCreator,
+                      options.AlwaysCreateTemplate)
+                 .ConfigureAwait(false);
+        }
 
         // Creating a DB from a template can cause an exception when done in parallel.
         // The lock usually prevents this, however, we still encounter race conditions
@@ -72,10 +74,7 @@ public class NpgsqlDatabasePerTestStore : ITestStore
             if (isDbCreated)
                 return;
 
-            var connection = new NpgsqlConnection(postgresConnectionString);
-            await using var _ = connection.ConfigureAwait(false);
-            await connection.OpenAsync().ConfigureAwait(false);
-            await connection.ExecuteAsync($@"CREATE DATABASE ""{connectionStringBuilder.Database}"" TEMPLATE ""{templateDatabaseName}""").ConfigureAwait(false);
+            await PostgreSqlUtil.CreateDatabase(options.ConnectionString, connectionStringBuilder.Database!).ConfigureAwait(false);
 
             isDbCreated = true;
         }

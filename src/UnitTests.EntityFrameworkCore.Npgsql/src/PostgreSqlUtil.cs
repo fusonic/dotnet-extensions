@@ -1,6 +1,7 @@
 // Copyright (c) Fusonic GmbH. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
+using System.Data.Common;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Microsoft.EntityFrameworkCore;
@@ -14,7 +15,21 @@ namespace Fusonic.Extensions.UnitTests.EntityFrameworkCore.Npgsql;
 
 public static class PostgreSqlUtil
 {
-    /// <summary> Creates a test database. </summary>
+    internal static async Task EnsureTemplateDbCreated(
+        string connectionString,
+        Func<string, Task> createTemplate,
+        bool alwaysCreateTemplate = false)
+    {
+        await DatabaseTestHelper.EnsureTemplateDbCreated(
+            connectionString, 
+            CheckDatabaseExists, 
+            DropDatabase, 
+            NpgsqlConnection.ClearAllPools, 
+            createTemplate, 
+            alwaysCreateTemplate).ConfigureAwait(false);
+    }
+
+    /// <summary> Creates a test database template. </summary>
     /// <param name="connectionString">Connection string to the test database. The database does not have to exist.</param>
     /// <param name="dbContextFactory">Returns a DbContext using the given options.</param>
     /// <param name="npgsqlOptionsAction">The configuration action for .UseNpgsql().</param>
@@ -80,17 +95,27 @@ public static class PostgreSqlUtil
         logger.LogInformation("Done");
     }
 
+    internal static async Task CreateDatabase(string templateConnectionString, string dbName)
+    {
+        var connection = CreatePostgresConnection(templateConnectionString, out var templateName);
+        await using (connection.ConfigureAwait(false))
+        {
+            if (templateName == dbName)
+                throw new ArgumentException("Template and new database name must not be the same.");
+
+            await connection.OpenAsync().ConfigureAwait(false);
+            await connection.ExecuteAsync($""" CREATE DATABASE "{dbName}" TEMPLATE "{templateName}"; """).ConfigureAwait(false);
+        }
+    }
+
     public static async Task DropDatabase(string connectionString)
     {
-        var csBuilder = new NpgsqlConnectionStringBuilder(connectionString);
-        var dbName = csBuilder.Database;
-        AssertNotPostgres(dbName);
-
-        csBuilder.Database = "postgres";
-        var connection = new NpgsqlConnection(csBuilder.ConnectionString);
-        await using var _ = connection.ConfigureAwait(false);
-        connection.Open();
-        await DropDatabase(connection, dbName).ConfigureAwait(false);
+        var connection = CreatePostgresConnection(connectionString, out var dbName);
+        await using (connection.ConfigureAwait(false))
+        {
+            connection.Open();
+            await DropDatabase(connection, dbName).ConfigureAwait(false);
+        }
     }
 
     private static async Task DropDatabase(NpgsqlConnection connection, string dbName)
@@ -104,16 +129,14 @@ public static class PostgreSqlUtil
 
     public static async Task<bool> CheckDatabaseExists(string connectionString)
     {
-        var csBuilder = new NpgsqlConnectionStringBuilder(connectionString);
-        var dbName = csBuilder.Database!;
+        var connection = CreatePostgresConnection(connectionString, out var dbName);
+        await using (connection.ConfigureAwait(false))
+        {
+            connection.Open();
+            var exists = await CheckDatabaseExists(connection, dbName).ConfigureAwait(false);
 
-        csBuilder.Database = "postgres";
-        var connection = new NpgsqlConnection(csBuilder.ConnectionString);
-        await using var _ = connection.ConfigureAwait(false);
-        connection.Open();
-        var exists = await CheckDatabaseExists(connection, dbName).ConfigureAwait(false);
-
-        return exists;
+            return exists;
+        }
     }
 
     private static async Task<bool> CheckDatabaseExists(NpgsqlConnection connection, string dbName)
@@ -124,6 +147,19 @@ public static class PostgreSqlUtil
 
         var result = await cmd.ExecuteScalarAsync().ConfigureAwait(false);
         return result != null && (bool)result;
+    }
+
+    private static NpgsqlConnection CreatePostgresConnection(string connectionString, out string dbName)
+    {
+        var csBuilder = new NpgsqlConnectionStringBuilder(connectionString);
+        if (string.IsNullOrWhiteSpace(csBuilder.Database))
+            throw new ArgumentException("Database name is missing in the connection string.", nameof(connectionString));
+
+        dbName = csBuilder.Database;
+        AssertNotPostgres(dbName);
+
+        csBuilder.Database = "postgres";
+        return new NpgsqlConnection(csBuilder.ConnectionString);
     }
 
     private static void AssertNotPostgres([NotNull] string? dbName)

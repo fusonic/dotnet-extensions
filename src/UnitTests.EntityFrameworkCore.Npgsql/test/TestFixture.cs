@@ -15,7 +15,7 @@ public class TestFixture : ServiceProviderTestFixture
         var testStoreOptions = new NpgsqlDatabasePerTestStoreOptions
         {
             TemplateCreator = CreateDatabase,
-            ConnectionString = Configuration.GetConnectionString("Npgsql")
+            ConnectionString = Configuration.GetConnectionString("Npgsql")!
         };
 
         var testStore = new NpgsqlDatabasePerTestStore(testStoreOptions);

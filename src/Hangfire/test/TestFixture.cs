@@ -51,7 +51,7 @@ public class TestFixture : SimpleInjectorTestFixture
         var testStoreOptions = new NpgsqlDatabasePerTestStoreOptions
         {
             TemplateCreator = CreateDatabase,
-            ConnectionString = Configuration.GetConnectionString("Hangfire")
+            ConnectionString = Configuration.GetConnectionString("Hangfire")!
         };
 
         var testStore = new NpgsqlDatabasePerTestStore(testStoreOptions);

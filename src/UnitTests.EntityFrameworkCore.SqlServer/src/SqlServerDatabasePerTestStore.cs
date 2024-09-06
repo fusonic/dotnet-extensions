@@ -10,8 +10,6 @@ public class SqlServerDatabasePerTestStore : ITestStore
     private readonly SqlServerDatabasePerTestStoreOptions options;
     private readonly SqlConnectionStringBuilder connectionStringBuilder;
 
-    private readonly string masterConnectionString;
-
     public string ConnectionString => connectionStringBuilder.ConnectionString;
 
     private bool isDbCreated;
@@ -19,48 +17,32 @@ public class SqlServerDatabasePerTestStore : ITestStore
     public SqlServerDatabasePerTestStore(SqlServerDatabasePerTestStoreOptions options)
     {
         this.options = new SqlServerDatabasePerTestStoreOptions(options);
-
         connectionStringBuilder = new SqlConnectionStringBuilder(options.ConnectionString);
-        masterConnectionString = connectionStringBuilder.ConnectionString;
-
+        
+        ValidateConnectionString();
         OnTestConstruction();
+    }
+
+    private void ValidateConnectionString()
+    {
+        var templateCatalogName = connectionStringBuilder.InitialCatalog
+                               ?? throw new ArgumentException("Missing initial catalog in connection string.");
+
+        if (templateCatalogName == "master")
+            throw new ArgumentException("Connection string cannot use master as initial catalog. It should provide the name of the template catalog, even if it does not exist.");
     }
 
     public void OnTestConstruction()
     {
-        connectionStringBuilder.InitialCatalog = string.Concat(options.DatabasePrefix, Convert.ToBase64String(Guid.NewGuid().ToByteArray()).TrimEnd('='));
+        var dbName = Convert.ToBase64String(Guid.NewGuid().ToByteArray()).TrimEnd('=').Replace('/', '_');
+        connectionStringBuilder.InitialCatalog = $"{options.DatabasePrefix}{dbName}";
         isDbCreated = false;
     }
 
     public async Task OnTestEnd()
     {
-        if (!isDbCreated)
-            return;
-
-        var connection = new SqlConnection(masterConnectionString);
-        await using var _ = connection.ConfigureAwait(continueOnCapturedContext: false);
-        await connection.OpenAsync().ConfigureAwait(false);
-
-        var cmd = connection.CreateCommand();
-        var dbName = connectionStringBuilder.InitialCatalog;
-
-        // Other connections users may still access the DB. Set it to single user to disconnect other sessions and drop it then.
-        SqlConnection.ClearAllPools();
-        cmd.CommandText = $"""
-            DECLARE @SQL nvarchar(1000);
-            IF EXISTS (SELECT 1 FROM sys.databases WHERE [name] = N'{dbName}')
-            BEGIN
-                SET @SQL = N'USE [{dbName}];
-        
-                             ALTER DATABASE [{dbName}] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
-                             USE [tempdb];
-        
-                             DROP DATABASE [{dbName}];';
-                EXEC (@SQL);
-            END;
-            """;
-
-        await cmd.ExecuteNonQueryAsync().ConfigureAwait(false);
+        if (isDbCreated)
+            await SqlServerTestUtil.DropDatabase(ConnectionString).ConfigureAwait(false);
     }
 
     public async Task CreateDatabase()
@@ -68,7 +50,21 @@ public class SqlServerDatabasePerTestStore : ITestStore
         if (isDbCreated)
             return;
 
-        await options.CreateDatabase(ConnectionString).ConfigureAwait(false);
+        if (options.TemplateCreator != null)
+        {
+            await SqlServerTestUtil
+                 .EnsureTemplateDbCreated(
+                      options.ConnectionString,
+                      options.TemplateCreator,
+                      options.AlwaysCreateTemplate)
+                 .ConfigureAwait(false);
+        }
+
+        await SqlServerTestUtil.CreateDatabase(
+            options.ConnectionString, 
+            connectionStringBuilder.InitialCatalog, 
+            options.DataDirectoryPath).ConfigureAwait(false);
+
         isDbCreated = true;
     }
 }

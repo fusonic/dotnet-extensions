@@ -163,7 +163,10 @@ public class TestFixture : ServiceProviderTestFixture
 {
     protected sealed override void RegisterCoreDependencies(ServiceCollection services)
     {
-        var options = Configuration.Get<NpgsqlDatabasePerTestStoreOptions>();
+        var options = new NpgsqlDatabasePerTestStoreOptions
+        {
+            ConnectionString = Configuration.GetConnectionString("Npgsql")
+        };
         var testStore = new NpgsqlDatabasePerTestStore(options);
         services.AddSingleton<ITestStore>(testStore);
 
@@ -187,8 +190,11 @@ You can create the template directly in the TestFixture by specifying a `Templat
 ```cs
 protected sealed override void RegisterCoreDependencies(ServiceCollection services)
 {
-    var options = Configuration.Get<NpgsqlDatabasePerTestStoreOptions>();
-    options.TemplateCreator = CreateTemplate; // Function to create the template on first connect
+    var options = new NpgsqlDatabasePerTestStoreOptions
+    {
+        ConnectionString = Configuration.GetConnectionString("Npgsql"),
+        TemplateCreator = CreateTemplate; // Function to create the template on first connect
+    };
     
     // rest of the configuration
 }
@@ -240,24 +246,28 @@ public class TestFixture : ServiceProviderTestFixture
         var options = new SqlServerDatabasePerTestStoreOptions
         {
             ConnectionString = Configuration.GetConnectionString("SqlServer")!,
-            CreateDatabase = CreateSqlServerDatabase
+            TemplateCreator = CreateSqlServerTemplate,
+            DatabasePrefix = "project_test_" // Optional. Defines a prefix for the randomly generated test database names.
+            DatabaseDirectoryPath = "C:/mssql/data" // Optional. Defaults to docker image default path.
         };
         var testStore = new SqlServerDatabasePerTestStore(options);
         services.AddSingleton<ITestStore>(testStore);
         services.AddDbContext<AppDbContext>(b => b.UseSqlServerDatabasePerTest(testStore));
     }
 
-    private static async Task CreateSqlServerDatabase(string connectionString)
-    {
-        await using var dbContext = new AppDbContext(connectionString);
-        await dbContext.Database.EnsureCreatedAsync();
-    }
+    private static async Task CreateSqlServerTemplate(string connectionString)
+        => await SqlServerTestUtil.CreateTestDbTemplate<SqlServerDbContext>(connectionString, o => new SqlServerDbContext(o));
 }
 ```
 
+The connection string must have the `Intial catalog` set. It determines the name of the template database. All tests will use a copy of the template database.
+
+The `TemplateCreator` specifies the method to create a template. It has to create and seed the database and create a backup for the copies used for the tests. Fortunately, the `SqlServerTestUtil` provides a method to do exactly that.
+
+
 ### Configuring any other database
 
-The database support is not limited to PostgreSql. You just have to implement and register the `ITestStore`.
+The database support is not limited to PostgreSql and SQL Server. You just have to implement and register the `ITestStore`.
 
 For a simple example with SqLite, check `Fusonic.Extensions.UnitTests.EntityFrameworkCore.Tests` -> `SqliteTestStore` and `TestFixture`.
 
@@ -284,7 +294,7 @@ public class TestFixture : ServiceProviderTestFixture
         var sqlServerSettings = new SqlServerDatabasePerTestStoreOptions
         {
             ConnectionString = Configuration.GetConnectionString("SqlServer")!,
-            CreateDatabase = CreateSqlServerDatabase
+            TemplateCreator = CreateSqlServerTemplate
         };
         var sqlServerTestStore = new SqlServerDatabasePerTestStore(sqlServerSettings);
         services.AddDbContext<SqlServerDbContext>(b => b.UseSqlServerDatabasePerTest(sqlServerTestStore));
@@ -296,11 +306,8 @@ public class TestFixture : ServiceProviderTestFixture
     private static Task CreatePostgresTemplate(string connectionString)
         => PostgreSqlUtil.CreateTestDbTemplate<NpgsqlDbContext>(connectionString, o => new NpgsqlDbContext(o), seed: ctx => new TestDataSeed(ctx).Seed());
 
-    private static async Task CreateSqlServerDatabase(string connectionString)
-    {
-        await using var dbContext = new SqlServerDbContext(connectionString);
-        await dbContext.Database.EnsureCreatedAsync();
-    }
+    private static Task CreateSqlServerTemplate(string connectionString)
+        => SqlServerTestUtil.CreateTestDbTemplate<SqlServerDbContext>(connectionString, o => new SqlServerDbContext(o));
 }
 ```
 

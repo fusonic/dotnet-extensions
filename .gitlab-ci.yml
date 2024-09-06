@@ -80,8 +80,16 @@ publish:
   stage: publish
   variables:
     GIT_STRATEGY: none
+  allow_failure: true
   script:
-    - dotnet nuget push "artifacts/package/release/*.nupkg" -k $Nuget_Key -s https://api.nuget.org/v3/index.json --skip-duplicate
+    - |
+      if [ $CI_PIPELINE_SOURCE != "merge_request_event" ]; then
+        echo "Publishing to NuGet.org"
+        dotnet nuget push "artifacts/package/release/*.nupkg" -k $Nuget_Key -s https://api.nuget.org/v3/index.json --skip-duplicate
+      fi
+    
+    - echo "Publishing to GitLab"
+    - dotnet nuget push "artifacts/package/release/*.nupkg" --source "https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/packages/nuget/index.json" --api-key $CI_JOB_TOKEN
   rules:
-    - if: $CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH =~ /^release\// || $CI_COMMIT_TAG
+    - if: $CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH =~ /^release\// || $CI_COMMIT_TAG || $CI_PIPELINE_SOURCE == "merge_request_event"
       when: manual
