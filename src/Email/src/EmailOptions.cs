@@ -16,6 +16,9 @@ public class EmailOptions
     /// <summary> Name of the sender. </summary>
     public string? SenderName { get; set; }
 
+    /// <summary> A fixed BCC address which will be set in every email. If another BCC address is set for a specific email, the address of the email has precedence. </summary>
+    public string? BccAddress { get; set; }
+
     /// <summary> Enable SSL connection to the mail server. Default is true. </summary>
     public bool EnableSsl { get; set; } = true;
 

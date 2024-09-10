@@ -16,9 +16,10 @@ public static class ContainerExtensions
     /// <summary>
     /// Registers the components for sending emails.
     ///
-    /// Note: You need to register ViewLocalization in your services.
+    /// Note: You need to register ViewLocalization as well as the HtmlRenderer in your services.
     /// Example:
     /// <code>
+    /// services.AddScoped{HtmlRenderer}(); 
     /// services.AddLocalization(options => options.ResourcesPath = "Resources/Localization");
     ///
     /// services.AddMvc(options => options.Filters.Add(typeof(ExceptionFilter)))
@@ -48,5 +49,11 @@ public static class ContainerExtensions
         container.Collection.Append<IEmailAttachmentResolver, FileAttachmentResolver>(Lifestyle.Singleton);
 
         container.Register(typeof(IRequestHandler<,>), Assembly.GetExecutingAssembly());
+
+        if (!string.IsNullOrWhiteSpace(options.BccAddress))
+        {
+            container.RegisterInstance(new SendEmailBccDecorator.Options(options.BccAddress));
+            container.RegisterDecorator<IRequestHandler<SendEmail, Unit>, SendEmailBccDecorator>();
+        }
     }
 }
