@@ -101,4 +101,10 @@ container.RegisterMediatorTracingDecorators();
 container.RegisterMediator( /* Mediator configuration */ );
 ```
 
+Also, when configuring the OpenTelemetry-Tracer, you need to enable the instrumentation:
+```
+services.AddOpenTelemetry()
+        .WithTracing(tracer => tracer.AddMediatorInstrumentation());
+```
+
 Note that the order matters. You must register the tracing decorators before mediator.

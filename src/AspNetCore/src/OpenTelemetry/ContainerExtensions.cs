@@ -9,7 +9,8 @@ namespace Fusonic.Extensions.AspNetCore.OpenTelemetry;
 public static class ContainerExtensions
 {
     /// <summary>
-    /// Adds decorators for tracing mediator requests and notifications.
+    /// Adds decorators for tracing mediator requests and notifications.<br/>
+    /// Note: You also need to call <see cref="TracerProviderBuilderExtensions.AddMediatorInstrumentation"/> to enable tracing.
     /// </summary>
     /// <param name="container">The SimpleInjector container</param>
     public static void RegisterMediatorTracingDecorators(this Container container)
