@@ -1,10 +1,10 @@
 include:
   - project: 'fusonic/devops/images/gitlab-ci-tools'
     file: 'dotnet_test.yml'
-    ref: '5.9'
+    ref: '5.10'
   - project: "fusonic/devops/images/gitlab-ci-tools"
     file: "release_tool.yml"
-    ref: "5.9"
+    ref: "5.10"
 
 stages:
   - build
