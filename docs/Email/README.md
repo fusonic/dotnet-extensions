@@ -12,12 +12,13 @@
     - [Set a Subject](#set-a-subject-1)
   - [Attachments](#attachments)
   - [Headers](#headers)
-
+  - [PostProcessor](#post-processor)
+    - [Mjml Sample](#mjml-sample)
 ## Setup
 
 The following sample binds settings from the configuration located in the section "Email" using SimpleInjector.
 
-The settings contain sender Email and name, SMTP settings, Debug settings and CSS settings. Check the `EmailSettings` class for details.
+The settings contain sender Email and name, SMTP settings, Debug settings, PostProcessor settings and CSS settings. Check the `EmailSettings` class for details.
 ```cs
 container.RegisterEmail(options => Configuration.GetSection("Email").Bind(options));
 ```
@@ -81,3 +82,26 @@ container.Collections.Append<IEmailAttachmentResolver, YourResolver>()
 
 No special Headers are sent per default, however with the `Headers` parameter on `SendEmail`, `MimeKit.Header`s can be added to the email (overrides all Headers defined in `EmailOptions.DefaultHeaders`). With `EmailOptions.DefaultHeaders` default headers can be set for all emails. Predefined sets of headers can be found in `EmailHeaders`:
 - `DiscourageAutoReplies` includes [`Precedence:list`](https://www.rfc-editor.org/rfc/rfc3834#section-3.1.8), [`AutoSubmitted:generated`](https://www.rfc-editor.org/rfc/rfc3834#section-3.1.7), and [`X-Auto-Response-Suppress:All`](https://learn.microsoft.com/en-us/openspecs/exchange_server_protocols/ms-oxcmail/e489ffaf-19ed-4285-96d9-c31c42cab17f). They discourage email servers to sent auto replies.
+
+## Post Processor
+On the `EmailOptions` email content post processors can be defined on the `RazorContentPostProcessor` (.cshtml) and the `BlazorContentPostProcessor` (.razor) property. Per default they both call the `CssInliner` to inline all styles into the tags themselves.
+Providing `null` will instruct the renderer to not use a post processor.
+
+### Mjml Sample
+Configuring the `EmailOptions` like seen in the sample below, all blazor emails will be processed by [Mjml.Net](https://github.com/SebastianStehle/mjml-net) before being sent.
+
+```cs
+container.RegisterSingleton<MjmlRenderer>();
+
+container.RegisterEmail(o =>
+{
+    // Other configurations...
+
+    o.BlazorContentPostProcessor = async ctx =>
+    {
+        var result = await container.GetInstance<MjmlRenderer>().RenderAsync(ctx.Html);
+
+        return result.Html;
+    };
+});
+```

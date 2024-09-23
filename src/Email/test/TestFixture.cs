@@ -34,7 +34,7 @@ public class TestFixture : SimpleInjectorTestFixture
             o.StoreInDirectory = path;
         });
         var services = new ServiceCollection();
-        container.RegisterMediator(services, [ typeof(SendEmail).Assembly ]);
+        container.RegisterMediator(services, [typeof(SendEmail).Assembly]);
 
         services.AddRazorComponents();
         services.AddRazorPages()

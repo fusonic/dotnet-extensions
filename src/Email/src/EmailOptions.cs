@@ -59,6 +59,16 @@ public class EmailOptions
     /// </summary>
     public IReadOnlyDictionary<string, string>? DefaultHeaders { get; set; }
 
+    /// <summary>
+    /// Sets the post processor for all emails being sent that were rendered through the <see cref="RazorEmailRenderingService"/>. Defaults to inlining the CSS through <see cref="CssInliner.Inline(string)"/>.
+    /// </summary>
+    public Func<RazorPostProcessContext, ValueTask<string>>? RazorContentPostProcessor { get; set; } = static ctx => ValueTask.FromResult(CssInliner.Inline(ctx.Html));
+
+    /// <summary>
+    /// Sets the post processor for all emails being sent that were rendered through the <see cref="BlazorEmailRenderingService"/>. Defaults to inlining the CSS through <see cref="CssInliner.Inline(string)"/>.
+    /// </summary>
+    public Func<BlazorPostProcessContext, ValueTask<string>>? BlazorContentPostProcessor { get; set; } = static ctx => ValueTask.FromResult(CssInliner.Inline(ctx.Html));
+
     internal void Validate()
     {
         var errors = new List<string>();

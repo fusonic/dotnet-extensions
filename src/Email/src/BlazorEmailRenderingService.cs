@@ -8,7 +8,7 @@ using Microsoft.Extensions.Localization;
 
 namespace Fusonic.Extensions.Email;
 
-public class BlazorEmailRenderingService(IBlazorRenderingService blazorRenderingService, IStringLocalizerFactory stringLocalizerFactory) : IEmailRenderingService
+public class BlazorEmailRenderingService(IBlazorRenderingService blazorRenderingService, IStringLocalizerFactory stringLocalizerFactory, EmailOptions emailOptions) : IEmailRenderingService
 {
     private const string DefaultSubjectKey = "Subject";
 
@@ -34,12 +34,21 @@ public class BlazorEmailRenderingService(IBlazorRenderingService blazorRendering
         subjectKey ??= (componentModel as IProvideEmailSubject)?.SubjectKey ?? DefaultSubjectKey;
         var subject = subjectKey;
 
-        var body = await RenderAsync(
+        var body = await blazorRenderingService.RenderComponent(
             componentType,
-            modelProperty.Name,
-            componentModel,
             culture,
-            beforeRender: SetSubject);
+            new() { [modelProperty.Name] = model },
+            beforeRender: SetSubject
+        );
+
+        if (emailOptions.BlazorContentPostProcessor is not null)
+        {
+            body = await emailOptions.BlazorContentPostProcessor.Invoke(new()
+            {
+                Html = body,
+                ComponentModel = componentModel
+            });
+        }
 
         return (subject, body);
 
@@ -48,12 +57,5 @@ public class BlazorEmailRenderingService(IBlazorRenderingService blazorRendering
             var subjectLocalization = stringLocalizerFactory.Create(componentType).GetString(subjectKey, subjectFormatParameters ?? []);
             subject = subjectLocalization.ResourceNotFound ? subjectKey : subjectLocalization.Value;
         }
-    }
-
-    private async Task<string> RenderAsync(Type componentType, string modelPropertyName, IComponentModel model, CultureInfo culture, Action beforeRender)
-    {
-        var content = await blazorRenderingService.RenderComponent(componentType, culture, new() { [modelPropertyName] = model }, beforeRender);
-        content = CssInliner.Inline(content);
-        return content;
     }
 }

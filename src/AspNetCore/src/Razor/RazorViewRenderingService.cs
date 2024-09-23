@@ -21,7 +21,6 @@ public class RazorViewRenderingService(
     IServiceScope serviceScope,
     ITempDataProvider tempDataProvider) : IRazorViewRenderingService
 {
-
     /// <inheritdoc />
     public async Task<string> RenderAsync(object model, CultureInfo culture, Action<ViewContext>? beforeRender = null)
     {
