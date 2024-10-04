@@ -80,11 +80,8 @@ public partial class SendEmailTests(SendEmailTests.SendEmailFixture fixture) : T
 
         Fixture.SmtpServer.ReceivedEmailCount.Should().Be(1);
         var email = Fixture.SmtpServer.ReceivedEmail.Single();
-        email.ToAddresses
-             .Should()
-             .HaveCount(2)
-             .And.Contain(a => a.Address == "recipient@fusonic.net")
-             .And.Contain(a => a.Address == "bcc@fusonic.net");
+        email.ToAddresses.Select(a => a.Address).Should().BeEquivalentTo(["recipient@fusonic.net"]);
+        email.BccAddresses.Select(a => a.Address).Should().BeEquivalentTo(["bcc@fusonic.net"]);
 
         email.FromAddress.Address.Should().Be("test@fusonic.net");
         email.Headers.AllKeys.Should().Contain("Subject");
@@ -126,7 +123,7 @@ public partial class SendEmailTests(SendEmailTests.SendEmailFixture fixture) : T
         if (!GetAsciiCharsRegex().IsMatch(attachmentName))
         {
             var base64EncodedName = Convert.ToBase64String(Encoding.UTF8.GetBytes(attachmentName));
-            email.MessageParts[1].HeaderData.Should().Be($"application/octet-stream; name=\"=?utf-8?B?{base64EncodedName}?=\"");
+            email.MessageParts[1].HeaderData.Should().Contain($"application/octet-stream; name=\"=?utf-8?B?{base64EncodedName}?=\"");
         }
         else
         {

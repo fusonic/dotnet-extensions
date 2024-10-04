@@ -22,11 +22,8 @@ public class SendEmailBccDecoratorTests(SendEmailBccDecoratorTests.SendEmailBccD
 
         Fixture.SmtpServer.ReceivedEmailCount.Should().Be(1);
         var email = Fixture.SmtpServer.ReceivedEmail.Single();
-        email.ToAddresses
-             .Should()
-             .HaveCount(2)
-             .And.Contain(a => a.Address == "recipient@fusonic.net")
-             .And.Contain(a => a.Address == "bcc@fusonic.net");
+        email.ToAddresses.Select(a => a.Address).Should().BeEquivalentTo(["recipient@fusonic.net"]);
+        email.BccAddresses.Select(a => a.Address).Should().BeEquivalentTo(["bcc@fusonic.net"]);
     }
 
     [Fact]
@@ -39,11 +36,8 @@ public class SendEmailBccDecoratorTests(SendEmailBccDecoratorTests.SendEmailBccD
 
         Fixture.SmtpServer.ReceivedEmailCount.Should().Be(1);
         var email = Fixture.SmtpServer.ReceivedEmail.Single();
-        email.ToAddresses
-             .Should()
-             .HaveCount(2)
-             .And.Contain(a => a.Address == "recipient@fusonic.net")
-             .And.Contain(a => a.Address == "franz@fusonic.net");
+        email.ToAddresses.Select(a => a.Address).Should().BeEquivalentTo(["recipient@fusonic.net"]);
+        email.BccAddresses.Select(a => a.Address).Should().BeEquivalentTo(["franz@fusonic.net"]);
     }
 
     public class SendEmailBccDecoratorTestsFixture : TestFixture
