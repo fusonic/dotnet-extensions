@@ -4,6 +4,7 @@
 using System.Globalization;
 using Fusonic.Extensions.Common.Security;
 using Fusonic.Extensions.Mediator;
+using Hangfire;
 using Hangfire.Server;
 using SimpleInjector;
 
@@ -11,8 +12,7 @@ namespace Fusonic.Extensions.Hangfire;
 
 public class JobProcessor(Container container) : IJobProcessor
 {
-    private readonly Container container = container;
-
+    [JobDisplayName("OutOfBand {0}")]
     public virtual Task ProcessAsync(MediatorHandlerContext context, PerformContext performContext)
     {
         if (context.Culture != null)

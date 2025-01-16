@@ -6,13 +6,25 @@ using System.Security.Claims;
 
 namespace Fusonic.Extensions.Hangfire;
 
-public class MediatorHandlerContext(object message, string handlerType)
+public class MediatorHandlerContext
 {
-    public object Message { get; set; } = message;
-    public string HandlerType { get; set; } = handlerType;
+    public MediatorHandlerContext(object message, string handlerType)
+    {
+        Message = message;
+        HandlerType = handlerType;
+
+        var type = Message.GetType();
+        DisplayName = $"Message: {type.Name} ({type.Namespace})";
+    }
+
+    public object Message { get; set; }
+    public string HandlerType { get; set; }
     public CultureInfo? Culture { get; set; }
     public CultureInfo? UiCulture { get; set; }
     public HangfireUser? User { get; set; }
+    public string DisplayName { get; set; }
+
+    public override string ToString() => DisplayName;
 
     public class HangfireUser(List<HangfireUser.HangfireUserClaim> claims)
     {
