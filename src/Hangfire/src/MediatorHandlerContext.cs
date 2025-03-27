@@ -14,7 +14,7 @@ public class MediatorHandlerContext
         HandlerType = handlerType;
 
         var type = Message.GetType();
-        DisplayName = $"Message: {type.Name} ({type.Namespace})";
+        DisplayName = $"Message: {GetTypeName(type)} ({type.Namespace})";
     }
 
     public object Message { get; set; }
@@ -25,6 +25,20 @@ public class MediatorHandlerContext
     public string DisplayName { get; set; }
 
     public override string ToString() => DisplayName;
+
+    private string GetTypeName(Type type)
+    {
+        if (!type.IsGenericType)
+            return type.Name;
+
+        // Remove the `n suffix from generic type names (e.g. List`1 -> List)
+        var index = type.Name.IndexOf('`', StringComparison.Ordinal);
+        var typeName = index > 0 ? type.Name[..index] : type.Name;
+
+        var genericNames = string.Join(", ", type.GetGenericArguments().Select(GetTypeName));
+
+        return $"{typeName}<{genericNames}>";
+    }
 
     public class HangfireUser(List<HangfireUser.HangfireUserClaim> claims)
     {
