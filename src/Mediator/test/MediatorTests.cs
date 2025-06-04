@@ -2,11 +2,9 @@
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
 using System.Globalization;
-using FluentAssertions;
 using Fusonic.Extensions.Mediator.Tests.Notifications;
 using Fusonic.Extensions.Mediator.Tests.Requests;
 using NSubstitute;
-using Xunit;
 
 namespace Fusonic.Extensions.Mediator.Tests;
 

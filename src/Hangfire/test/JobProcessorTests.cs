@@ -3,7 +3,6 @@
 
 using System.Globalization;
 using System.Security.Claims;
-using FluentAssertions;
 using Fusonic.Extensions.Common.Security;
 using Fusonic.Extensions.Mediator;
 using Hangfire;
@@ -11,7 +10,6 @@ using Hangfire.Server;
 using Hangfire.Storage;
 using NSubstitute;
 using NSubstitute.ClearExtensions;
-using Xunit;
 
 namespace Fusonic.Extensions.Hangfire.Tests;
 
@@ -76,13 +74,13 @@ public class JobProcessorTests(TestFixture testFixture) : TestBase(testFixture)
         OutOfBandCommandHandler.Handled += (_, _) =>
         {
             handled = true;
-            Assert.False(GetInstance<RuntimeOptions>().SkipOutOfBandDecorators);
+            GetInstance<RuntimeOptions>().SkipOutOfBandDecorators.Should().BeFalse();
         };
 
         await GetJobProcessor().ProcessAsync(new MediatorHandlerContext(new OutOfBandCommand(), typeof(OutOfBandCommandHandler).AssemblyQualifiedName!), CreatePerformContext());
 
         jobClient.DidNotReceiveWithAnyArgs().Enqueue<JobProcessor>(x => x.ProcessAsync(null!, null!));
-        Assert.True(handled);
+        handled.Should().BeTrue();
     }
 
     [Fact]
@@ -95,13 +93,13 @@ public class JobProcessorTests(TestFixture testFixture) : TestBase(testFixture)
         OutOfBandNotificationHandler.Handled += (_, _) =>
         {
             handled = true;
-            Assert.False(GetInstance<RuntimeOptions>().SkipOutOfBandDecorators);
+            GetInstance<RuntimeOptions>().SkipOutOfBandDecorators.Should().BeFalse();
         };
 
         await GetJobProcessor().ProcessAsync(new MediatorHandlerContext(new OutOfBandNotification(), typeof(OutOfBandNotificationHandler).AssemblyQualifiedName!), CreatePerformContext());
 
         jobClient.DidNotReceiveWithAnyArgs().Enqueue<JobProcessor>(x => x.ProcessAsync(null!, null!));
-        Assert.True(handled);
+        handled.Should().BeTrue();
     }
 
     private static PerformContext CreatePerformContext() => new(
@@ -130,7 +128,7 @@ public class JobProcessorTests(TestFixture testFixture) : TestBase(testFixture)
             public Task<Unit> Handle(CommandWithUser request, CancellationToken cancellationToken)
             {
                 var user = userAccessor.User;
-                user.Claims.Should().HaveCount(1);
+                user.Claims.Should().ContainSingle();
                 user.Claims.Should().Contain(c => c.Type == "test" && c.Value == "test");
                 return Unit.Task;
             }

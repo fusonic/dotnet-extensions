@@ -2,11 +2,9 @@
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
 using System.Globalization;
-using FluentAssertions;
 using Fusonic.Extensions.Email.Tests.Models;
 using netDumbster.smtp;
 using SimpleInjector;
-using Xunit;
 
 namespace Fusonic.Extensions.Email.Tests;
 

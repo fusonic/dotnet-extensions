@@ -4,9 +4,7 @@
 using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Web;
-using FluentAssertions;
 using Fusonic.Extensions.AspNetCore.Blazor;
-using Xunit;
 
 namespace Fusonic.Extensions.AspNetCore.Tests.Blazor;
 

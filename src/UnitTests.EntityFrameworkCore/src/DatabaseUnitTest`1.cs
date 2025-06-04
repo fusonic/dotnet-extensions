@@ -31,14 +31,13 @@ public abstract class DatabaseUnitTest<TFixture> : DependencyInjectionUnitTest<T
         if (resultType.IsGenericType)
             resultType = resultType.GetGenericTypeDefinition();
 
-        if (resultType == typeof(Task) || resultType == typeof(Task<>) || resultType == typeof(ValueTask) || resultType == typeof(ValueTask<>))
-            throw new InvalidOperationException("This is the wrong method for async queries. Use QueryAsync() instead.");
-
-        return Scoped(() =>
-        {
-            using var dbContext = GetInstance<TDbContext>();
-            return query(dbContext);
-        });
+        return resultType == typeof(Task) || resultType == typeof(Task<>) || resultType == typeof(ValueTask) || resultType == typeof(ValueTask<>)
+            ? throw new InvalidOperationException("This is the wrong method for async queries. Use QueryAsync() instead.")
+            : Scoped(() =>
+            {
+                using var dbContext = GetInstance<TDbContext>();
+                return query(dbContext);
+            });
     }
 
     /// <summary> Executes a query in an own scope. </summary>
@@ -61,6 +60,10 @@ public abstract class DatabaseUnitTest<TFixture> : DependencyInjectionUnitTest<T
             return await query(dbContext);
         });
 
-    public virtual Task InitializeAsync() => Task.CompletedTask;
-    public virtual async Task DisposeAsync() => await GetInstance<ITestStore>().OnTestEnd().ConfigureAwait(false);
+    public virtual ValueTask InitializeAsync() => ValueTask.CompletedTask;
+    public virtual async ValueTask DisposeAsync()
+    {
+        await GetInstance<ITestStore>().OnTestEnd().ConfigureAwait(false);
+        GC.SuppressFinalize(this);
+    }
 }

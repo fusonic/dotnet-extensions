@@ -2,9 +2,7 @@
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
 using System.Text;
-using FluentAssertions;
 using Fusonic.Extensions.Common.IO;
-using Xunit;
 
 namespace Fusonic.Extensions.Common.Tests.IO;
 
@@ -21,8 +19,8 @@ public class TempFileStreamTests
     public async Task TempFileStream_CanWriteToFile()
     {
         await using var stream = new TempFileStream();
-        await stream.WriteAsync("Test"u8.ToArray());
-        await stream.FlushAsync();
+        await stream.WriteAsync("Test"u8.ToArray(), TestContext.Current.CancellationToken);
+        await stream.FlushAsync(TestContext.Current.CancellationToken);
         
         stream.Seek(0, SeekOrigin.Begin);
 

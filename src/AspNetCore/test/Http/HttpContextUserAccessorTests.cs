@@ -4,7 +4,6 @@
 using Fusonic.Extensions.AspNetCore.Http;
 using Microsoft.AspNetCore.Http;
 using NSubstitute;
-using Xunit;
 
 namespace Fusonic.Extensions.AspNetCore.Tests.Http;
 
@@ -15,7 +14,8 @@ public class HttpContextUserAccessorTests
     {
         var httpContextAccessor = new HttpContextAccessor();
         var userAccessor = new HttpContextUserAccessor(httpContextAccessor);
-        Assert.Throws<InvalidOperationException>(() => userAccessor.User);
+        var act = () => userAccessor.User;
+        act.Should().ThrowExactly<InvalidOperationException>();
     }
 
     [Fact]
@@ -27,7 +27,7 @@ public class HttpContextUserAccessorTests
         };
 
         var userAccessor = new HttpContextUserAccessor(httpContextAccessor);
-        Assert.NotNull(userAccessor.User);
+        userAccessor.User.Should().NotBeNull();
     }
 
     [Fact]
@@ -35,11 +35,11 @@ public class HttpContextUserAccessorTests
     {
         var httpContextAccessor = new HttpContextAccessor();
         var userAccessor = new HttpContextUserAccessor(httpContextAccessor);
-        Assert.False(userAccessor.TryGetUser(out var nullUser));
-        Assert.Null(nullUser);
+        userAccessor.TryGetUser(out var nullUser).Should().BeFalse();
+        nullUser.Should().BeNull();
 
         httpContextAccessor.HttpContext = Substitute.For<HttpContext>();
-        Assert.True(userAccessor.TryGetUser(out var user));
-        Assert.NotNull(user);
+        userAccessor.TryGetUser(out var user).Should().BeTrue();
+        user.Should().NotBeNull();
     }
 }

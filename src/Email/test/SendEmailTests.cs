@@ -4,12 +4,10 @@
 using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
-using FluentAssertions;
 using Fusonic.Extensions.Email.Tests.Models;
 using MailKit.Net.Smtp;
 using netDumbster.smtp;
 using SimpleInjector;
-using Xunit;
 
 namespace Fusonic.Extensions.Email.Tests;
 
@@ -27,14 +25,14 @@ public partial class SendEmailTests(SendEmailTests.SendEmailFixture fixture) : T
         var email = Fixture.SmtpServer.ReceivedEmail.Single();
         email.ToAddresses
              .Should()
-             .HaveCount(1)
+             .ContainSingle()
              .And.Contain(a => a.Address == "recipient@fusonic.net");
 
         email.FromAddress.Address.Should().Be("test@fusonic.net");
         email.Headers.AllKeys.Should().Contain("Subject");
         email.Headers["Subject"].Should().Be("The subject");
 
-        email.MessageParts.Should().HaveCount(1);
+        email.MessageParts.Should().ContainSingle();
         email.MessageParts[0]
              .BodyData.Should()
              .Be(
@@ -55,14 +53,14 @@ public partial class SendEmailTests(SendEmailTests.SendEmailFixture fixture) : T
         var email = Fixture.SmtpServer.ReceivedEmail.Single();
         email.ToAddresses
              .Should()
-             .HaveCount(1)
+             .ContainSingle()
              .And.Contain(a => a.Address == "recipient@fusonic.net");
 
         email.FromAddress.Address.Should().Be("test@fusonic.net");
         email.Headers.AllKeys.Should().Contain("Subject");
         email.Headers["Subject"].Should().Be("The subject");
 
-        email.MessageParts.Should().HaveCount(1);
+        email.MessageParts.Should().ContainSingle();
         email.MessageParts[0]
              .BodyData.Should()
              .Be(
@@ -87,7 +85,7 @@ public partial class SendEmailTests(SendEmailTests.SendEmailFixture fixture) : T
         email.Headers.AllKeys.Should().Contain("Subject");
         email.Headers["Subject"].Should().Be("The subject");
 
-        email.MessageParts.Should().HaveCount(1);
+        email.MessageParts.Should().ContainSingle();
         email.MessageParts[0]
              .BodyData.Should()
              .Be(
@@ -130,7 +128,7 @@ public partial class SendEmailTests(SendEmailTests.SendEmailFixture fixture) : T
             email.MessageParts[1].HeaderData.Should().Contain(attachmentName);
         }
 
-        var expectedAttachmentContent = await File.ReadAllTextAsync(attachmentPath);
+        var expectedAttachmentContent = await File.ReadAllTextAsync(attachmentPath, TestContext.Current.CancellationToken); 
         email.MessageParts[1].BodyData.Should().Be(expectedAttachmentContent);
     }
 
@@ -264,6 +262,7 @@ public partial class SendEmailTests(SendEmailTests.SendEmailFixture fixture) : T
         {
             SmtpServer?.Dispose();
             await base.DisposeAsync();
+            GC.SuppressFinalize(this);
         }
     }
 

@@ -2,7 +2,6 @@
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
 using System.Diagnostics;
-using OpenTelemetry.Trace;
 
 namespace Fusonic.Extensions.AspNetCore.OpenTelemetry;
 
@@ -30,7 +29,7 @@ internal static class MediatorTracer
             if (activity != null)
             {
                 activity.SetStatus(ActivityStatusCode.Error, ex.Message);
-                activity.RecordException(ex);
+                activity.AddException(ex);
             }
 
             throw;

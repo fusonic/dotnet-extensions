@@ -7,7 +7,6 @@ using Hangfire;
 using NSubstitute;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;
-using Xunit;
 
 namespace Fusonic.Extensions.Hangfire.Tests;
 
@@ -19,8 +18,8 @@ public class ContainerExtensionsTests : IDisposable
     public ContainerExtensionsTests()
     {
         Container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
-        Container.Register(typeof(IRequestHandler<,>), new[] { typeof(OutOfBandCommandHandler), typeof(CommandHandler) });
-        Container.Register(typeof(INotificationHandler<>), new[] { typeof(OutOfBandNotificationHandler), typeof(NotificationHandler) });
+        Container.Register(typeof(IRequestHandler<,>), [typeof(OutOfBandCommandHandler), typeof(CommandHandler)]);
+        Container.Register(typeof(INotificationHandler<>), [typeof(OutOfBandNotificationHandler), typeof(NotificationHandler)]);
         Container.RegisterInstance(Substitute.For<IBackgroundJobClient>());
         Container.RegisterInstance(Substitute.For<IUserAccessor>());
         Container.Options.ResolveUnregisteredConcreteTypes = false;
@@ -33,17 +32,17 @@ public class ContainerExtensionsTests : IDisposable
     {
         Container.RegisterOutOfBandDecorators();
         var decorated = Container.GetInstance<IRequestHandler<OutOfBandCommand, Unit>>();
-        Assert.Equal(typeof(OutOfBandRequestHandlerDecorator<OutOfBandCommand, JobProcessor>), decorated.GetType());
+        decorated.Should().BeOfType<OutOfBandRequestHandlerDecorator<OutOfBandCommand, JobProcessor>>();
 
         var handler = Container.GetInstance<IRequestHandler<Command, Unit>>();
-        Assert.Equal(typeof(CommandHandler), handler.GetType());
+        handler.Should().BeOfType<CommandHandler>();
     }
 
     [Fact]
     public void JobProcessorMustBeResolvable()
     {
         Container.RegisterOutOfBandDecorators();
-        Assert.NotNull(Container.GetInstance<JobProcessor>());
+        Container.GetInstance<JobProcessor>().Should().NotBeNull();
     }
 
     [Fact]
@@ -51,17 +50,17 @@ public class ContainerExtensionsTests : IDisposable
     {
         Container.RegisterOutOfBandDecorators(options => options.UseJobProcessor<CustomJobProcessor>());
         var decorated = Container.GetInstance<IRequestHandler<OutOfBandCommand, Unit>>();
-        Assert.Equal(typeof(OutOfBandRequestHandlerDecorator<OutOfBandCommand, CustomJobProcessor>), decorated.GetType());
+        decorated.Should().BeOfType<OutOfBandRequestHandlerDecorator<OutOfBandCommand, CustomJobProcessor>>();
 
         var decoratedNotification = Container.GetInstance<INotificationHandler<OutOfBandNotification>>();
-        Assert.Equal(typeof(OutOfBandNotificationHandlerDecorator<OutOfBandNotification, CustomJobProcessor>), decoratedNotification.GetType());
+        decoratedNotification.Should().BeOfType<OutOfBandNotificationHandlerDecorator<OutOfBandNotification, CustomJobProcessor>>();
     }
 
     [Fact]
     public void CustomJobProcessorMustBeResolvable()
     {
         Container.RegisterOutOfBandDecorators(options => options.UseJobProcessor<CustomJobProcessor>());
-        Assert.NotNull(Container.GetInstance<CustomJobProcessor>());
+        Container.GetInstance<CustomJobProcessor>().Should().NotBeNull();
     }
 
     [Fact]
@@ -69,17 +68,17 @@ public class ContainerExtensionsTests : IDisposable
     {
         Container.RegisterOutOfBandDecorators();
         var decorated = Container.GetInstance<INotificationHandler<OutOfBandNotification>>();
-        Assert.Equal(typeof(OutOfBandNotificationHandlerDecorator<OutOfBandNotification, JobProcessor>), decorated.GetType());
+        decorated.Should().BeOfType<OutOfBandNotificationHandlerDecorator<OutOfBandNotification, JobProcessor>>();
 
         var handler = Container.GetInstance<INotificationHandler<Notification>>();
-        Assert.Equal(typeof(NotificationHandler), handler.GetType());
+        handler.Should().BeOfType<NotificationHandler>();
     }
 
     [Fact]
     public void UserAccessorDecoratorShouldBeApplied()
     {
         Container.RegisterOutOfBandDecorators();
-        Assert.IsType<HangfireUserAccessorDecorator>(Container.GetInstance<IUserAccessor>());
+        Container.GetInstance<IUserAccessor>().Should().BeOfType<HangfireUserAccessorDecorator>();
     }
 
     private sealed class CustomJobProcessor(Container container) : JobProcessor(container)

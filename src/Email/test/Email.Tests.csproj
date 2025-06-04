@@ -1,5 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
     <PropertyGroup>
+        <OutputType>Exe</OutputType>
         <IsPackable>false</IsPackable>
         <AssemblyName>Fusonic.Extensions.Email.Tests</AssemblyName>
         <RootNamespace>Fusonic.Extensions.Email.Tests</RootNamespace>
@@ -7,15 +8,18 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="coverlet.collector">
+        <PackageReference Include="FluentAssertions" />
+        <PackageReference Include="FluentAssertions.Analyzers">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="FluentAssertions" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" />
+        <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" />
+        <PackageReference Include="Microsoft.Testing.Extensions.TrxReport" />
         <PackageReference Include="netDumbster" />
         <PackageReference Include="NSubstitute" />
-        <PackageReference Include="xunit" />
+        <PackageReference Include="xunit.v3.core" />
+        <PackageReference Include="xunit.analyzers" />
         <PackageReference Include="xunit.runner.visualstudio">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

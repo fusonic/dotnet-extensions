@@ -1,7 +1,10 @@
 include:
-  - project: 'fusonic/devops/images/gitlab-ci-tools'
-    file: 'dotnet_test.yml'
-    ref: '5.10'
+  - component: $CI_SERVER_FQDN/fusonic/devops/components/dotnet-test/dotnet-test@1.0.0
+    inputs:
+      sln-path: Extensions.sln
+  - component: $CI_SERVER_FQDN/fusonic/devops/components/dotnet-test/dotnet-check-warnings@1.0.0
+    inputs:
+      sln-path: Extensions.sln
   - project: "fusonic/devops/images/gitlab-ci-tools"
     file: "release_tool.yml"
     ref: "5.10"
@@ -12,7 +15,7 @@ stages:
   - publish
 
 variables:
-  BUILD_IMAGE: mcr.microsoft.com/dotnet/sdk:8.0
+  BUILD_IMAGE: mcr.microsoft.com/dotnet/sdk:9.0
 
 default:
   interruptible: true
@@ -38,28 +41,14 @@ build:
   rules:
     - when: always
 
-test:
-  stage: test
-  image: ${BUILD_IMAGE}
-  extends: .dotnet-test
+dotnet:test:
   services:
-    - name: postgres:15.4
+    - name: postgres:17
       alias: postgres
   variables:
     POSTGRES_PASSWORD: admin
-    BACKEND_SRC_DIR: src/**
-    SLN_PATH: Extensions.sln
     ConnectionStrings__Npgsql: Host=postgres;Database=test_npgsql;Username=postgres;Password=admin
     ConnectionStrings__Hangfire: Host=postgres;Database=test_hangfire;Username=postgres;Password=admin
-  rules:
-    - when: always
-
-dotnet:check-warnings:
-  stage: test
-  extends: .dotnet:check-warnings
-  image: ${BUILD_IMAGE}
-  variables:
-    SLN_PATH: Extensions.sln
 
 release:lint-merge-request:
   stage: test

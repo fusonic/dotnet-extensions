@@ -2,12 +2,10 @@
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
 using System.Net;
-using FluentAssertions;
 using Fusonic.Extensions.Hosting.TimedHostedService;
 using Fusonic.Extensions.UnitTests;
 using NSubstitute;
 using SimpleInjector;
-using Xunit;
 
 namespace Fusonic.Extensions.Hosting.Tests.TimedHostedService;
 

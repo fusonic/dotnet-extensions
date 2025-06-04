@@ -1,11 +1,9 @@
 // Copyright (c) Fusonic GmbH. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
-using FluentAssertions;
 using FluentAssertions.Execution;
 using Fusonic.Extensions.AspNetCore.Http.Middlewares;
 using Microsoft.AspNetCore.Http;
-using Xunit;
 
 namespace Fusonic.Extensions.AspNetCore.Tests.Http;
 

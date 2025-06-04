@@ -5,7 +5,6 @@ using Fusonic.Extensions.Mediator;
 using Hangfire;
 using NSubstitute;
 using NSubstitute.ClearExtensions;
-using Xunit;
 
 namespace Fusonic.Extensions.Hangfire.Tests;
 
@@ -29,7 +28,7 @@ public class DecoratorTests : TestBase
         await handler.Handle(new OutOfBandCommand(), CancellationToken.None);
 
         jobClient.ReceivedWithAnyArgs().Enqueue<JobProcessor>(x => x.ProcessAsync(null!, null!));
-        Assert.False(handled, "Handle must not be called if handler is marked for out of band processing.");
+        handled.Should().BeFalse("Handle must not be called if handler is marked for out of band processing.");
     }
 
     [Fact]
@@ -42,7 +41,7 @@ public class DecoratorTests : TestBase
         OutOfBandNotificationHandlerWithoutAttribute.Handled += (_, _) => syncHandled = true;
 
         var handlers = Fixture.Container.GetAllInstances<INotificationHandler<OutOfBandNotification>>().ToList();
-        Assert.Equal(2, handlers.Count);
+        handlers.Should().HaveCount(2);
 
         foreach (var handler in handlers)
         {
@@ -50,7 +49,7 @@ public class DecoratorTests : TestBase
         }
 
         jobClient.ReceivedWithAnyArgs(1).Enqueue<JobProcessor>(x => x.ProcessAsync(null!, null!));
-        Assert.False(outOfBandHandled, "Handle must not be called if handler is marked for out of band processing.");
-        Assert.True(syncHandled);
+        outOfBandHandled.Should().BeFalse("Handle must not be called if handler is marked for out of band processing.");
+        syncHandled.Should().BeTrue();
     }
 }

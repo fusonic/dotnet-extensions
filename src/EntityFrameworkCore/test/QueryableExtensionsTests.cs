@@ -1,11 +1,9 @@
 // Copyright (c) Fusonic GmbH. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
-using FluentAssertions;
 using Fusonic.Extensions.Common.Entities;
 using Fusonic.Extensions.EntityFrameworkCore.Tests.Data;
 using Microsoft.EntityFrameworkCore;
-using Xunit;
 
 namespace Fusonic.Extensions.EntityFrameworkCore.Tests;
 
@@ -56,7 +54,7 @@ public class QueryableExtensionsTests : IDisposable
         var sampleEntity = await CreateSampleEntity();
 
         // Act
-        var result = await testDbContext.SampleDomainEntities.SingleOrDefaultAsync(s => s.Id == sampleEntity.Id).IsRequiredAsync();
+        var result = await testDbContext.SampleDomainEntities.SingleOrDefaultAsync(s => s.Id == sampleEntity.Id, TestContext.Current.CancellationToken).IsRequiredAsync();
 
         // Assert
         result.Should().Be(sampleEntity);
@@ -81,7 +79,7 @@ public class QueryableExtensionsTests : IDisposable
         var sampleEntity = await CreateSampleEntity();
 
         // Act
-        await testDbContext.SampleDomainEntities.IsRequiredAsync(sampleEntity.Id);
+        await testDbContext.SampleDomainEntities.IsRequiredAsync(sampleEntity.Id, TestContext.Current.CancellationToken);
 
         // Assert, throws no exception
     }
@@ -107,7 +105,7 @@ public class QueryableExtensionsTests : IDisposable
         var sampleEntity = await CreateSampleEntity();
 
         // Act
-        await testDbContext.SampleDomainEntities.Where(e => e.Id == sampleEntity.Id).IsRequiredAsync();
+        await testDbContext.SampleDomainEntities.Where(e => e.Id == sampleEntity.Id).IsRequiredAsync(TestContext.Current.CancellationToken);
 
         // Assert, throws no exception
     }
@@ -130,10 +128,10 @@ public class QueryableExtensionsTests : IDisposable
     public async Task SingleRequiredAsync_Succeeds()
     {
         // Act
-        var result = await testDbContext.SampleDomainEntities.SingleRequiredAsync();
+        var result = await testDbContext.SampleDomainEntities.SingleRequiredAsync(TestContext.Current.CancellationToken);
 
         // Assert
-        result.Should().Be(await testDbContext.SampleDomainEntities.FirstOrDefaultAsync());
+        result.Should().Be(await testDbContext.SampleDomainEntities.FirstOrDefaultAsync(TestContext.Current.CancellationToken));
     }
 
     [Fact]
@@ -141,7 +139,7 @@ public class QueryableExtensionsTests : IDisposable
     {
         // Arrange
         testDbContext.SampleDomainEntities.RemoveRange(testDbContext.SampleDomainEntities);
-        await testDbContext.SaveChangesAsync();
+        await testDbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         // Act
         var errorAction = () => testDbContext.SampleDomainEntities.SingleRequiredAsync();
@@ -173,7 +171,7 @@ public class QueryableExtensionsTests : IDisposable
         var sampleEntity = await CreateSampleEntity();
 
         // Act
-        var result = await testDbContext.SampleDomainEntities.SingleRequiredAsync(sampleEntity.Id);
+        var result = await testDbContext.SampleDomainEntities.SingleRequiredAsync(sampleEntity.Id, TestContext.Current.CancellationToken);
 
         // Assert
         result.Should().Be(sampleEntity);
@@ -201,7 +199,7 @@ public class QueryableExtensionsTests : IDisposable
         var sampleEntity = await CreateSampleEntity();
 
         // Act
-        var result = await testDbContext.SampleDomainEntities.SingleRequiredAsync(s => s.Id == sampleEntity.Id);
+        var result = await testDbContext.SampleDomainEntities.SingleRequiredAsync(s => s.Id == sampleEntity.Id, TestContext.Current.CancellationToken);
 
         // Assert
         result.Should().Be(sampleEntity);
@@ -226,7 +224,7 @@ public class QueryableExtensionsTests : IDisposable
         var sampleEntity = await CreateSampleEntity();
 
         // Act
-        var result = await testDbContext.SampleDomainEntities.FindRequiredAsync(sampleEntity.Id);
+        var result = await testDbContext.SampleDomainEntities.FindRequiredAsync(sampleEntity.Id, TestContext.Current.CancellationToken);
 
         // Assert
         result.Should().Be(sampleEntity);
@@ -250,7 +248,7 @@ public class QueryableExtensionsTests : IDisposable
         var sampleEntity = await CreateSampleEntity();
 
         // Act
-        var result = await testDbContext.SampleDomainEntities.ExistsAsync(sampleEntity.Id);
+        var result = await testDbContext.SampleDomainEntities.ExistsAsync(sampleEntity.Id, TestContext.Current.CancellationToken);
 
         // Assert
         result.Should().BeTrue();
@@ -260,7 +258,7 @@ public class QueryableExtensionsTests : IDisposable
     public async Task ExistsAsync_ReturnsFalse()
     {
         // Act
-        var result = await testDbContext.SampleDomainEntities.ExistsAsync(Guid.NewGuid());
+        var result = await testDbContext.SampleDomainEntities.ExistsAsync(Guid.NewGuid(), TestContext.Current.CancellationToken);
 
         // Assert
         result.Should().BeFalse();

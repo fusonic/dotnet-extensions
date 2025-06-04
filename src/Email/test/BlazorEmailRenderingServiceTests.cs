@@ -4,10 +4,8 @@
 using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Web;
-using FluentAssertions;
 using Fusonic.Extensions.AspNetCore.Blazor;
 using Fusonic.Extensions.Email.Tests.Models;
-using Xunit;
 
 namespace Fusonic.Extensions.Email.Tests;
 

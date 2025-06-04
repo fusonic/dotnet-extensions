@@ -6,7 +6,6 @@ using Fusonic.Extensions.Common.Security;
 using NSubstitute;
 using NSubstitute.ClearExtensions;
 using NSubstitute.ExceptionExtensions;
-using Xunit;
 
 namespace Fusonic.Extensions.Hangfire.Tests;
 
@@ -18,10 +17,11 @@ public class HangfireUserAccessorDecoratorTests
         var innerAccessor = Substitute.For<IUserAccessor>();
         innerAccessor.User.Throws<InvalidOperationException>();
         var decorator = new HangfireUserAccessorDecorator(innerAccessor);
-        Assert.Throws<InvalidOperationException>(() => decorator.User);
+        var act = () => decorator.User;
+        act.Should().ThrowExactly<InvalidOperationException>();
 
         decorator.User = new ClaimsPrincipal();
-        Assert.NotNull(decorator.User);
+        decorator.User.Should().NotBeNull();
     }
 
     [Fact]
@@ -31,8 +31,8 @@ public class HangfireUserAccessorDecoratorTests
         innerAccessor.User.Throws<InvalidOperationException>();
         var decorator = new HangfireUserAccessorDecorator(innerAccessor);
 
-        Assert.False(decorator.TryGetUser(out var nullUser));
-        Assert.Null(nullUser);
+        decorator.TryGetUser(out var nullUser).Should().BeFalse();
+        nullUser.Should().BeNull();
 
         innerAccessor.ClearSubstitute();
         var claimsPrincipal = new ClaimsPrincipal();
@@ -43,8 +43,8 @@ public class HangfireUserAccessorDecoratorTests
             return true;
         });
 
-        Assert.True(decorator.TryGetUser(out var user));
-        Assert.NotNull(user);
+        decorator.TryGetUser(out var user).Should().BeTrue();
+        user.Should().NotBeNull();
     }
 
     [Fact]
@@ -57,7 +57,7 @@ public class HangfireUserAccessorDecoratorTests
             User = new ClaimsPrincipal()
         };
 
-        Assert.True(decorator.TryGetUser(out var user));
-        Assert.NotNull(user);
+        decorator.TryGetUser(out var user).Should().BeTrue();
+        user.Should().NotBeNull();
     }
 }

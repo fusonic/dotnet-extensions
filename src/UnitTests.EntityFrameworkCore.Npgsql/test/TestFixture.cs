@@ -28,6 +28,6 @@ public class TestFixture : ServiceProviderTestFixture
     private static async Task CreateDatabase(string connectionString)
     {
         await using var dbContext = new TestDbContext(new DbContextOptionsBuilder<TestDbContext>().UseNpgsql(connectionString).Options);
-        await dbContext.Database.EnsureCreatedAsync();
+        await dbContext.Database.EnsureCreatedAsync(TestContext.Current.CancellationToken);
     }
 }

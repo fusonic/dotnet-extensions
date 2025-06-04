@@ -3,7 +3,6 @@
 
 using System.Text.Json;
 using Dapper;
-using FluentAssertions;
 using Fusonic.Extensions.Common.Transactions;
 using Fusonic.Extensions.UnitTests.EntityFrameworkCore;
 using Fusonic.Extensions.UnitTests.EntityFrameworkCore.Npgsql;
@@ -12,7 +11,6 @@ using Hangfire.PostgreSql;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
-using Xunit;
 
 namespace Fusonic.Extensions.Hangfire.Tests;
 
@@ -20,7 +18,7 @@ namespace Fusonic.Extensions.Hangfire.Tests;
 // bugs in core usage scenarios multiple times, mainly transaction handling. To avoid surprises when updating hangfire, we test those scenarios here.
 public class HangfireTransactionalBehaviorTests(HangfireTransactionalBehaviorTests.HangfireFixture fixture) : TestBase<HangfireTransactionalBehaviorTests.HangfireFixture>(fixture)
 {
-    public override async Task InitializeAsync()
+    public override async ValueTask InitializeAsync()
     {
         await base.InitializeAsync();
 
@@ -49,7 +47,7 @@ public class HangfireTransactionalBehaviorTests(HangfireTransactionalBehaviorTes
         testEntity.Name.Should().Be("Test");
 
         var jobs = await QueryJobs();
-        jobs.Should().HaveCount(1);
+        jobs.Should().ContainSingle();
 
         var job = jobs[0];
         job.StateName.Should().Be("Enqueued");
@@ -75,7 +73,7 @@ public class HangfireTransactionalBehaviorTests(HangfireTransactionalBehaviorTes
         testEntity.Name.Should().Be("Test");
 
         var jobs = await QueryJobs();
-        jobs.Should().HaveCount(1);
+        jobs.Should().ContainSingle();
 
         var job = jobs[0];
         job.StateName.Should().Be("Enqueued");
@@ -125,7 +123,7 @@ public class HangfireTransactionalBehaviorTests(HangfireTransactionalBehaviorTes
 
         // Assert
         var jobs = await QueryJobs();
-        jobs.Should().HaveCount(1);
+        jobs.Should().ContainSingle();
 
         var job = jobs[0];
         job.StateName.Should().Be("Enqueued");
@@ -148,7 +146,7 @@ public class HangfireTransactionalBehaviorTests(HangfireTransactionalBehaviorTes
 
         // Assert
         var jobs = await QueryJobs();
-        jobs.Should().HaveCount(1);
+        jobs.Should().ContainSingle();
 
         var job = jobs[0];
         job.StateName.Should().Be("Enqueued");

@@ -6,12 +6,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Fusonic.Extensions.UnitTests.EntityFrameworkCore;
 
-public abstract class DatabaseUnitTest<TDbContext, TFixture> : DatabaseUnitTest<TFixture>
+public abstract class DatabaseUnitTest<TDbContext, TFixture>(TFixture fixture) : DatabaseUnitTest<TFixture>(fixture)
     where TDbContext : DbContext
     where TFixture : class, IDependencyInjectionTestFixture
 {
-    protected DatabaseUnitTest(TFixture fixture) : base(fixture) { }
-
     /// <summary> Executes a query in an own scope. </summary>
     [DebuggerStepThrough]
     protected void Query(Action<TDbContext> query) => base.Query(query);

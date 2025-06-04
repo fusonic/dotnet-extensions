@@ -6,15 +6,7 @@ using Fusonic.Extensions.UnitTests.SimpleInjector;
 
 namespace Fusonic.Extensions.AspNetCore.Tests;
 
-public abstract class TestBase : TestBase<TestFixture>
-{
-    protected TestBase(TestFixture fixture) : base(fixture)
-    { }
-}
+public abstract class TestBase(TestFixture fixture) : TestBase<TestFixture>(fixture);
 
-public abstract class TestBase<TFixture> : DependencyInjectionUnitTest<TFixture>
-    where TFixture : SimpleInjectorTestFixture
-{
-    protected TestBase(TFixture fixture) : base(fixture)
-    { }
-}
+public abstract class TestBase<TFixture>(TFixture fixture) : DependencyInjectionUnitTest<TFixture>(fixture)
+    where TFixture : SimpleInjectorTestFixture;

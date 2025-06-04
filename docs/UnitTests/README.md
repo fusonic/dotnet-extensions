@@ -122,18 +122,10 @@ The basic idea behind those is that every test gets its own database copy. This 
 
 A test base for your database tests is available called `DatabaseUnitTest`. Type parameters are the test fixture optionally the `DbContext`. Example base classes in your test lib:
 ```cs
-public abstract class TestBase : TestBase<TestFixture>
-{
-    protected TestBase(TestFixture fixture) : base(fixture)
-    { }
-}
+public abstract class TestBase(TestFixture fixture) : TestBase<TestFixture>(fixture);
 
-public abstract class TestBase<TFixture> : DatabaseUnitTest<AppDbContext, TFixture>
-    where TFixture : TestFixture
-{
-    protected TestBase(TFixture fixture) : base(fixture)
-    { }
-}
+public abstract class TestBase<TFixture>(TFixture fixture) : DatabaseUnitTest<AppDbContext, TFixture>(fixture)
+    where TFixture : TestFixture;
 ```
 
 The `DatabaseUnitTest` provides the methods `Query` and `QueryAsync`. This is basically shortcut to resolving the `DbContext` and using it. So instead of writing
@@ -323,8 +315,8 @@ To solve this, you can either throttle your tests, or increase the max. connecti
 To increase the max. connections of your postgres test instance, just pass the parameter max_connections. Example for a docker compose file:
 ```yaml
 postgres_test:
-  image: postgres:14
-  command: -c max_connections=300
+  image: postgres:17
+  command: -c max_connections=500
   ports:
     - "5433:5432"
   volumes:
@@ -339,15 +331,15 @@ postgres_test:
 Alternatively, if you want to throttle your tests instead, you can to this easily with a semaphore in your test base:
 
 ```cs
-public class TestBase : IAsyncLifetime
-
+public class TestBase : IAsyncDisposable
+{
     private static readonly SemaphoreSlim Throttle = new(64);
     public async Task InitializeAsync() => await Throttle.WaitAsync();
 
-    public virtual Task DisposeAsync()
+    public ValueTask DisposeAsync()
     {
         _ = Throttle.Release();
-        return Task.CompletedTask;
+        return ValueTask.CompletedTask;
     }
 }
 ```

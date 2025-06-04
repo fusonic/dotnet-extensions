@@ -1,7 +1,6 @@
 // Copyright (c) Fusonic GmbH. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
-using System.Data.Common;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Microsoft.EntityFrameworkCore;
@@ -144,7 +143,7 @@ public static class PostgreSqlUtil
         var cmd = connection.CreateCommand();
         cmd.CommandText = "SELECT EXISTS(SELECT * FROM pg_database WHERE datname=@dbName)";
         cmd.Parameters.Add("@dbName", NpgsqlDbType.Varchar).Value = dbName;
-
+        
         var result = await cmd.ExecuteScalarAsync().ConfigureAwait(false);
         return result != null && (bool)result;
     }
@@ -170,7 +169,7 @@ public static class PostgreSqlUtil
         if ("postgres".Equals(dbName.ToLower(CultureInfo.InvariantCulture).Trim(), StringComparison.Ordinal))
             throw new ArgumentException("You can't do this on the postgres database.");
     }
-
+    
     private static ILogger CreateConsoleLogger()
         => LoggerFactory.Create(b => b.AddSimpleConsole(c => c.SingleLine = true))
                         .CreateLogger(nameof(PostgreSqlUtil));

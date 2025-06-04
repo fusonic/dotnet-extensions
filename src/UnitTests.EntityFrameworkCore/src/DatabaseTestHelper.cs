@@ -1,12 +1,6 @@
 ﻿// Copyright (c) Fusonic GmbH. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Fusonic.Extensions.UnitTests.EntityFrameworkCore;
 public static class DatabaseTestHelper
 {
