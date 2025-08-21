@@ -72,7 +72,7 @@ release:create:
   before_script:
     - export RELEASE_VERSION=`sed -n 's/.*<Version>\(.*\)<\/Version>.*/\1/p' ./src/Directory.Build.props`
   rules:
-    - if: '$CI_COMMIT_REF_SLUG == "main"'
+    - if: $CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH =~ /^release\//
       when: manual
 
 publish:
