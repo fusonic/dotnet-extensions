@@ -54,16 +54,6 @@ public record SendEmail(
                 Subject = subject
             };
 
-            var headers = request.Headers ?? emailOptions.DefaultHeaders;
-
-            if (headers != null)
-            {
-                foreach (var (field, value) in headers)
-                {
-                    message.Headers.Add(field, value);
-                }
-            }
-
             if (!string.IsNullOrWhiteSpace(request.BccRecipient))
             {
                 message.Bcc.Add(new MailboxAddress(request.BccRecipient, request.BccRecipient));
