@@ -10,7 +10,7 @@ The project on Github.com is updated on a daily basis, but does not include any 
 If we see broader community engagement in the future, we may consider switching our primary development to Github.
 
 Fusonic Extensions follows the official yearly .NET release cycle.
-Latest Fusonic Extensions main branch targets .NET 9.0.
+Latest Fusonic Extensions main branch targets .NET 10.0.
 
 
 Packages

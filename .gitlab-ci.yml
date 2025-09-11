@@ -2,12 +2,14 @@ include:
   - component: $CI_SERVER_FQDN/fusonic/devops/components/dotnet-test/dotnet-test@1.0.0
     inputs:
       sln-path: Extensions.sln
+      image: mcr.microsoft.com/dotnet/sdk:10.0
   - component: $CI_SERVER_FQDN/fusonic/devops/components/dotnet-test/dotnet-check-warnings@1.0.0
     inputs:
       sln-path: Extensions.sln
+      image: mcr.microsoft.com/dotnet/sdk:10.0
   - project: "fusonic/devops/images/gitlab-ci-tools"
     file: "release_tool.yml"
-    ref: "5.10"
+    ref: "5.12"
 
 stages:
   - build
@@ -15,7 +17,7 @@ stages:
   - publish
 
 variables:
-  BUILD_IMAGE: mcr.microsoft.com/dotnet/sdk:9.0
+  BUILD_IMAGE: mcr.microsoft.com/dotnet/sdk:10.0
 
 default:
   interruptible: true

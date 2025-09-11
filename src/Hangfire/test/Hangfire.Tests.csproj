@@ -21,7 +21,10 @@
         <PackageReference Include="NSubstitute" />
         <PackageReference Include="SimpleInjector.Integration.ServiceCollection" />
         <PackageReference Include="xunit.v3.core" />
-        <PackageReference Include="xunit.analyzers" />
+        <PackageReference Include="xunit.analyzers">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
         <PackageReference Include="xunit.runner.visualstudio">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
