@@ -15,6 +15,6 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build Extensions.sln --no-restore
+      run: dotnet build Extensions.slnx --no-restore
     - name: Test
-      run: dotnet test Extensions.sln --no-build --verbosity normal --filter "FullyQualifiedName!~Fusonic.Extensions.UnitTests.EntityFrameworkCore & FullyQualifiedName!~Fusonic.Extensions.Hangfire.Tests.HangfireTransactionalBehaviorTests"
+      run: dotnet test Extensions.slnx --no-build --verbosity normal --filter "FullyQualifiedName!~Fusonic.Extensions.UnitTests.EntityFrameworkCore & FullyQualifiedName!~Fusonic.Extensions.Hangfire.Tests.HangfireTransactionalBehaviorTests"

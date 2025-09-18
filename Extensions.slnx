@@ -1,0 +1,34 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path=".editorconfig.disableAnalyzers" />
+    <File Path=".gitlab-ci.yml" />
+    <File Path="README.md" />
+    <File Path="src/Directory.Build.props" />
+    <File Path="src/Directory.Packages.props" />
+  </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="src/AspNetCore/test/AspNetCore.Tests.csproj" />
+    <Project Path="src/Common/test/Common.Tests.csproj" />
+    <Project Path="src/Email/test/Email.Tests.csproj" />
+    <Project Path="src/EntityFrameworkCore/test/EntityFrameworkCore.Tests.csproj" />
+    <Project Path="src/Hangfire/test/Hangfire.Tests.csproj" />
+    <Project Path="src/Hosting/test/Hosting.Tests.csproj" />
+    <Project Path="src/Mediator/test/Mediator.Tests.csproj" />
+    <Project Path="src/UnitTests.EntityFrameworkCore.Npgsql/test/UnitTests.EntityFrameworkCore.Npgsql.Tests.csproj" />
+    <Project Path="src/UnitTests.EntityFrameworkCore/test/UnitTests.EntityFrameworkCore.Tests.csproj" />
+  </Folder>
+  <Project Path="src/AspNetCore/src/AspNetCore.csproj" />
+  <Project Path="src/Common/src/Common.csproj" />
+  <Project Path="src/Email/src/Email.csproj" />
+  <Project Path="src/EntityFrameworkCore/src/EntityFrameworkCore.csproj" />
+  <Project Path="src/Hangfire/src/Hangfire.csproj" />
+  <Project Path="src/Hosting/src/Hosting.csproj" />
+  <Project Path="src/Mediator/src/Mediator.csproj" />
+  <Project Path="src/UnitTests.EntityFrameworkCore.Npgsql/src/UnitTests.EntityFrameworkCore.Npgsql.csproj" />
+  <Project Path="src/UnitTests.EntityFrameworkCore.SqlServer/src/UnitTests.EntityFrameworkCore.SqlServer.csproj" />
+  <Project Path="src/UnitTests.EntityFrameworkCore/src/UnitTests.EntityFrameworkCore.csproj" />
+  <Project Path="src/UnitTests.ServiceProvider/src/UnitTests.ServiceProvider.csproj" />
+  <Project Path="src/UnitTests.SimpleInjector/src/UnitTests.SimpleInjector.csproj" />
+  <Project Path="src/UnitTests/src/UnitTests.csproj" />
+</Solution>
