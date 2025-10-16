@@ -2,7 +2,7 @@
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
 using System.Globalization;
-using FluentAssertions;
+using AwesomeAssertions;
 using Fusonic.Extensions.Email.Tests.Models;
 using MimeKit;
 using NSubstitute;

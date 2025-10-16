@@ -1,7 +1,7 @@
 // Copyright (c) Fusonic GmbH. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
-using FluentAssertions.Execution;
+using AwesomeAssertions.Execution;
 using Fusonic.Extensions.AspNetCore.Http.Middlewares;
 using Microsoft.AspNetCore.Http;
 

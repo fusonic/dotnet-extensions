@@ -7,12 +7,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Dapper" />
-        <PackageReference Include="FluentAssertions" />
-        <PackageReference Include="FluentAssertions.Analyzers">
+        <PackageReference Include="AwesomeAssertions" />
+        <PackageReference Include="AwesomeAssertions.Analyzers">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="Dapper" />
         <PackageReference Include="Hangfire" />
         <PackageReference Include="Hangfire.PostgreSql" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" />

@@ -4,13 +4,13 @@
     <EnablePackageVersionOverride>false</EnablePackageVersionOverride>
   </PropertyGroup>
   <ItemGroup>
+    <PackageVersion Include="AwesomeAssertions" Version="9.2.0" />
+    <PackageVersion Include="AwesomeAssertions.Analyzers" Version="9.0.8" />
     <PackageVersion Include="Dapper" Version="2.1.66" />
-    <PackageVersion Include="FluentAssertions" Version="[7.2.0,8.0.0)" />
-    <PackageVersion Include="FluentAssertions.Analyzers" Version="0.34.1" />
     <PackageVersion Include="Hangfire" Version="1.8.21" />
     <PackageVersion Include="Hangfire.Core" Version="1.8.21" />
     <PackageVersion Include="Hangfire.PostgreSql" Version="1.20.12" />
-    <PackageVersion Include="MailKit" Version="4.13.0" />
+    <PackageVersion Include="MailKit" Version="4.14.1" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.0-rc.1.25451.107" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.0.0-rc.1.25451.107" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.0-rc.1.25451.107" />
@@ -31,20 +31,20 @@
     <PackageVersion Include="Microsoft.Testing.Extensions.CodeCoverage" Version="17.14.2" />
     <PackageVersion Include="Microsoft.Testing.Extensions.TrxReport" Version="1.8.4" />
     <PackageVersion Include="netDumbster" Version="3.1.1" />
-    <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageVersion Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0-rc.1" />
     <PackageVersion Include="NSubstitute" Version="5.3.0" />
-    <PackageVersion Include="OpenTelemetry.Api" Version="1.12.0" />
-    <PackageVersion Include="Polly" Version="8.6.3" />
+    <PackageVersion Include="OpenTelemetry.Api" Version="1.13.1" />
+    <PackageVersion Include="Polly" Version="8.6.4" />
     <PackageVersion Include="PreMailer.Net" Version="2.7.2" />
     <PackageVersion Include="SimpleInjector.Integration.AspNetCore.Mvc.Core" Version="5.5.0" />
     <PackageVersion Include="SimpleInjector.Integration.AspNetCore" Version="5.5.0" />
     <PackageVersion Include="SimpleInjector.Integration.GenericHost" Version="5.5.0" />
     <PackageVersion Include="SimpleInjector" Version="5.5.0" />
     <PackageVersion Include="SimpleInjector.Integration.ServiceCollection" Version="5.5.0" />
-    <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.4" />
-    <PackageVersion Include="xunit.v3.core" Version="3.0.1" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
+    <PackageVersion Include="xunit.v3.core" Version="3.1.0" />
     <PackageVersion Include="xunit.analyzers" Version="1.24.0" />
-    <PackageVersion Include="xunit.v3.extensibility.core" Version="3.0.1" />
+    <PackageVersion Include="xunit.v3.extensibility.core" Version="3.1.0" />
   </ItemGroup>
 </Project>
