@@ -1,26 +1,26 @@
-<Project Sdk="Microsoft.NET.Sdk">
-    <PropertyGroup>
-        <AssemblyName>Fusonic.Extensions.Mediator</AssemblyName>
-        <RootNamespace>Fusonic.Extensions.Mediator</RootNamespace>
-        <PackageProjectUrl>https://github.com/fusonic/dotnet-extensions</PackageProjectUrl>
-        <IncludeSymbols>true</IncludeSymbols>
-        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-        <DocumentationFile>$(ArtifactsPath)\bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
-        <Description>Contains a simple implementation of the common mediator pattern. </Description>
-      <PackageReadmeFile>README.md</PackageReadmeFile>
-    </PropertyGroup>
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>Fusonic.Extensions.Mediator</AssemblyName>
+    <RootNamespace>Fusonic.Extensions.Mediator</RootNamespace>
+    <PackageProjectUrl>https://github.com/fusonic/dotnet-extensions</PackageProjectUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <DocumentationFile>$(ArtifactsPath)\bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    <Description>Contains a simple implementation of the common mediator pattern. </Description>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
 
-    <ItemGroup>
-      <None Include="..\..\..\docs\Mediator\README.md" Pack="true" PackagePath="\" />
-    </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\docs\Mediator\README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
 
-    <ItemGroup>
-      <PackageReference Include="SimpleInjector" />
-      <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
-    </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="SimpleInjector" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+  </ItemGroup>
 
-    <ItemGroup>
-        <ProjectReference Include="..\..\Common\src\Common.csproj" />
-    </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\src\Common.csproj" />
+  </ItemGroup>
 
 </Project>

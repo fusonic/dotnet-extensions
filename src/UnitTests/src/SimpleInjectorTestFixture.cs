@@ -5,7 +5,7 @@ using System.Diagnostics;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;
 
-namespace Fusonic.Extensions.UnitTests.SimpleInjector;
+namespace Fusonic.Extensions.UnitTests;
 
 public abstract class SimpleInjectorTestFixture : DependencyInjectionTestFixture<Scope>, IAsyncDisposable
 {

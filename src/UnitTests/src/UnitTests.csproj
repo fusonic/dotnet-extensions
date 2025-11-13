@@ -28,6 +28,7 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+    <PackageReference Include="SimpleInjector" PrivateAssets="all" />
     <PackageReference Include="xunit.v3.extensibility.core" />
   </ItemGroup>
 

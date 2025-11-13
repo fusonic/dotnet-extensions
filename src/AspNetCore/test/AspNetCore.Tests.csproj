@@ -37,7 +37,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\Common\src\Common.csproj" />
-        <ProjectReference Include="..\..\UnitTests.SimpleInjector\src\UnitTests.SimpleInjector.csproj" />
+        <ProjectReference Include="..\..\UnitTests\src\UnitTests.csproj" />
         <ProjectReference Include="..\src\AspNetCore.csproj" />
     </ItemGroup>
 

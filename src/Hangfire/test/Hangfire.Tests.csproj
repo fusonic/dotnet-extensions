@@ -35,7 +35,6 @@
     <ItemGroup>
         <ProjectReference Include="..\..\UnitTests.EntityFrameworkCore.Npgsql\src\UnitTests.EntityFrameworkCore.Npgsql.csproj" />
         <ProjectReference Include="..\..\UnitTests.EntityFrameworkCore\src\UnitTests.EntityFrameworkCore.csproj" />
-        <ProjectReference Include="..\..\UnitTests.SimpleInjector\src\UnitTests.SimpleInjector.csproj" />
         <ProjectReference Include="..\..\UnitTests\src\UnitTests.csproj" />
         <ProjectReference Include="..\src\Hangfire.csproj" />
     </ItemGroup>

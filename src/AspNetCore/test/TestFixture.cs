@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.Reflection;
 using Fusonic.Extensions.AspNetCore.Blazor;
 using Fusonic.Extensions.AspNetCore.Razor;
-using Fusonic.Extensions.UnitTests.SimpleInjector;
+using Fusonic.Extensions.UnitTests;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;

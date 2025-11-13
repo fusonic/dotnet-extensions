@@ -28,7 +28,5 @@
   <Project Path="src/UnitTests.EntityFrameworkCore.Npgsql/src/UnitTests.EntityFrameworkCore.Npgsql.csproj" />
   <Project Path="src/UnitTests.EntityFrameworkCore.SqlServer/src/UnitTests.EntityFrameworkCore.SqlServer.csproj" />
   <Project Path="src/UnitTests.EntityFrameworkCore/src/UnitTests.EntityFrameworkCore.csproj" />
-  <Project Path="src/UnitTests.ServiceProvider/src/UnitTests.ServiceProvider.csproj" />
-  <Project Path="src/UnitTests.SimpleInjector/src/UnitTests.SimpleInjector.csproj" />
   <Project Path="src/UnitTests/src/UnitTests.csproj" />
 </Solution>

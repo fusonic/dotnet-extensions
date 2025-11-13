@@ -1,14 +1,18 @@
 // Copyright (c) Fusonic GmbH. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
-using Fusonic.Extensions.UnitTests.SimpleInjector;
 using Microsoft.Extensions.DependencyInjection;
 using SimpleInjector;
 
 namespace Fusonic.Extensions.Mediator.Tests;
 
-public class TestFixture : SimpleInjectorTestFixture
+public class SimpleInjectorMediatorTransactionalTestFixture() : SimpleInjectorMediatorTestFixture(true);
+public class SimpleInjectorMediatorNonTransactionalTestFixture() : SimpleInjectorMediatorTestFixture(false);
+
+public abstract class SimpleInjectorMediatorTestFixture(bool enableTransactionalDecorators) : UnitTests.SimpleInjectorTestFixture, IMediatorTestFixture
 {
+    public bool EnableTransactionalDecorators => enableTransactionalDecorators;
+
     protected override void RegisterCoreDependencies(Container container)
     {
         base.RegisterCoreDependencies(container);
@@ -23,8 +27,8 @@ public class TestFixture : SimpleInjectorTestFixture
         services.BuildServiceProvider().UseSimpleInjector(container);
     }
 
-    private static void RegisterMediator(Container container, IServiceCollection services)
+    private void RegisterMediator(Container container, IServiceCollection services)
     {
-        container.RegisterMediator(services, [typeof(TestFixture).Assembly]);
+        container.RegisterMediator(services, [typeof(SimpleInjectorMediatorTestFixture).Assembly], o => o.EnableTransactionalDecorators = EnableTransactionalDecorators);
     }
 }

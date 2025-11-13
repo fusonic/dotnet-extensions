@@ -3,11 +3,10 @@
 
 using System.Collections.Concurrent;
 using System.Runtime.CompilerServices;
-using SimpleInjector;
 
-namespace Fusonic.Extensions.Mediator.SimpleInjector;
+namespace Fusonic.Extensions.Mediator.DependencyInjection;
 
-public class SimpleInjectorMediator(Container container) : IMediator
+public class ServiceProviderMediator(IServiceProvider serviceProvider) : IMediator
 {
     private static readonly ConcurrentDictionary<Type, IRequestHandlerWrapper> RequestWrappers = new();
     private static readonly ConcurrentDictionary<Type, INotificationHandlerWrapper> NotificationWrappers = new();
@@ -27,7 +26,7 @@ public class SimpleInjectorMediator(Container container) : IMediator
                 return wrapperInstance;
             });
 
-        return (TResponse)await wrapper.Handle(request, container, cancellationToken);
+        return (TResponse)await wrapper.Handle(request, serviceProvider, cancellationToken);
     }
 
     public async Task Publish(INotification notification, CancellationToken cancellationToken = default)
@@ -44,7 +43,7 @@ public class SimpleInjectorMediator(Container container) : IMediator
                 return wrapperInstance;
             });
 
-        await wrapper.Handle(notification, container, cancellationToken);
+        await wrapper.Handle(notification, serviceProvider, cancellationToken);
     }
 
     public async IAsyncEnumerable<TResponse> CreateAsyncEnumerable<TResponse>(IAsyncEnumerableRequest<TResponse> request, [EnumeratorCancellation] CancellationToken cancellationToken = default)
@@ -61,7 +60,7 @@ public class SimpleInjectorMediator(Container container) : IMediator
                 return wrapperInstance;
             });
 
-        await foreach (var item in wrapper.Handle(request, container, cancellationToken))
+        await foreach (var item in wrapper.Handle(request, serviceProvider, cancellationToken))
         {
             yield return (TResponse)item;
         }

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Description>Provides ASP.NET Core extensions (Middelwares, Utilities ...)</Description>
@@ -20,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="SimpleInjector" PrivateAssets="all" />
     <PackageReference Include="OpenTelemetry.Api" />
   </ItemGroup>
 

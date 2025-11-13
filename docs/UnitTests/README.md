@@ -23,7 +23,7 @@ The unit test framwork tries to provide the following features & design goals:
   - **Resolving types:** Can be done using `GetInstance<T>()`
   - **Scope separation:** In reality, creating data and consuming that data is not done in the same scope. In order to be able to see issues when using different scopes in the unit tests you can run your code in the provided `Scoped` and `ScopedAsync` methods. They run your code in separate lifetime scopes of the DI-Container. Within the tests you usually want to run your data preparations and your queries in different scopes.
 
-- **Dependency injection:** The test base is layed out to be support dependency injection. Use `Fusonic.Extensions.UnitTests.ServiceProvider` to use Microsofts dependency injection, or `Fusonic.Extensions.UnitTests.SimpleInjector` for SimpleInjector support.
+- **Dependency injection:** The test base is layed out to be support dependency injection. Extensions for IServiceProvider and SimpleInjector are provided.
 
 - **Database support:** The basic framework, `Fusonic.Extensions.UnitTests` does not come with any support for Databases, but we do provide support for fast and parallel database tests with `Fusonic.Extensions.UnitTests.EntityFrameworkCore`, currently specifically supporting PostgreSQL with `Fusonic.Extensions.UnitTests.EntityFrameworkCore.Npgsql`.
 
@@ -31,13 +31,11 @@ The unit test framwork tries to provide the following features & design goals:
 
 ## Setup
 
-Currently SimpleInjector and Microsofts dependency injection are supported. Reference the required library accordingly:
-- `Fusonic.Extensions.UnitTests.SimpleInjector` or
-- `Fusonic.Extensions.UnitTests.ServiceProvider`
+Currently SimpleInjector and Microsofts dependency injection are supported.
 
 Create a `TestBase` and a `TestFixture` for the assembly.
 
-The `TestFixture` is used for registering your depdendencies. Override `ServiceProviderTestFixture` or `SimpleInjectorTestFixture`, depending on the DI container you want to use.
+The `TestFixture` is used for registering your depdendencies. Override `ServiceProviderTestFixture` or `SimpleInjectorTestFixture`, depending on the DI container you want to use. Note that when using SimpleInjector, you must reference it in your projects, as it does not come as a transient build dependency when using `Fusonic.Extensions.UnitTests`.
 
 The `TestBase` is used for tying up the test base from the extensions and your test fixture.
 

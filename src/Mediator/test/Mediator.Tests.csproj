@@ -5,6 +5,7 @@
         <AssemblyName>Fusonic.Extensions.Mediator.Tests</AssemblyName>
         <RootNamespace>Fusonic.Extensions.Mediator.Tests</RootNamespace>
         <IsPackable>false</IsPackable>
+        <UserSecretsId>9a7066e2-59e2-4eec-92fb-721fde1dad1b</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>
@@ -17,6 +18,7 @@
         <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" />
         <PackageReference Include="Microsoft.Testing.Extensions.TrxReport" />
         <PackageReference Include="NSubstitute" />
+        <PackageReference Include="Scrutor" />
         <PackageReference Include="xunit.v3.core" />
         <PackageReference Include="xunit.analyzers">
           <PrivateAssets>all</PrivateAssets>
@@ -30,7 +32,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\UnitTests.SimpleInjector\src\UnitTests.SimpleInjector.csproj" />
+        <ProjectReference Include="..\..\UnitTests\src\UnitTests.csproj" />
         <ProjectReference Include="..\src\Mediator.csproj" />
     </ItemGroup>
 </Project>

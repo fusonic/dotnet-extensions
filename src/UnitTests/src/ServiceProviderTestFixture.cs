@@ -4,11 +4,11 @@
 using System.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Fusonic.Extensions.UnitTests.ServiceProvider;
+namespace Fusonic.Extensions.UnitTests;
 
 public abstract class ServiceProviderTestFixture : DependencyInjectionTestFixture<AsyncServiceScope>, IDisposable
 {
-    private readonly Microsoft.Extensions.DependencyInjection.ServiceProvider serviceProvider;
+    private readonly ServiceProvider serviceProvider;
 
     protected virtual ServiceProviderOptions ServiceProviderOptions { get; } = new()
     {
@@ -27,7 +27,7 @@ public abstract class ServiceProviderTestFixture : DependencyInjectionTestFixtur
     [DebuggerStepThrough]
     public override object GetInstance(AsyncServiceScope scope, Type serviceType) => scope.ServiceProvider.GetRequiredService(serviceType);
 
-    private Microsoft.Extensions.DependencyInjection.ServiceProvider BuildServiceProvider()
+    private ServiceProvider BuildServiceProvider()
     {
         var services = new ServiceCollection();
         RegisterCoreDependencies(services);

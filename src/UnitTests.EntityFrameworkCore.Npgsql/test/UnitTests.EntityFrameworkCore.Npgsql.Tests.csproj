@@ -33,7 +33,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\UnitTests.ServiceProvider\src\UnitTests.ServiceProvider.csproj" />
         <ProjectReference Include="..\src\UnitTests.EntityFrameworkCore.Npgsql.csproj" />
     </ItemGroup>
 

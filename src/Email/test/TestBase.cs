@@ -4,7 +4,6 @@
 using System.Diagnostics;
 using Fusonic.Extensions.Mediator;
 using Fusonic.Extensions.UnitTests;
-using Fusonic.Extensions.UnitTests.SimpleInjector;
 
 namespace Fusonic.Extensions.Email.Tests;
 

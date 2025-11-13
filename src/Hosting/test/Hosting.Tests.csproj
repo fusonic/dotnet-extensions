@@ -29,7 +29,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\UnitTests.SimpleInjector\src\UnitTests.SimpleInjector.csproj" />
+        <ProjectReference Include="..\..\UnitTests\src\UnitTests.csproj" />
         <ProjectReference Include="..\src\Hosting.csproj" />
     </ItemGroup>
 

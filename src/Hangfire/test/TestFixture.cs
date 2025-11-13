@@ -3,9 +3,9 @@
 
 using Fusonic.Extensions.Common.Security;
 using Fusonic.Extensions.Mediator;
+using Fusonic.Extensions.UnitTests;
 using Fusonic.Extensions.UnitTests.EntityFrameworkCore;
 using Fusonic.Extensions.UnitTests.EntityFrameworkCore.Npgsql;
-using Fusonic.Extensions.UnitTests.SimpleInjector;
 using Hangfire;
 using Hangfire.PostgreSql;
 using Microsoft.EntityFrameworkCore;
