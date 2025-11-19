@@ -2,13 +2,11 @@
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
 using System.Globalization;
-using AwesomeAssertions;
 using Fusonic.Extensions.Email.Tests.Models;
 using MimeKit;
 using NSubstitute;
 using NSubstitute.ClearExtensions;
 using SimpleInjector;
-using Xunit;
 
 namespace Fusonic.Extensions.Email.Tests;
 

@@ -167,6 +167,12 @@ public class TestFixture : ServiceProviderTestFixture
 
 The interface of `ITestStore` is straight forward. You can easily replace your test store with something else for another strategy or for supporting other databases.
 
+When using `IDbContextFactory`, the factory must be registered with scoped lifetime, not with the default singleton lifetime.  
+
+```cs
+services.AddDbContext<AppDbContext>(b => b.UseNpgsqlDatabasePerTest(testStore), ServiceLifetime.Scoped);
+```
+
 ### PostgreSQL - Template
 
 When using the `NpgsqlDatabasePerTest` it is assumed that you use a prepared database template. This template should have all migrations applied and may contain some seeded data. Each test gets a copy of this template. With the `PostgreSqlUtil`, we provide an easy way to create such a template.
@@ -254,6 +260,11 @@ The connection string must have the `Intial catalog` set. It determines the name
 
 The `TemplateCreator` specifies the method to create a template. It has to create and seed the database and create a backup for the copies used for the tests. Fortunately, the `SqlServerTestUtil` provides a method to do exactly that.
 
+When using `IDbContextFactory`, the factory must be registered with scoped lifetime, not with the default singleton lifetime.  
+
+```cs
+services.AddDbContext<AppDbContext>(b => b.UseSqlServerDatabasePerTest(testStore), ServiceLifetime.Scoped);
+```
 
 ### Configuring any other database
 

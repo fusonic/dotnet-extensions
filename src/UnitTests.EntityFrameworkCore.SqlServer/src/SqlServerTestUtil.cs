@@ -1,4 +1,4 @@
-﻿// Copyright (c) Fusonic GmbH. All rights reserved.
+// Copyright (c) Fusonic GmbH. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
 using System.Diagnostics.CodeAnalysis;
@@ -120,9 +120,9 @@ public static class SqlServerTestUtil
     /// <param name="seed">Optional seed action that gets executed after creating the database.</param>
     /// <param name="logger">Logger. Defaults to console logger.</param>
     /// <param name="useMigrations">
-    /// If the DbContext was scaffolded from an existing database, this setting should be set to false (=default). <br/>
-    /// If the DbContext is code first and the database gets created with migrations, this setting should be set to true. <br/>
-    /// Defaults to false.
+    /// If there are database migrations to be executed when setting up the test database, set this to true. <br/>
+    /// If the database and the tables should be created from the current state, set this to false. <br/>
+    /// Defaults to true.
     /// </param>
     public static async Task CreateTestDbTemplate<TDbContext>(
         string connectionString,
@@ -130,7 +130,7 @@ public static class SqlServerTestUtil
         Action<SqlServerDbContextOptionsBuilder>? sqlServerOptionsAction = null,
         Func<TDbContext, Task>? seed = null,
         ILogger? logger = null,
-        bool useMigrations = false)
+        bool useMigrations = true)
         where TDbContext : DbContext
     {
         logger ??= CreateConsoleLogger();

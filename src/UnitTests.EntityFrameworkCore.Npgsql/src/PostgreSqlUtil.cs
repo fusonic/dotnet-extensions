@@ -34,12 +34,18 @@ public static class PostgreSqlUtil
     /// <param name="npgsqlOptionsAction">The configuration action for .UseNpgsql().</param>
     /// <param name="seed">Optional seed action that gets executed after creating the database.</param>
     /// <param name="logger">Logger. Defaults to console logger.</param>
+    /// <param name="useMigrations">
+    /// If there are database migrations to be executed when setting up the test database, set this to true. <br/>
+    /// If the database and the tables should be created from the current state, set this to false. <br/>
+    /// Defaults to true.
+    /// </param>
     public static async Task CreateTestDbTemplate<TDbContext>(
         string connectionString,
         Func<DbContextOptions<TDbContext>, TDbContext> dbContextFactory,
         Action<NpgsqlDbContextOptionsBuilder>? npgsqlOptionsAction = null,
         Func<TDbContext, Task>? seed = null,
-        ILogger? logger = null)
+        ILogger? logger = null,
+        bool useMigrations = true)
         where TDbContext : DbContext
     {
         logger ??= CreateConsoleLogger();
@@ -75,8 +81,17 @@ public static class PostgreSqlUtil
             var dbContext = dbContextFactory(options);
             await using (dbContext.ConfigureAwait(false))
             {
-                logger.LogInformation("Running migrations");
-                await dbContext.Database.MigrateAsync().ConfigureAwait(false);
+                // Migrate and run seed
+                if (useMigrations)
+                {
+                    logger.LogInformation("Running migrations");
+                    await dbContext.Database.MigrateAsync().ConfigureAwait(false);
+                }
+                else
+                {
+                    logger.LogInformation("Creating database");
+                    await dbContext.Database.EnsureCreatedAsync().ConfigureAwait(false);
+                }
 
                 if (seed != null)
                 {

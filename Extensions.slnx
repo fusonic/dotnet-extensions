@@ -16,6 +16,7 @@
     <Project Path="src/Hosting/test/Hosting.Tests.csproj" />
     <Project Path="src/Mediator/test/Mediator.Tests.csproj" />
     <Project Path="src/UnitTests.EntityFrameworkCore.Npgsql/test/UnitTests.EntityFrameworkCore.Npgsql.Tests.csproj" />
+    <Project Path="src/UnitTests.EntityFrameworkCore.SqlServer/test/UnitTests.EntityFrameworkCore.SqlServer.Tests.csproj" />
     <Project Path="src/UnitTests.EntityFrameworkCore/test/UnitTests.EntityFrameworkCore.Tests.csproj" />
   </Folder>
   <Project Path="src/AspNetCore/src/AspNetCore.csproj" />
@@ -25,6 +26,7 @@
   <Project Path="src/Hangfire/src/Hangfire.csproj" />
   <Project Path="src/Hosting/src/Hosting.csproj" />
   <Project Path="src/Mediator/src/Mediator.csproj" />
+  <Project Path="src/TestContainers/src/TestContainers.csproj" />
   <Project Path="src/UnitTests.EntityFrameworkCore.Npgsql/src/UnitTests.EntityFrameworkCore.Npgsql.csproj" />
   <Project Path="src/UnitTests.EntityFrameworkCore.SqlServer/src/UnitTests.EntityFrameworkCore.SqlServer.csproj" />
   <Project Path="src/UnitTests.EntityFrameworkCore/src/UnitTests.EntityFrameworkCore.csproj" />

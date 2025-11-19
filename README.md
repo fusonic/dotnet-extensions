@@ -39,14 +39,11 @@ Provides services and extensions for hosting. See the [documentation](docs/Hosti
 [![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.Mediator.svg?label=Fusonic.Extensions.Mediator&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.Mediator/)
 Provides simple mediator implementation. See the [documentation](docs/Mediator/README.md) for more details.
 
+[![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.TestContainers.svg?label=Fusonic.Extensions.TestContainers&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.TestContainers/)
+Provides simple mediator implementation. See the [documentation](docs/Mediator/README.md) for more details.
+
 [![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.UnitTests.svg?label=Fusonic.Extensions.UnitTests&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.UnitTests/)
-Xunit-based testing base classes with support for dependency injection. Libraries supporting specific DI containers (SimpleInjector, ServiceProvider) are in separate packages. See the [unit test documentation](docs/UnitTests/README.md) for more details.
-
-[![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.UnitTests.ServiceProvider.svg?label=Fusonic.Extensions.UnitTests.ServiceProvider&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.UnitTests.ServiceProvider/)
-Xunit-based testing base classes. Supports dependency injection with Microsofts Dependency Injection framework (ServiceProvider).. See the [unit test documentation](docs/UnitTests/README.md) for more details.
-
-[![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.UnitTests.SimpleInjector.svg?label=Fusonic.Extensions.UnitTests.SimpleInjector&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.UnitTests.SimpleInjector/)
-Xunit-based testing base classes. Supports dependency injection with SimpleInjector.. See the [unit test documentation](docs/UnitTests/README.md) for more details.
+Experimental package that provides a simple TestContainer setup for XUnit v3 test assemblies. See the [test containers documentation](docs/TestContainers/README.md) for more details.
 
 [![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.UnitTests.EntityFrameworkCore.svg?label=Fusonic.Extensions.UnitTests.EntityFrameworkCore&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.UnitTests.EntityFrameworkCore/)
 Adds database support using EF Core to the unit tests. See the [unit test documentation](docs/UnitTests/README.md) for more details.

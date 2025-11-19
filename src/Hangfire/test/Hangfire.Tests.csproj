@@ -33,15 +33,10 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\TestContainers\src\TestContainers.csproj" />
         <ProjectReference Include="..\..\UnitTests.EntityFrameworkCore.Npgsql\src\UnitTests.EntityFrameworkCore.Npgsql.csproj" />
         <ProjectReference Include="..\..\UnitTests.EntityFrameworkCore\src\UnitTests.EntityFrameworkCore.csproj" />
         <ProjectReference Include="..\..\UnitTests\src\UnitTests.csproj" />
         <ProjectReference Include="..\src\Hangfire.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <None Update="testsettings.json">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
     </ItemGroup>
 </Project>

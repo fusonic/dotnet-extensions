@@ -18,6 +18,13 @@ stages:
 
 variables:
   BUILD_IMAGE: mcr.microsoft.com/dotnet/sdk:10.0
+  DOCKER_VERSION: "29"
+  DOCKER_BUILDKIT: 1
+  DOCKER_HOST: tcp://docker:2376
+  DOCKER_TLS_CERTDIR: "/certs/${CI_JOB_ID}"
+  DOCKER_TLS_VERIFY: 1
+  DOCKER_CERT_PATH: "/certs/${CI_JOB_ID}/client"
+  TESTCONTAINERS_RYUK_DISABLED: "true" # Disable Ryuk as we're running in dind-rootless and there is no docker.sock available.
 
 default:
   interruptible: true
@@ -45,12 +52,7 @@ build:
 
 dotnet:test:
   services:
-    - name: postgres:17
-      alias: postgres
-  variables:
-    POSTGRES_PASSWORD: admin
-    ConnectionStrings__Npgsql: Host=postgres;Database=test_npgsql;Username=postgres;Password=admin
-    ConnectionStrings__Hangfire: Host=postgres;Database=test_hangfire;Username=postgres;Password=admin
+    - docker:${DOCKER_VERSION}-dind-rootless
 
 release:lint-merge-request:
   stage: test

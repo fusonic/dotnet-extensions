@@ -2,13 +2,13 @@
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
 using Dapper;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using Npgsql;
 
-namespace Fusonic.Extensions.UnitTests.EntityFrameworkCore.Npgsql.Tests;
+namespace Fusonic.Extensions.UnitTests.EntityFrameworkCore.SqlServer.Tests;
 
-public class NpgsqlDatabasePerTestStoreTests(TestFixture fixture) : NpgsqlDatabasePerTestStoreTests<TestFixture>(fixture);
-public abstract class NpgsqlDatabasePerTestStoreTests<T>(T fixture) : TestBase<T>(fixture)
+public class SqlServerDatabasePerTestStoreTests(TestFixture fixture) : SqlServerDatabasePerTestStoreTests<TestFixture>(fixture);
+public abstract class SqlServerDatabasePerTestStoreTests<T>(T fixture) : TestBase<T>(fixture) 
     where T : TestFixture
 {
     private static readonly List<string> UsedDbNames = [];
@@ -24,7 +24,7 @@ public abstract class NpgsqlDatabasePerTestStoreTests<T>(T fixture) : TestBase<T
         {
             ctx.AddRange(Enumerable.Range(1, entityCount).Select(i => new TestEntity { Name = "Name " + i }));
             await ctx.SaveChangesAsync();
-            return new NpgsqlConnectionStringBuilder(ctx.Database.GetConnectionString()).Database!;
+            return GetDbName(ctx.Database.GetConnectionString()!);
         });
 
         // Assert unique db names (not nice)
@@ -83,22 +83,22 @@ public abstract class NpgsqlDatabasePerTestStoreTests<T>(T fixture) : TestBase<T
     public void TestDbName_IsDifferentThanTemplate()
     {
         var store = GetStore();
-        var settings = GetInstance<NpgsqlDatabasePerTestStoreOptions>();
+        var settings = GetInstance<SqlServerDatabasePerTestStoreOptions>();
         GetDbName(settings.ConnectionString!).Should().NotBe(GetDbName(store));
     }
 
     private async Task<List<string>> GetDatabases()
     {
-        var settings = GetInstance<NpgsqlDatabasePerTestStoreOptions>();
-        var builder = new NpgsqlConnectionStringBuilder(settings.ConnectionString);
-        builder.Database = "postgres";
+        var settings = GetInstance<SqlServerDatabasePerTestStoreOptions>();
+        var builder = new SqlConnectionStringBuilder(settings.ConnectionString);
+        builder.InitialCatalog = "master";
 
-        await using var connection = new NpgsqlConnection(builder.ConnectionString);
-        var dbNames = (await connection.QueryAsync<string>("SELECT datname FROM pg_database")).ToList();
+        await using var connection = new SqlConnection(builder.ConnectionString);
+        var dbNames = (await connection.QueryAsync<string>("SELECT name FROM master.dbo.sysdatabases")).ToList();
         return dbNames;
     }
 
-    private NpgsqlDatabasePerTestStore GetStore() => (NpgsqlDatabasePerTestStore)GetInstance<ITestStore>();
-    private static string GetDbName(NpgsqlDatabasePerTestStore store) => GetDbName(store.ConnectionString);
-    private static string GetDbName(string connectionString) => new NpgsqlConnectionStringBuilder(connectionString).Database!;
+    private SqlServerDatabasePerTestStore GetStore() => (SqlServerDatabasePerTestStore)GetInstance<ITestStore>();
+    private static string GetDbName(SqlServerDatabasePerTestStore store) => GetDbName(store.ConnectionString);
+    private static string GetDbName(string connectionString) => new SqlConnectionStringBuilder(connectionString).InitialCatalog!;
 }
