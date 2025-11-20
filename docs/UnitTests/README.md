@@ -8,12 +8,12 @@
     - [Test base](#test-base)
     - [PostgreSQL - Configure DbContext](#postgresql---configure-dbcontext)
     - [PostgreSQL - Template](#postgresql---template)
-      - [PostgreSQL template option: Create it in the fixture](#postgresql-template-option-create-it-in-the-fixture)
-      - [PostgreSQL template option: Console application](#postgresql-template-option-console-application)
+    - [PostgreSQL - TestContainers](#postgresql---testcontainers)
     - [Microsoft SQL Server - Configure DbContext](#microsoft-sql-server---configure-dbcontext)
+    - [Microsoft SQL Server - TestContainers](#microsoft-sql-server---testcontainers)
     - [Configuring any other database](#configuring-any-other-database)
     - [Support mulitple databases in a test](#support-mulitple-databases-in-a-test)
-    - [Database test concurrency](#database-test-concurrency)
+  - [Running in GitLab](#running-in-gitlab)
 
 ## Introduction
 
@@ -112,7 +112,9 @@ protected override void RegisterDependencies(Container container)
 
 ## Database setup
 
-For database support you can use `Fusonic.Extensions.UnitTests.EntityFrameworkCore`, optionally with specific support for PostgreSQL in `Fusonic.Extensions.UnitTests.EntityFrameworkCore.Npgsql`.
+For database support you can use `Fusonic.Extensions.UnitTests.EntityFrameworkCore`, optionally with specific support for 
+- PostgreSQL in `Fusonic.Extensions.UnitTests.EntityFrameworkCore.Npgsql`
+- SQL Server in `Fusonic.Extensions.UnitTests.EntityFrameworkCore.SqlServer`
 
 The basic idea behind those is that every test gets its own database copy. This enables parallel database testing and avoids any issues from tests affecting other tests.
 
@@ -153,11 +155,7 @@ public class TestFixture : ServiceProviderTestFixture
 {
     protected sealed override void RegisterCoreDependencies(ServiceCollection services)
     {
-        var options = new NpgsqlDatabasePerTestStoreOptions
-        {
-            ConnectionString = Configuration.GetConnectionString("Npgsql")
-        };
-        var testStore = new NpgsqlDatabasePerTestStore(options);
+        var testStore = new NpgsqlDatabasePerTestStore(Configuration.GetConnectionString("Npgsql")); // or TestStartup.ConnectionString when using TestContainers
         services.AddSingleton<ITestStore>(testStore);
 
         services.AddDbContext<AppDbContext>(b => b.UseNpgsqlDatabasePerTest(testStore));
@@ -165,10 +163,7 @@ public class TestFixture : ServiceProviderTestFixture
 }
 ```
 
-The interface of `ITestStore` is straight forward. You can easily replace your test store with something else for another strategy or for supporting other databases.
-
 When using `IDbContextFactory`, the factory must be registered with scoped lifetime, not with the default singleton lifetime.  
-
 ```cs
 services.AddDbContext<AppDbContext>(b => b.UseNpgsqlDatabasePerTest(testStore), ServiceLifetime.Scoped);
 ```
@@ -177,100 +172,57 @@ services.AddDbContext<AppDbContext>(b => b.UseNpgsqlDatabasePerTest(testStore), 
 
 When using the `NpgsqlDatabasePerTest` it is assumed that you use a prepared database template. This template should have all migrations applied and may contain some seeded data. Each test gets a copy of this template. With the `PostgreSqlUtil`, we provide an easy way to create such a template.
 
-You can either create a small console application that creates the template, or do it directly once in the fixture during setup.
+You can either create a small console application that creates the template, or do it directly once in the test startup.
 
-#### PostgreSQL template option: Create it in the fixture
-
-You can create the template directly in the TestFixture by specifying a `TemplateCreator` in the options:
+A simple way to create that template is provided in `PostgreSqlUtil`. Example:
 
 ```cs
-protected sealed override void RegisterCoreDependencies(ServiceCollection services)
-{
-    var options = new NpgsqlDatabasePerTestStoreOptions
-    {
-        ConnectionString = Configuration.GetConnectionString("Npgsql"),
-        TemplateCreator = CreateTemplate; // Function to create the template on first connect
-    };
-    
-    // rest of the configuration
-}
-
-private static Task CreateTemplate(string connectionString)
-    => PostgreSqlUtil.CreateTestDbTemplate<AppDbContext>(connectionString, o => new AppDbContext(o), seed: ctx => new TestDataSeed(ctx).Seed());
+PostgreSqlUtil.CreateTestDbTemplate<AppDbContext>(templateConnectionString, o => new AppDbContext(o), seed: ctx => new TestDataSeed(ctx).Seed());
 ```
 
-By default, if the template creator is set, the `TestStore` checks exactly once, if the database exists.
-- If the template database exists, no action will be taken. It is not checked, if the database is up to date.
-- If the template database does not exist, the `TemplateCreator` is executed.
-- All future calls won't do anything and just return.
+By default this only creates the template, if the database does not exist yet. This speeds up testing in local development when running tests multiple times. You can change this behaviour to always create a fresh template by setting the parameter `overwrite` to `true`.
 
-`PostgreSqlUtil.CreateTestDbTemplate` force drops and recreates your database. However, it won't be called if the datbase already exists.
+### PostgreSQL - TestContainers
 
-In order to get updates to your test database, either drop it or restart your postgresql container, if its data partition is mounted to `tmpfs`.
+To get your test PostgreSQL server up and running, a simple solution is to use [TestContainers](https://testcontainers.com/) and start one during test startup. This ensures that the test configuration in your local development and in your CI pipelines is the same.
 
-You can change this behavior to always create a template by setting `options.AlwaysCreateTemplate` to true. In that case, the `TemplateCreator` will always be executed once per test run. This will increase the startup time for your test run though.
-
-#### PostgreSQL template option: Console application  
-Alternatively, if you prefer to create the test database externally before the test run, create a console application with the following code in `Program.cs`:
-
-```cs
-if (args.Length == 0)
-{
-    Console.Out.WriteLine("Missing connection string.");
-    return 1;
-}
-
-PostgreSqlUtil.CreateTestDbTemplate<AppDbContext>(args[0], o => new AppDbContext(o), seed: ctx => new TestDataSeed(ctx).Seed());
-
-return 0;
-```
-
-With that, the database given in the connection string is getting force dropped, recreated, migrations applied and optionally seeded via the given `TestDataSeed`. You can simply call it in your console or the build pipeline before running the tests using 
-```sh
-dotnet run --project <pathToCsProject> "<connectionString>"
-```
+For an example how we use TestContainers see [UnitTests.EntityFrameworkCore.Npgsql.Tests.TestStartup](../../src/UnitTests.EntityFrameworkCore.Npgsql/test/TestStartup.cs) and [TestFixture](../../src/UnitTests.EntityFrameworkCore.Npgsql/test/TestFixture.cs)
 
 ### Microsoft SQL Server - Configure DbContext
 
-A `TestStore` is used for handling the test databases. For Microsoft SQL Server, you can use the `SqlServerDatabasePerTestStore`, which creates a separate database for each test. You have to pass the connection string to the database and a method to create the test database. Register it as follows:
+A `TestStore` is used for handling the test databases. For Microsoft SQL Server, you can use the `SqlServerDatabasePerTestStore`, which creates a separate database for each test. You just have to pass it the connection string to the template and register it as follows:
 
 ```cs
 public class TestFixture : ServiceProviderTestFixture
 {
     protected sealed override void RegisterCoreDependencies(ServiceCollection services)
     {
-        var options = new SqlServerDatabasePerTestStoreOptions
-        {
-            ConnectionString = Configuration.GetConnectionString("SqlServer")!,
-            TemplateCreator = CreateSqlServerTemplate,
-            DatabasePrefix = "project_test_" // Optional. Defines a prefix for the randomly generated test database names.
-            DatabaseDirectoryPath = "C:/mssql/data" // Optional. Defaults to docker image default path.
-        };
-        var testStore = new SqlServerDatabasePerTestStore(options);
+        var testStore = new SqlServerDatabasePerTestStore(Configuration.GetConnectionString("SqlServer")); // or TestStartup.ConnectionString when using TestContainers
         services.AddSingleton<ITestStore>(testStore);
+
         services.AddDbContext<AppDbContext>(b => b.UseSqlServerDatabasePerTest(testStore));
     }
-
-    private static async Task CreateSqlServerTemplate(string connectionString)
-        => await SqlServerTestUtil.CreateTestDbTemplate<SqlServerDbContext>(connectionString, o => new SqlServerDbContext(o));
 }
 ```
 
 The connection string must have the `Intial catalog` set. It determines the name of the template database. All tests will use a copy of the template database.
 
-The `TemplateCreator` specifies the method to create a template. It has to create and seed the database and create a backup for the copies used for the tests. Fortunately, the `SqlServerTestUtil` provides a method to do exactly that.
-
 When using `IDbContextFactory`, the factory must be registered with scoped lifetime, not with the default singleton lifetime.  
-
 ```cs
 services.AddDbContext<AppDbContext>(b => b.UseSqlServerDatabasePerTest(testStore), ServiceLifetime.Scoped);
 ```
+
+### Microsoft SQL Server - TestContainers
+
+To get your test SQL Server server up and running, a simple solution is to use [TestContainers](https://testcontainers.com/) and start one during test startup. This ensures that the test configuration in your local development and in your CI pipelines is the same.
+
+For an example how we use TestContainers see [UnitTests.EntityFrameworkCore.SqlServer.Tests.TestStartup](../../src/UnitTests.EntityFrameworkCore.SqlServer/test/TestStartup.cs) and [TestFixture](../../src/UnitTests.EntityFrameworkCore.SqlServer/test/TestFixture.cs)
 
 ### Configuring any other database
 
 The database support is not limited to PostgreSql and SQL Server. You just have to implement and register the `ITestStore`.
 
-For a simple example with SqLite, check `Fusonic.Extensions.UnitTests.EntityFrameworkCore.Tests` -> `SqliteTestStore` and `TestFixture`.
+For a simple example with SqLite, check [UnitTests.EntityFrameworkCore.Tests.SqliteTestStore](../../src/UnitTests.EntityFrameworkCore/test/SqliteTestStore.cs) and [TestFixture](../../src/UnitTests.EntityFrameworkCore/test/TestFixture.cs).
 
 ### Support mulitple databases in a test
 
@@ -281,74 +233,38 @@ public class TestFixture : ServiceProviderTestFixture
 {
     private void RegisterDatabase(IServiceCollection services)
     {
-        // Register Npgsql (PostgreSQL)
-        var npgsqlSettings = new NpgsqlDatabasePerTestStoreOptions
-        {
-            ConnectionString = Configuration.GetConnectionString("Npgsql"),
-            TemplateCreator = CreatePostgresTemplate
-        };
-
-        var npgsqlTestStore = new NpgsqlDatabasePerTestStore(npgsqlSettings);
+        // Register Npgsql (PostgreSQL) using TestContainers in the TestStartup
+        var npgsqlTestStore = new NpgsqlDatabasePerTestStore(TestStartup.NpgsqlConnectionString);
         services.AddDbContext<NpgsqlDbContext>(b => b.UseNpgsqlDatabasePerTest(npgsqlTestStore));
 
-        // Register SQL Server
-        var sqlServerSettings = new SqlServerDatabasePerTestStoreOptions
-        {
-            ConnectionString = Configuration.GetConnectionString("SqlServer")!,
-            TemplateCreator = CreateSqlServerTemplate
-        };
-        var sqlServerTestStore = new SqlServerDatabasePerTestStore(sqlServerSettings);
+        // Register SQL Server using TestContainers in the TestStartup
+        var sqlServerTestStore = new SqlServerDatabasePerTestStore(TestStartup.SqlServerConnectionString);
         services.AddDbContext<SqlServerDbContext>(b => b.UseSqlServerDatabasePerTest(sqlServerTestStore));
 
         // Combine the test stores in the AggregateTestStore
         services.AddSingleton<ITestStore>(new AggregateTestStore(npgsqlTestStore, sqlServerTestStore));
     }
-
-    private static Task CreatePostgresTemplate(string connectionString)
-        => PostgreSqlUtil.CreateTestDbTemplate<NpgsqlDbContext>(connectionString, o => new NpgsqlDbContext(o), seed: ctx => new TestDataSeed(ctx).Seed());
-
-    private static Task CreateSqlServerTemplate(string connectionString)
-        => SqlServerTestUtil.CreateTestDbTemplate<SqlServerDbContext>(connectionString, o => new SqlServerDbContext(o));
 }
 ```
 
-### Database test concurrency
+## Running in GitLab
 
-XUnit limits the number the maximum _active_ tests executing, but it does not the limit of maximum parallel tests.  
-Simplified, as soon as a test awaits a task somewhere, the thread is returned to the pool and another test gets started. This is intended by design.  
+In order to use TestContainers in GitLab, start `docker:dind-rootless` as a service. When running rootless dind, you also must set `TESTCONTAINERS_RYUK_DISABLED` to `true`, as there is no `docker.sock` available. Ryuk is responsible for cleaning up the test containers, even when test jobs get cancelled. Disabling it should be safe though, as the containers started within `docker:dind` get cleaned up anyway after the job ends.
 
-This behavior can cause issues when running integration tests against a database, especially when lots of tests are started. Connection limits can be exhausted quickly.
-
-To solve this, you can either throttle your tests, or increase the max. connections of your test database.
-
-To increase the max. connections of your postgres test instance, just pass the parameter max_connections. Example for a docker compose file:
+Example:
 ```yaml
-postgres_test:
-  image: postgres:17
-  command: -c max_connections=500
-  ports:
-    - "5433:5432"
-  volumes:
-    - type: tmpfs
-      target: /var/lib/postgresql/data
-    - type: tmpfs
-      target: /dev/shm
-  environment:
-    POSTGRES_PASSWORD: developer
-```
+variables:
+  DOCKER_VERSION: "29"
+  DOCKER_BUILDKIT: 1
+  DOCKER_HOST: tcp://docker:2376
+  DOCKER_TLS_CERTDIR: "/certs/${CI_JOB_ID}"
+  DOCKER_TLS_VERIFY: 1
+  DOCKER_CERT_PATH: "/certs/${CI_JOB_ID}/client"
+  TESTCONTAINERS_RYUK_DISABLED: "true" # Disable Ryuk as we're running in dind-rootless and there is no docker.sock available.
 
-Alternatively, if you want to throttle your tests instead, you can to this easily with a semaphore in your test base:
-
-```cs
-public class TestBase : IAsyncDisposable
-{
-    private static readonly SemaphoreSlim Throttle = new(64);
-    public async Task InitializeAsync() => await Throttle.WaitAsync();
-
-    public ValueTask DisposeAsync()
-    {
-        _ = Throttle.Release();
-        return ValueTask.CompletedTask;
-    }
-}
+dotnet:test:
+  services:
+    - docker:${DOCKER_VERSION}-dind-rootless
+  script:
+    - echo "Running Tests..."
 ```

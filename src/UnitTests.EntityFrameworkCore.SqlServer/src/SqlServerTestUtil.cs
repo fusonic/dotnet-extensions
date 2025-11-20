@@ -13,23 +13,6 @@ namespace Fusonic.Extensions.UnitTests.EntityFrameworkCore.SqlServer;
 
 public static class SqlServerTestUtil
 {
-    private static readonly SemaphoreSlim CreationSync = new(1);
-
-    internal static async Task EnsureTemplateDbCreated(
-        string connectionString,
-        Func<string, Task> createTemplate,
-        bool alwaysCreateTemplate = false)
-    {
-        await DatabaseTestHelper.EnsureTemplateDbCreated(
-                                     connectionString,
-                                     CheckDatabaseExists,
-                                     DropDatabase,
-                                     SqlConnection.ClearAllPools,
-                                     createTemplate,
-                                     alwaysCreateTemplate)
-                                .ConfigureAwait(false);
-    }
-
     public static async Task<bool> CheckDatabaseExists(string connectionString)
     {
         var connection = CreateMasterConnection(connectionString, out var dbName);
@@ -49,31 +32,23 @@ public static class SqlServerTestUtil
 
     internal static async Task CreateDatabase(string templateConnectionString, string dbName, string dataDirectoryPath)
     {
-        await CreationSync.WaitAsync().ConfigureAwait(false);
-        try
+        var connection = CreateMasterConnection(templateConnectionString, out var templateName);
+        await using (connection.ConfigureAwait(false))
         {
-            var connection = CreateMasterConnection(templateConnectionString, out var templateName);
-            await using (connection.ConfigureAwait(false))
-            {
-                if (templateName == dbName)
-                    throw new ArgumentException("Template and new database name must not be the same.");
+            if (templateName == dbName)
+                throw new ArgumentException("Template and new database name must not be the same.");
 
-                await connection.OpenAsync().ConfigureAwait(false);
+            await connection.OpenAsync().ConfigureAwait(false);
 
-                var cmd = connection.CreateCommand();
-                cmd.CommandText = $"""
-                               RESTORE DATABASE [{dbName}] FROM DISK='{templateName}.bak'
-                               WITH
-                               MOVE '{templateName}' TO '{dataDirectoryPath}/{dbName}.mdf',
-                               MOVE '{templateName}_log' TO '{dataDirectoryPath}/{dbName}_log.ldf'
-                               """;
+            var cmd = connection.CreateCommand();
+            cmd.CommandText = $"""
+                RESTORE DATABASE [{dbName}] FROM DISK='{templateName}.bak'
+                WITH
+                MOVE '{templateName}' TO '{dataDirectoryPath}/{dbName}.mdf',
+                MOVE '{templateName}_log' TO '{dataDirectoryPath}/{dbName}_log.ldf'
+                """;
 
-                await cmd.ExecuteNonQueryAsync().ConfigureAwait(false);
-            }
-        }
-        finally
-        {
-            CreationSync.Release();
+            await cmd.ExecuteNonQueryAsync().ConfigureAwait(false);
         }
     }
 
@@ -124,13 +99,15 @@ public static class SqlServerTestUtil
     /// If the database and the tables should be created from the current state, set this to false. <br/>
     /// Defaults to true.
     /// </param>
+    /// <param name="overwrite">When true, the template gets dropped and recreated if it exists. When false, the template will only be created if it does not exist. Defaults to false.</param>
     public static async Task CreateTestDbTemplate<TDbContext>(
         string connectionString,
         Func<DbContextOptions<TDbContext>, TDbContext> dbContextFactory,
         Action<SqlServerDbContextOptionsBuilder>? sqlServerOptionsAction = null,
         Func<TDbContext, Task>? seed = null,
         ILogger? logger = null,
-        bool useMigrations = true)
+        bool useMigrations = true,
+        bool overwrite = false)
         where TDbContext : DbContext
     {
         logger ??= CreateConsoleLogger();
@@ -141,6 +118,16 @@ public static class SqlServerTestUtil
                           (eventId, _) => eventId != RelationalEventId.CommandExecuted,
                           eventData => logger.Log(eventData.LogLevel, eventData.EventId, "[EF] {Message}", eventData.ToString()))
                      .Options;
+
+        if (!overwrite)
+        {
+            var exists = await CheckDatabaseExists(connectionString).ConfigureAwait(false);
+            if (exists)
+            {
+                logger.LogInformation("Database template already exists. Skipping creation.");
+                return;
+            }
+        }
 
         // Drop existing test template
         await DropDatabase(connectionString).ConfigureAwait(false);

@@ -9,9 +9,7 @@ using Fusonic.Extensions.UnitTests.EntityFrameworkCore.Npgsql;
 using Hangfire;
 using Hangfire.PostgreSql;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Npgsql;
 using NSubstitute;
 using SimpleInjector;
 
@@ -48,16 +46,8 @@ public class TestFixture : SimpleInjectorTestFixture
     private void RegisterDatabase(IServiceCollection services)
     {
         // Database
-        var testStoreOptions = new NpgsqlDatabasePerTestStoreOptions
-        {
-            TemplateCreator = CreateDatabase,
-            ConnectionString = TestStartup.ConnectionString
-        };
-
-        var testStore = new NpgsqlDatabasePerTestStore(testStoreOptions);
+        var testStore = new NpgsqlDatabasePerTestStore(TestStartup.ConnectionString);
         services.AddSingleton<ITestStore>(testStore);
-        services.AddSingleton(testStoreOptions);
-
         services.AddDbContext<TestDbContext>(b => b.UseNpgsqlDatabasePerTest(testStore));
     }
 
@@ -76,15 +66,5 @@ public class TestFixture : SimpleInjectorTestFixture
             EnableTransactionScopeEnlistment = true,
             PrepareSchemaIfNecessary = false // If true, Hangfire runs its scripts directly here on the not yet existing DB.
         }));
-    }
-
-    private static async Task CreateDatabase(string connectionString)
-    {
-        await using var dbContext = new TestDbContext(new DbContextOptionsBuilder<TestDbContext>().UseNpgsql(connectionString).Options);
-        await dbContext.Database.EnsureCreatedAsync();
-
-        await using var connection = new NpgsqlConnection(connectionString);
-        await connection.OpenAsync();
-        PostgreSqlObjectsInstaller.Install(connection);
     }
 }

@@ -62,7 +62,7 @@ public abstract class NpgsqlDatabasePerTestStoreTests<T>(T fixture) : TestBase<T
 
         // Assert
         var dbNames = await GetDatabases();
-        dbNames.Should().NotContain(GetDbName(store));
+        dbNames.Should().NotContain(GetDbName(store.ConnectionString));
     }
 
     [Fact]
@@ -76,21 +76,19 @@ public abstract class NpgsqlDatabasePerTestStoreTests<T>(T fixture) : TestBase<T
 
         // Assert
         var dbNames = await GetDatabases();
-        dbNames.Should().Contain(GetDbName(store));
+        dbNames.Should().Contain(GetDbName(store.ConnectionString));
     }
 
     [Fact]
     public void TestDbName_IsDifferentThanTemplate()
     {
         var store = GetStore();
-        var settings = GetInstance<NpgsqlDatabasePerTestStoreOptions>();
-        GetDbName(settings.ConnectionString!).Should().NotBe(GetDbName(store));
+        GetDbName(store.TemplateConnectionString).Should().NotBe(GetDbName(store.ConnectionString));
     }
 
     private async Task<List<string>> GetDatabases()
     {
-        var settings = GetInstance<NpgsqlDatabasePerTestStoreOptions>();
-        var builder = new NpgsqlConnectionStringBuilder(settings.ConnectionString);
+        var builder = new NpgsqlConnectionStringBuilder(GetStore().ConnectionString);
         builder.Database = "postgres";
 
         await using var connection = new NpgsqlConnection(builder.ConnectionString);
@@ -99,6 +97,5 @@ public abstract class NpgsqlDatabasePerTestStoreTests<T>(T fixture) : TestBase<T
     }
 
     private NpgsqlDatabasePerTestStore GetStore() => (NpgsqlDatabasePerTestStore)GetInstance<ITestStore>();
-    private static string GetDbName(NpgsqlDatabasePerTestStore store) => GetDbName(store.ConnectionString);
     private static string GetDbName(string connectionString) => new NpgsqlConnectionStringBuilder(connectionString).Database!;
 }

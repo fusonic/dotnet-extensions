@@ -14,20 +14,6 @@ namespace Fusonic.Extensions.UnitTests.EntityFrameworkCore.Npgsql;
 
 public static class PostgreSqlUtil
 {
-    internal static async Task EnsureTemplateDbCreated(
-        string connectionString,
-        Func<string, Task> createTemplate,
-        bool alwaysCreateTemplate = false)
-    {
-        await DatabaseTestHelper.EnsureTemplateDbCreated(
-            connectionString, 
-            CheckDatabaseExists, 
-            DropDatabase, 
-            NpgsqlConnection.ClearAllPools, 
-            createTemplate, 
-            alwaysCreateTemplate).ConfigureAwait(false);
-    }
-
     /// <summary> Creates a test database template. </summary>
     /// <param name="connectionString">Connection string to the test database. The database does not have to exist.</param>
     /// <param name="dbContextFactory">Returns a DbContext using the given options.</param>
@@ -39,13 +25,15 @@ public static class PostgreSqlUtil
     /// If the database and the tables should be created from the current state, set this to false. <br/>
     /// Defaults to true.
     /// </param>
+    /// <param name="overwrite">When true, the template gets dropped and recreated if it exists. When false, the template will only be created if it does not exist. Defaults to false.</param>
     public static async Task CreateTestDbTemplate<TDbContext>(
         string connectionString,
         Func<DbContextOptions<TDbContext>, TDbContext> dbContextFactory,
         Action<NpgsqlDbContextOptionsBuilder>? npgsqlOptionsAction = null,
         Func<TDbContext, Task>? seed = null,
         ILogger? logger = null,
-        bool useMigrations = true)
+        bool useMigrations = true,
+        bool overwrite = false)
         where TDbContext : DbContext
     {
         logger ??= CreateConsoleLogger();
@@ -54,6 +42,16 @@ public static class PostgreSqlUtil
         var csBuilder = new NpgsqlConnectionStringBuilder(connectionString);
         var dbName = csBuilder.Database;
         AssertNotPostgres(dbName);
+
+        if (!overwrite)
+        {
+            var exists = await CheckDatabaseExists(connectionString).ConfigureAwait(false);
+            if (exists)
+            {
+                logger.LogInformation("Database template already exists. Skipping creation.");
+                return;
+            }
+        }
 
         // Open connection to the postgres-DB (for drop, create, alter)
         csBuilder.Database = "postgres";

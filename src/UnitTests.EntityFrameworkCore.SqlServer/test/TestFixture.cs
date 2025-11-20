@@ -10,15 +10,8 @@ public class TestFixture : ServiceProviderTestFixture
 {
     protected override void RegisterCoreDependencies(IServiceCollection services)
     {
-        var testStoreOptions = new SqlServerDatabasePerTestStoreOptions
-        {
-            TemplateCreator = CreateDatabase,
-            ConnectionString = TestStartup.ConnectionString
-        };
-
-        var testStore = new SqlServerDatabasePerTestStore(testStoreOptions);
+        var testStore = new SqlServerDatabasePerTestStore(TestStartup.ConnectionString);
         services.AddSingleton<ITestStore>(testStore);
-        services.AddSingleton(testStoreOptions);
 
         AddDbContext(services, testStore);
     }
@@ -27,7 +20,4 @@ public class TestFixture : ServiceProviderTestFixture
     {
         services.AddDbContext<TestDbContext>(b => b.UseSqlServerDatabasePerTest(testStore));
     }
-
-    private static async Task CreateDatabase(string connectionString)
-        => await SqlServerTestUtil.CreateTestDbTemplate<TestDbContext>(connectionString, o => new TestDbContext(o), useMigrations: false);
 }

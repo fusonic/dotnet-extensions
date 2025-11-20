@@ -21,6 +21,7 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" />
     <PackageReference Include="Microsoft.Testing.Extensions.TrxReport" />
+    <PackageReference Include="Testcontainers.MsSql" />
     <PackageReference Include="xunit.v3.core" />
     <PackageReference Include="xunit.analyzers">
       <PrivateAssets>all</PrivateAssets>
@@ -33,7 +34,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\TestContainers\src\TestContainers.csproj" />
     <ProjectReference Include="..\src\UnitTests.EntityFrameworkCore.SqlServer.csproj" />
   </ItemGroup>
 

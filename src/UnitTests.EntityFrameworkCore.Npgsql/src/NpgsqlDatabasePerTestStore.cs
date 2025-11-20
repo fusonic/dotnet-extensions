@@ -8,29 +8,32 @@ namespace Fusonic.Extensions.UnitTests.EntityFrameworkCore.Npgsql;
 
 public class NpgsqlDatabasePerTestStore : ITestStore
 {
-    private readonly NpgsqlDatabasePerTestStoreOptions options;
     private readonly NpgsqlConnectionStringBuilder connectionStringBuilder;
 
+    public string TemplateConnectionString { get; }
     public string ConnectionString => connectionStringBuilder.ConnectionString;
 
     private bool isDbCreated;
 
-    public NpgsqlDatabasePerTestStore(NpgsqlDatabasePerTestStoreOptions options)
+    /// <summary>
+    /// Initializes a new instance of the NpgsqlDatabasePerTestStore.
+    /// </summary>
+    /// <remarks>This constructor sets up the store to create isolated PostgreSQL databases for each test,
+    /// based on the provided template connection string. Ensure that the template connection string points to a valid
+    /// and accessible database.</remarks>
+    /// <param name="templateConnectionString">The connection string to use as a template for creating per-test database instances.</param>
+    public NpgsqlDatabasePerTestStore(string templateConnectionString)
     {
-        this.options = new NpgsqlDatabasePerTestStoreOptions(options);
-        connectionStringBuilder = new NpgsqlConnectionStringBuilder(options.ConnectionString);
+        TemplateConnectionString = templateConnectionString;
+        connectionStringBuilder = new NpgsqlConnectionStringBuilder(templateConnectionString);
 
-        ValidateConnectionString();
-        OnTestConstruction();
-    }
-
-    private void ValidateConnectionString()
-    {
         var templateDatabaseName = connectionStringBuilder.Database
-                                ?? throw new ArgumentException("Missing database in connection string.");
+                                ?? throw new ArgumentException("Missing database in connection string.", nameof(templateConnectionString));
 
         if (templateDatabaseName == "postgres")
-            throw new ArgumentException("Connection string cannot use postgres as database. It should provide the name of the template database, even if it does not exist.");
+            throw new ArgumentException("Connection string cannot use postgres as database. It should provide the name of the template database, even if it does not exist.", nameof(templateConnectionString));
+
+        OnTestConstruction();
     }
 
     public void OnTestConstruction()
@@ -50,16 +53,6 @@ public class NpgsqlDatabasePerTestStore : ITestStore
         if (isDbCreated)
             return;
 
-        if (options.TemplateCreator != null)
-        {
-            await PostgreSqlUtil
-                 .EnsureTemplateDbCreated(
-                      options.ConnectionString,
-                      options.TemplateCreator,
-                      options.AlwaysCreateTemplate)
-                 .ConfigureAwait(false);
-        }
-
         // Creating a DB from a template can cause an exception when done in parallel.
         // The lock usually prevents this, however, we still encounter race conditions
         // where we just have to retry.
@@ -74,7 +67,7 @@ public class NpgsqlDatabasePerTestStore : ITestStore
             if (isDbCreated)
                 return;
 
-            await PostgreSqlUtil.CreateDatabase(options.ConnectionString, connectionStringBuilder.Database!).ConfigureAwait(false);
+            await PostgreSqlUtil.CreateDatabase(TemplateConnectionString, connectionStringBuilder.Database!).ConfigureAwait(false);
 
             isDbCreated = true;
         }

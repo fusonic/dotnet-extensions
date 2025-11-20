@@ -2,7 +2,6 @@
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Fusonic.Extensions.UnitTests.EntityFrameworkCore.Npgsql.Tests;
@@ -11,16 +10,8 @@ public class TestFixture : ServiceProviderTestFixture
 {
     protected override void RegisterCoreDependencies(IServiceCollection services)
     {
-        var testStoreOptions = new NpgsqlDatabasePerTestStoreOptions
-        {
-            TemplateCreator = CreateDatabase,
-            ConnectionString = TestStartup.ConnectionString
-        };
-
-        var testStore = new NpgsqlDatabasePerTestStore(testStoreOptions);
+        var testStore = new NpgsqlDatabasePerTestStore(TestStartup.ConnectionString);
         services.AddSingleton<ITestStore>(testStore);
-        services.AddSingleton(testStoreOptions);
-
         AddDbContext(services, testStore);
     }
 
@@ -28,7 +19,4 @@ public class TestFixture : ServiceProviderTestFixture
     {
         services.AddDbContext<TestDbContext>(b => b.UseNpgsqlDatabasePerTest(testStore));
     }
-
-    private static async Task CreateDatabase(string connectionString)
-        => await PostgreSqlUtil.CreateTestDbTemplate<TestDbContext>(connectionString, o => new TestDbContext(o), useMigrations: false);
 }

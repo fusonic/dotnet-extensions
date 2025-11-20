@@ -62,7 +62,7 @@ public abstract class SqlServerDatabasePerTestStoreTests<T>(T fixture) : TestBas
 
         // Assert
         var dbNames = await GetDatabases();
-        dbNames.Should().NotContain(GetDbName(store));
+        dbNames.Should().NotContain(GetDbName(store.ConnectionString));
     }
 
     [Fact]
@@ -76,21 +76,19 @@ public abstract class SqlServerDatabasePerTestStoreTests<T>(T fixture) : TestBas
 
         // Assert
         var dbNames = await GetDatabases();
-        dbNames.Should().Contain(GetDbName(store));
+        dbNames.Should().Contain(GetDbName(store.ConnectionString));
     }
 
     [Fact]
     public void TestDbName_IsDifferentThanTemplate()
     {
         var store = GetStore();
-        var settings = GetInstance<SqlServerDatabasePerTestStoreOptions>();
-        GetDbName(settings.ConnectionString!).Should().NotBe(GetDbName(store));
+        GetDbName(store.TemplateConnectionString).Should().NotBe(GetDbName(store.ConnectionString));
     }
 
     private async Task<List<string>> GetDatabases()
     {
-        var settings = GetInstance<SqlServerDatabasePerTestStoreOptions>();
-        var builder = new SqlConnectionStringBuilder(settings.ConnectionString);
+        var builder = new SqlConnectionStringBuilder(GetStore().TemplateConnectionString);
         builder.InitialCatalog = "master";
 
         await using var connection = new SqlConnection(builder.ConnectionString);
@@ -99,6 +97,5 @@ public abstract class SqlServerDatabasePerTestStoreTests<T>(T fixture) : TestBas
     }
 
     private SqlServerDatabasePerTestStore GetStore() => (SqlServerDatabasePerTestStore)GetInstance<ITestStore>();
-    private static string GetDbName(SqlServerDatabasePerTestStore store) => GetDbName(store.ConnectionString);
     private static string GetDbName(string connectionString) => new SqlConnectionStringBuilder(connectionString).InitialCatalog!;
 }
