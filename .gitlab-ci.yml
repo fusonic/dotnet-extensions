@@ -1,9 +1,9 @@
 include:
-  - component: $CI_SERVER_FQDN/fusonic/devops/components/dotnet-test/dotnet-test@1.0.0
+  - component: $CI_SERVER_FQDN/fusonic/devops/components/dotnet-test/dotnet-test@2.0.0
     inputs:
       sln-path: Extensions.slnx
       image: mcr.microsoft.com/dotnet/sdk:10.0
-  - component: $CI_SERVER_FQDN/fusonic/devops/components/dotnet-test/dotnet-check-warnings@1.0.0
+  - component: $CI_SERVER_FQDN/fusonic/devops/components/dotnet-test/dotnet-check-warnings@2.0.0
     inputs:
       sln-path: Extensions.slnx
       image: mcr.microsoft.com/dotnet/sdk:10.0
