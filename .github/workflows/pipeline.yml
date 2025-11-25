@@ -13,10 +13,9 @@ jobs:
       docker:
         image: docker:dind-rootless
         ports:
-          - 2375:2375
+          - 12375:2375
     container: mcr.microsoft.com/dotnet/sdk:10.0
     env:
-      DOCKER_HOST: tcp://localhost:2375
       TESTCONTAINERS_RYUK_DISABLED: "true"
     steps:
     - uses: actions/checkout@v6
@@ -25,4 +24,6 @@ jobs:
     - name: Build
       run: dotnet build Extensions.slnx --no-restore
     - name: Test
-      run: dotnet test --solution Extensions.slnx --no-build --verbosity normal
+      run: |
+        export DOCKER_HOST=tcp://localhost:12375
+        dotnet test --solution Extensions.slnx --no-build --verbosity normal
