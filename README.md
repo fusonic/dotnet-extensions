@@ -39,8 +39,8 @@ Provides services and extensions for hosting. See the [documentation](docs/Hosti
 [![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.Mediator.svg?label=Fusonic.Extensions.Mediator&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.Mediator/)
 Provides simple mediator implementation. See the [documentation](docs/Mediator/README.md) for more details.
 
-[![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.TestContainers.svg?label=Fusonic.Extensions.TestContainers&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.TestContainers/)
-Provides simple mediator implementation. See the [documentation](docs/Mediator/README.md) for more details.
+[![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.UnitTests.svg?label=Fusonic.Extensions.UnitTests&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.UnitTests/)
+Xunit v3 based testing base classes with support for dependency injection. Supports DI containers SimpleInjector and ServiceProvider. See the [unit test documentation](docs/UnitTests/README.md) for more details.
 
 [![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.UnitTests.EntityFrameworkCore.svg?label=Fusonic.Extensions.UnitTests.EntityFrameworkCore&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.UnitTests.EntityFrameworkCore/)
 Adds database support using EF Core to the unit tests. See the [unit test documentation](docs/UnitTests/README.md) for more details.
