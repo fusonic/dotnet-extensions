@@ -9,7 +9,15 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    services:
+      docker:
+        image: docker:dind-rootless
+        ports:
+          - 2375:2375
     container: mcr.microsoft.com/dotnet/sdk:10.0
+    env:
+      DOCKER_HOST: tcp://localhost:2375
+      TESTCONTAINERS_RYUK_DISABLED: "true"
     steps:
     - uses: actions/checkout@v2
     - name: Restore dependencies
@@ -17,4 +25,4 @@ jobs:
     - name: Build
       run: dotnet build Extensions.slnx --no-restore
     - name: Test
-      run: dotnet test Extensions.slnx --no-build --verbosity normal --filter "FullyQualifiedName!~Fusonic.Extensions.UnitTests.EntityFrameworkCore & FullyQualifiedName!~Fusonic.Extensions.Hangfire.Tests.HangfireTransactionalBehaviorTests"
+      run: dotnet test --solution Extensions.slnx --no-build --verbosity normal
