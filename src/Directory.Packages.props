@@ -39,7 +39,7 @@
     <PackageVersion Include="OpenTelemetry.Api" Version="1.14.0" />
     <PackageVersion Include="Polly" Version="8.6.5" />
     <PackageVersion Include="PreMailer.Net" Version="2.7.2" />
-    <PackageVersion Include="Scrutor" Version="6.1.0" />
+    <PackageVersion Include="Scrutor" Version="7.0.0" />
     <PackageVersion Include="SimpleInjector.Integration.AspNetCore.Mvc.Core" Version="5.5.0" />
     <PackageVersion Include="SimpleInjector.Integration.AspNetCore" Version="5.5.0" />
     <PackageVersion Include="SimpleInjector.Integration.GenericHost" Version="5.5.0" />

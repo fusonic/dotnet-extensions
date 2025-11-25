@@ -482,6 +482,7 @@ dotnet_diagnostic.CA2016.severity = warning # CA2016: Forward the 'CancellationT
 dotnet_diagnostic.CS1573.severity = silent # CS1573: Parameter has no matching param tag in the XML comment (but other parameters do)
 dotnet_diagnostic.CS9107.severity = suggestion # CS9107: Parameter is captured into the state of the enclosing type and its value is also passed to the base constructor. The value might be captured by the base class as well.
 
+dotnet_diagnostic.xUnit1051.severity = suggestion # xUnit1051: Calls to methods which accept CancellationToken should use TestContext.Current.CancellationToken
+
 #### Fusonic.Extensions specific settings ####
 dotnet_diagnostic.IDE0073.severity = warning # IDE0073: The file header is missing or not located at the top of the file
-
