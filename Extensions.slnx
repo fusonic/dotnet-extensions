@@ -3,6 +3,7 @@
     <File Path=".editorconfig" />
     <File Path=".editorconfig.disableAnalyzers" />
     <File Path=".gitlab-ci.yml" />
+    <File Path="global.json" />
     <File Path="README.md" />
     <File Path="src/Directory.Build.props" />
     <File Path="src/Directory.Packages.props" />
