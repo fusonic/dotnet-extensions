@@ -16,7 +16,7 @@
 
   <ItemGroup>
     <PackageReference Include="SimpleInjector" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>
