@@ -1,30 +1,29 @@
 // Copyright (c) Fusonic GmbH. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
+using Dapper;
 using Fusonic.Extensions.Hangfire.Tests;
 using Fusonic.Extensions.UnitTests.EntityFrameworkCore.Npgsql;
 using Hangfire.PostgreSql;
 using Npgsql;
 using Testcontainers.PostgreSql;
-using Xunit.Sdk;
-using Xunit.v3;
 
-[assembly: TestPipelineStartup(typeof(TestStartup))]
+[assembly: DapperAot(false)] // Pulled by Hangfire.PostgreSql
+[assembly: AssemblyFixture(typeof(TestStartup))]
 
 namespace Fusonic.Extensions.Hangfire.Tests;
 
-public class TestStartup : ITestPipelineStartup
+public class TestStartup : IAsyncLifetime
 {
     private PostgreSqlContainer? container;
 
     public static string ConnectionString { get; private set; } = null!;
 
-    public async ValueTask StartAsync(IMessageSink diagnosticMessageSink)
+    public async ValueTask InitializeAsync()
     {
         // Start PostgreSQL test container
-        container = new PostgreSqlBuilder()
+        container = new PostgreSqlBuilder("postgres:17-alpine")
             .WithReuse(true)
-            .WithImage("postgres:17")
             .WithName("test.npgsql.extensions.hangfire")
             .WithTmpfsMount("/var/lib/postgresql/data")
             .WithTmpfsMount("/dev/shm")
@@ -50,5 +49,5 @@ public class TestStartup : ITestPipelineStartup
             useMigrations: false);
     }
 
-    public ValueTask StopAsync() => ValueTask.CompletedTask;
+    public ValueTask DisposeAsync() => ValueTask.CompletedTask;
 }

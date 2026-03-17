@@ -4,29 +4,26 @@
 using Fusonic.Extensions.UnitTests.EntityFrameworkCore.Npgsql.Tests;
 using Npgsql;
 using Testcontainers.PostgreSql;
-using Xunit.Sdk;
-using Xunit.v3;
 
-[assembly: TestPipelineStartup(typeof(TestStartup))]
+[assembly: AssemblyFixture(typeof(TestStartup))]
 
 namespace Fusonic.Extensions.UnitTests.EntityFrameworkCore.Npgsql.Tests;
 
-public class TestStartup : ITestPipelineStartup
+public class TestStartup : IAsyncLifetime
 {
     private PostgreSqlContainer? container;
 
     public static string ConnectionString { get; private set; } = null!;
 
-    public async ValueTask StartAsync(IMessageSink diagnosticMessageSink)
+    public async ValueTask InitializeAsync()
     {
         // Start PostgreSQL test container
         // - Reuse is enabled to speed up tests locally.
         //   Our CI pipelines always start fresh containers as the test jobs run within docker:dind and containers get disposed after a test run.
         // - The tmpfs mounts ensure that the database runs in memory only and does not write to disk, speeding up tests significantly.
         //   Also see https://www.fusonic.net/de/blog/fusonic-test-with-databases-part-3 for more information.
-        container = new PostgreSqlBuilder()
+        container = new PostgreSqlBuilder("postgres:17-alpine")
             .WithReuse(true)
-            .WithImage("postgres:17")
             .WithName("test.npgsql.extensions.unittests")
             .WithTmpfsMount("/var/lib/postgresql/data")
             .WithTmpfsMount("/dev/shm")
@@ -46,5 +43,5 @@ public class TestStartup : ITestPipelineStartup
             useMigrations: false);
     }
 
-    public ValueTask StopAsync() => ValueTask.CompletedTask;
+    public ValueTask DisposeAsync() => ValueTask.CompletedTask;
 }

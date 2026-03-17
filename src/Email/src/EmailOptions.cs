@@ -11,7 +11,7 @@ namespace Fusonic.Extensions.Email;
 public class EmailOptions
 {
     /// <summary> Email-Address of the sender. </summary>
-    public string? SenderAddress { get; set; }
+    public string SenderAddress { get; set; } = string.Empty;
 
     /// <summary> Name of the sender. </summary>
     public string? SenderName { get; set; }
@@ -74,7 +74,6 @@ public class EmailOptions
         var errors = new List<string>();
 
         Required(x => x.SenderAddress);
-        Required(x => x.SenderName);
 
         if (string.IsNullOrWhiteSpace(StoreInDirectory))
         {

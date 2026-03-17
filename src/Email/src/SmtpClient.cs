@@ -1,4 +1,4 @@
-﻿// Copyright (c) Fusonic GmbH. All rights reserved.
+// Copyright (c) Fusonic GmbH. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
 using Fusonic.Extensions.Common.IO;
@@ -13,7 +13,7 @@ public class SmtpClient(EmailOptions options) : ISmtpClient
     {
         if (!string.IsNullOrWhiteSpace(options.StoreInDirectory))
         {
-            string path = Path.Combine(options.StoreInDirectory, $"{DateTime.Now:yyyyMMdd_HHmmss}_{PathUtil.RemoveInvalidFilenameChars(message.Subject)}_{Guid.NewGuid()}.eml");
+            string path = Path.Combine(options.StoreInDirectory, $"{DateTime.Now:yyyyMMdd_HHmmss}_{PathUtil.RemoveInvalidFilenameChars(message.Subject ?? "")}_{Guid.NewGuid()}.eml");
             await message.WriteToAsync(path);
         }
         else

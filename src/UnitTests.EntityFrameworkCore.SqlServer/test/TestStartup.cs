@@ -4,24 +4,22 @@
 using Fusonic.Extensions.UnitTests.EntityFrameworkCore.SqlServer.Tests;
 using Microsoft.Data.SqlClient;
 using Testcontainers.MsSql;
-using Xunit.Sdk;
-using Xunit.v3;
 
-[assembly: TestPipelineStartup(typeof(TestStartup))]
+[assembly: AssemblyFixture(typeof(TestStartup))]
 
 namespace Fusonic.Extensions.UnitTests.EntityFrameworkCore.SqlServer.Tests;
 
-public class TestStartup : ITestPipelineStartup
+public class TestStartup : IAsyncLifetime
 {
     private MsSqlContainer? container;
     public static string ConnectionString { get; private set; } = null!;
 
-    public async ValueTask StartAsync(IMessageSink diagnosticMessageSink)
+    public async ValueTask InitializeAsync()
     {
         // Start MSSQL test container
         // - Reuse is enabled to speed up tests locally.
         //   Our CI pipelines always start fresh containers as the test jobs run within docker:dind and containers get disposed after a test run.
-        container = new MsSqlBuilder()
+        container = new MsSqlBuilder("mcr.microsoft.com/mssql/server:2022-latest")
             .WithReuse(true)
             .WithName("test.mssql.extensions.unittests")
             .Build();
@@ -40,5 +38,5 @@ public class TestStartup : ITestPipelineStartup
             useMigrations: false);
     }
 
-    public ValueTask StopAsync() => ValueTask.CompletedTask;
+    public ValueTask DisposeAsync() => ValueTask.CompletedTask;
 }
