@@ -69,6 +69,27 @@ public class EmailOptions
     /// </summary>
     public Func<BlazorPostProcessContext, ValueTask<string>>? BlazorContentPostProcessor { get; set; } = static ctx => ValueTask.FromResult(CssInliner.Inline(ctx.Html));
 
+    private static readonly string[] DefaultIgnoredDomains = ["invalid"];
+
+    /// <summary>
+    /// Ignores domains when sending emails. The domain "invalid" always gets ignored, as it may cause bounces and may impact the sender score.
+    /// </summary>
+    /// <remarks>
+    /// As per <a href="https://datatracker.ietf.org/doc/html/rfc6761">RFC6761</a> the domain ".invalid" is reserved and should result in negative responses.
+    /// The domain ".invalid" is the only domain that MAY be recognized by applications AND should cause a negative response.
+    /// This is not the case for other testing domains like ".test" or "example.com", which is why they are not on the default ignore list.
+    /// </remarks>
+    public IReadOnlyList<string> IgnoredDomains { get; set; } = DefaultIgnoredDomains;
+
+    internal IReadOnlyList<string> IgnoredDomainsCleaned => field ??=
+        IgnoredDomains
+            .Select(d => d.ToLowerInvariant().Trim())
+            .Union(DefaultIgnoredDomains)
+            .Distinct()
+            .Select(d => d.StartsWith(".", StringComparison.OrdinalIgnoreCase) ? d : "." + d)
+            .ToList()
+            .AsReadOnly();
+
     internal void Validate()
     {
         var errors = new List<string>();

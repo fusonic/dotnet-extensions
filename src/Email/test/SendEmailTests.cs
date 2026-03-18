@@ -16,11 +16,15 @@ public partial class SendEmailTests(SendEmailTests.SendEmailFixture fixture) : T
     [Fact]
     public async Task SendEmail_Razor()
     {
+        // Arrange
         Fixture.SmtpServer!.ClearReceivedEmail();
 
         var model = new SendEmailTestEmailViewModel { SomeField = "Some field." };
+
+        // Act
         await SendAsync(new SendEmail("recipient@fusonic.net", "The Recipient", new CultureInfo("de-AT"), model));
 
+        // Assert
         Fixture.SmtpServer.ReceivedEmailCount.Should().Be(1);
         var email = Fixture.SmtpServer.ReceivedEmail.Single();
         email.ToAddresses
@@ -44,11 +48,15 @@ public partial class SendEmailTests(SendEmailTests.SendEmailFixture fixture) : T
     [Fact]
     public async Task SendEmail_Blazor()
     {
+        // Arrange
         Fixture.SmtpServer!.ClearReceivedEmail();
 
         var model = new SendEmailTestEmailComponentModel { SomeField = "Some field." };
+
+        // Act
         await SendAsync(new SendEmail("recipient@fusonic.net", "The Recipient", new CultureInfo("de-AT"), model));
 
+        // Assert
         Fixture.SmtpServer.ReceivedEmailCount.Should().Be(1);
         var email = Fixture.SmtpServer.ReceivedEmail.Single();
         email.ToAddresses
@@ -71,11 +79,15 @@ public partial class SendEmailTests(SendEmailTests.SendEmailFixture fixture) : T
     [Fact]
     public async Task SendEmail_BccAdded()
     {
+        // Arrange
         Fixture.SmtpServer!.ClearReceivedEmail();
 
         var model = new SendEmailTestEmailViewModel { SomeField = "Some field." };
+
+        // Act
         await SendAsync(new SendEmail("recipient@fusonic.net", "The Recipient", new CultureInfo("de-AT"), model, BccRecipient: "bcc@fusonic.net"));
 
+        // Assert
         Fixture.SmtpServer.ReceivedEmailCount.Should().Be(1);
         var email = Fixture.SmtpServer.ReceivedEmail.Single();
         email.ToAddresses.Select(a => a.Address).Should().BeEquivalentTo(["recipient@fusonic.net"]);
@@ -100,6 +112,7 @@ public partial class SendEmailTests(SendEmailTests.SendEmailFixture fixture) : T
     [InlineData("!even-More.xml")]
     public async Task SendEmail_AttachmentsAdded(string attachmentName)
     {
+        // Arrange
         var attachmentPath = Path.Combine(Path.GetDirectoryName(typeof(TestFixture).Assembly.Location)!, "email.css");
         Fixture.SmtpServer!.ClearReceivedEmail();
 
@@ -112,8 +125,10 @@ public partial class SendEmailTests(SendEmailTests.SendEmailFixture fixture) : T
             )
         };
 
+        // Act
         await SendAsync(new SendEmail("recipient@fusonic.net", "The Recipient", new CultureInfo("de-AT"), model, Attachments: attachments));
 
+        // Assert
         Fixture.SmtpServer.ReceivedEmailCount.Should().Be(1);
         var email = Fixture.SmtpServer.ReceivedEmail.Single();
         email.MessageParts.Should().HaveCount(2);
@@ -128,18 +143,22 @@ public partial class SendEmailTests(SendEmailTests.SendEmailFixture fixture) : T
             email.MessageParts[1].HeaderData.Should().Contain(attachmentName);
         }
 
-        var expectedAttachmentContent = await File.ReadAllTextAsync(attachmentPath, TestContext.Current.CancellationToken); 
+        var expectedAttachmentContent = await File.ReadAllTextAsync(attachmentPath, TestContext.Current.CancellationToken);
         email.MessageParts[1].BodyData.Should().Be(expectedAttachmentContent);
     }
 
     [Fact]
     public async Task SendEmail_HeadersAdded()
     {
+        // Arrange
         Fixture.SmtpServer!.ClearReceivedEmail();
 
         var model = new SendEmailTestEmailViewModel { SomeField = "Some field." };
+
+        // Act
         await SendAsync(new SendEmail("recipient@fusonic.net", "The Recipient", new CultureInfo("de-AT"), model, Headers: new Dictionary<string, string> { ["my-header"] = "value" }));
 
+        // Assert
         Fixture.SmtpServer.ReceivedEmailCount.Should().Be(1);
         var email = Fixture.SmtpServer.ReceivedEmail.Single();
 
@@ -150,6 +169,7 @@ public partial class SendEmailTests(SendEmailTests.SendEmailFixture fixture) : T
     [Fact]
     public async Task SendEmail_DefaultHeadersAdded()
     {
+        // Arrange
         Fixture.SmtpServer!.ClearReceivedEmail();
 
         var options = GetInstance<EmailOptions>();
@@ -157,8 +177,11 @@ public partial class SendEmailTests(SendEmailTests.SendEmailFixture fixture) : T
         options.DefaultHeaders = new Dictionary<string, string> { ["my-header"] = "value" };
 
         var model = new SendEmailTestEmailViewModel { SomeField = "Some field." };
+
+        // Act
         await SendAsync(new SendEmail("recipient@fusonic.net", "The Recipient", new CultureInfo("de-AT"), model));
 
+        // Assert
         Fixture.SmtpServer.ReceivedEmailCount.Should().Be(1);
         var email = Fixture.SmtpServer.ReceivedEmail.Single();
 
@@ -169,6 +192,7 @@ public partial class SendEmailTests(SendEmailTests.SendEmailFixture fixture) : T
     [Fact]
     public async Task SendEmail_DefaultHeadersOverriddenIfSetTwice()
     {
+        // Arrange
         Fixture.SmtpServer!.ClearReceivedEmail();
 
         var options = GetInstance<EmailOptions>();
@@ -176,8 +200,11 @@ public partial class SendEmailTests(SendEmailTests.SendEmailFixture fixture) : T
         options.DefaultHeaders = new Dictionary<string, string> { ["replaced"] = "value", ["default"] = "value" };
 
         var model = new SendEmailTestEmailViewModel { SomeField = "Some field." };
+
+        // Act
         await SendAsync(new SendEmail("recipient@fusonic.net", "The Recipient", new CultureInfo("de-AT"), model, Headers: new Dictionary<string, string> { ["replaced"] = "new-value" }));
 
+        // Assert
         Fixture.SmtpServer.ReceivedEmailCount.Should().Be(1);
         var email = Fixture.SmtpServer.ReceivedEmail.Single();
 
@@ -190,11 +217,15 @@ public partial class SendEmailTests(SendEmailTests.SendEmailFixture fixture) : T
     [Fact]
     public async Task SendEmail_ReplyToAdded()
     {
+        // Arrange
         Fixture.SmtpServer!.ClearReceivedEmail();
 
         var model = new SendEmailTestEmailViewModel { SomeField = "Some field." };
+
+        // Act
         await SendAsync(new SendEmail("recipient@fusonic.net", "The Recipient", new CultureInfo("de-AT"), model, ReplyTo: "reply@mail.com"));
 
+        // Assert
         Fixture.SmtpServer.ReceivedEmailCount.Should().Be(1);
         var email = Fixture.SmtpServer.ReceivedEmail.Single();
 
@@ -205,37 +236,67 @@ public partial class SendEmailTests(SendEmailTests.SendEmailFixture fixture) : T
     [Fact]
     public async Task SendEmail_InvalidBccEmailAddress_ThrowsException()
     {
+        // Arrange
         var model = new SendEmailTestEmailViewModel { SomeField = "Some field." };
 
+        // Act
         var act = async () => await SendAsync(new SendEmail("recipient@fusonic.net", "The Recipient", new CultureInfo("de-AT"), model, BccRecipient: "invalidEmailAddress"));
 
+        // Assert
         await act.Should().ThrowAsync<SmtpCommandException>();
     }
 
     [Fact]
     public async Task SendEmail_UnsupportedAttachmentUri_ThrowsException()
     {
+        // Arrange
         var model = new SendEmailTestEmailViewModel { SomeField = "Some field." };
 
+        // Act
         var act = async () => await SendAsync(new SendEmail("recipient@fusonic.net", "The Recipient", new CultureInfo("de-AT"), model, Attachments: [
             new Attachment("foo", new Uri("soso://over.there/file.txt"))
         ]));
 
+        // Assert
         await act.Should().ThrowAsync<InvalidOperationException>();
     }
 
     [Fact]
     public async Task SendEmail_SubjectFormatParameters_GetPassedToRenderer()
     {
+        // Arrange
         Fixture.SmtpServer!.ClearReceivedEmail();
         var model = new SendEmailTestEmailViewModel { SomeField = "Some field." };
 
         var formatParams = new object[] { 1, "Test" };
+
+        // Act
         await SendAsync(new SendEmail("recipient@fusonic.net", "The Recipient", new CultureInfo("de-AT"), model, SubjectKey: "SubjectFormat", SubjectFormatParameters: formatParams));
 
+        // Assert
         Fixture.SmtpServer.ReceivedEmailCount.Should().Be(1);
         var email = Fixture.SmtpServer.ReceivedEmail.Single();
         email.Subject.Should().Be("The formatted subject 1 Test");
+    }
+
+    [Theory]
+    [InlineData("user@test.invalid")]
+    [InlineData("user@sub.domain.invalid")]
+    [InlineData("user@invalid")]
+    [InlineData("invalid")]
+    [InlineData("user@SUB.DOMAIN.INVAlid")]
+    [InlineData("user@DoMaIn.InValid")]
+    public async Task SendEmail_IgnoredDomain_DoesNotSendEmail(string recipient)
+    {
+        // Arrange
+        Fixture.SmtpServer!.ClearReceivedEmail();
+        var model = new SendEmailTestEmailViewModel { SomeField = "Some field." };
+
+        // Act
+        await SendAsync(new SendEmail(recipient, recipient, new CultureInfo("de-AT"), model));
+
+        // Assert
+        Fixture.SmtpServer.ReceivedEmailCount.Should().Be(0);
     }
 
     public class SendEmailFixture : TestFixture

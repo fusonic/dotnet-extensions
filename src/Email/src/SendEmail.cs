@@ -3,6 +3,7 @@
 
 using System.Globalization;
 using Fusonic.Extensions.Mediator;
+using Microsoft.Extensions.Logging;
 using MimeKit;
 
 namespace Fusonic.Extensions.Email;
@@ -33,12 +34,18 @@ public record SendEmail(
     string? ReplyTo = null) : ICommand
 {
     [OutOfBand]
-    public class Handler(EmailOptions emailOptions, ISmtpClient smtpClient, IEnumerable<IEmailRenderingService> emailRenderingServices, IEnumerable<IEmailAttachmentResolver> emailAttachmentResolvers) : AsyncRequestHandler<SendEmail>, IAsyncDisposable
+    public class Handler(EmailOptions emailOptions, ISmtpClient smtpClient, IEnumerable<IEmailRenderingService> emailRenderingServices, IEnumerable<IEmailAttachmentResolver> emailAttachmentResolvers, ILogger<SendEmail> logger) : AsyncRequestHandler<SendEmail>, IAsyncDisposable
     {
         private readonly List<Stream> openedStreams = [];
 
         protected override async Task Handle(SendEmail request, CancellationToken cancellationToken)
         {
+            if (ShouldIgnore(request.Recipient))
+            { 
+                logger.LogInformation("Email of type {Type} to {Recipient} ignored. The domain is on the ignore list.", request.ViewModel?.GetType()?.Name, request.Recipient);
+                return;
+            }
+
             var emailRenderingService = GetRenderingService(request.ViewModel);
 
             var (subject, body) = await emailRenderingService.RenderAsync(request.ViewModel, request.Culture, request.SubjectKey, request.SubjectFormatParameters);
@@ -54,7 +61,7 @@ public record SendEmail(
                 Subject = subject
             };
 
-            if (!string.IsNullOrWhiteSpace(request.BccRecipient))
+            if (!string.IsNullOrWhiteSpace(request.BccRecipient) && !ShouldIgnore(request.BccRecipient))
             {
                 message.Bcc.Add(new MailboxAddress(request.BccRecipient, request.BccRecipient));
             }
@@ -113,6 +120,12 @@ public record SendEmail(
             }
 
             return builder.ToMessageBody();
+        }
+
+        private bool ShouldIgnore(string recipient)
+        {
+            var domain = "." + recipient.Split('@').Last();
+            return emailOptions.IgnoredDomainsCleaned.Any(c => domain.EndsWith(c, StringComparison.OrdinalIgnoreCase));
         }
 
         private IEmailRenderingService GetRenderingService(object viewModel)
