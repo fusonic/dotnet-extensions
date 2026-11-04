@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+<Project Sdk="Microsoft.NET.Sdk.Razor">
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <IsPackable>false</IsPackable>
@@ -18,7 +18,7 @@
         <PackageReference Include="Microsoft.Testing.Extensions.TrxReport" />
         <PackageReference Include="netDumbster" />
         <PackageReference Include="NSubstitute" />
-        <PackageReference Include="xunit.v3.core.mtp-v2" />
+        <PackageReference Include="xunit.v3.core" />
         <PackageReference Include="xunit.analyzers">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

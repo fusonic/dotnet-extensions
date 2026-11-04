@@ -21,17 +21,22 @@ public class TestStartup : IAsyncLifetime
 
     public async ValueTask InitializeAsync()
     {
-        // Start PostgreSQL test container
-        container = new PostgreSqlBuilder("postgres:17-alpine")
-            .WithReuse(true)
-            .WithName("test.npgsql.extensions.hangfire")
-            .WithTmpfsMount("/var/lib/postgresql/data")
-            .WithTmpfsMount("/dev/shm")
-            .Build();
+        // In CI the database is provided as a service. Locally, a test container is started.
+        var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__Postgres");
+        if (string.IsNullOrWhiteSpace(connectionString))
+        {
+            container = new PostgreSqlBuilder("postgres:17-alpine")
+                .WithReuse(true)
+                .WithName("test.npgsql.extensions.hangfire")
+                .WithTmpfsMount("/var/lib/postgresql/data")
+                .WithTmpfsMount("/dev/shm")
+                .Build();
 
-        await container.StartAsync();
+            await container.StartAsync();
+            connectionString = container.GetConnectionString();
+        }
 
-        ConnectionString = new NpgsqlConnectionStringBuilder(container.GetConnectionString())
+        ConnectionString = new NpgsqlConnectionStringBuilder(connectionString)
         {
             Database = "hangfire"
         }.ConnectionString;

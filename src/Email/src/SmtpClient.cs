@@ -25,7 +25,7 @@ public class SmtpClient(EmailOptions options) : ISmtpClient
             await client.ConnectAsync(options.SmtpServer, options.SmtpPort, options.EnableSsl ? SecureSocketOptions.Auto : SecureSocketOptions.None);
             if (!string.IsNullOrWhiteSpace(options.SmtpUsername))
             {
-                await client.AuthenticateAsync(options.SmtpUsername, options.SmtpPassword);
+                await client.AuthenticateAsync(options.SmtpUsername, options.SmtpPassword ?? "");
             }
             await client.SendAsync(message);
             await client.DisconnectAsync(true);

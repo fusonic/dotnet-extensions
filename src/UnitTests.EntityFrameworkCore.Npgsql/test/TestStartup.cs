@@ -17,21 +17,25 @@ public class TestStartup : IAsyncLifetime
 
     public async ValueTask InitializeAsync()
     {
-        // Start PostgreSQL test container
+        // In CI the database is provided as a service. Locally, a test container is started.
         // - Reuse is enabled to speed up tests locally.
-        //   Our CI pipelines always start fresh containers as the test jobs run within docker:dind and containers get disposed after a test run.
         // - The tmpfs mounts ensure that the database runs in memory only and does not write to disk, speeding up tests significantly.
         //   Also see https://www.fusonic.net/de/blog/fusonic-test-with-databases-part-3 for more information.
-        container = new PostgreSqlBuilder("postgres:17-alpine")
-            .WithReuse(true)
-            .WithName("test.npgsql.extensions.unittests")
-            .WithTmpfsMount("/var/lib/postgresql/data")
-            .WithTmpfsMount("/dev/shm")
-            .Build();
+        var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__Postgres");
+        if (string.IsNullOrWhiteSpace(connectionString))
+        {
+            container = new PostgreSqlBuilder("postgres:17-alpine")
+                .WithReuse(true)
+                .WithName("test.npgsql.extensions.unittests")
+                .WithTmpfsMount("/var/lib/postgresql/data")
+                .WithTmpfsMount("/dev/shm")
+                .Build();
 
-        await container.StartAsync();
+            await container.StartAsync();
+            connectionString = container.GetConnectionString();
+        }
 
-        ConnectionString = new NpgsqlConnectionStringBuilder(container.GetConnectionString())
+        ConnectionString = new NpgsqlConnectionStringBuilder(connectionString)
         {
             Database = "efcore"
         }.ConnectionString;

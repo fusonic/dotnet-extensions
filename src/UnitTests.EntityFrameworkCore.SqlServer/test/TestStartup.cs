@@ -16,17 +16,21 @@ public class TestStartup : IAsyncLifetime
 
     public async ValueTask InitializeAsync()
     {
-        // Start MSSQL test container
+        // In CI the database is provided as a service. Locally, a test container is started.
         // - Reuse is enabled to speed up tests locally.
-        //   Our CI pipelines always start fresh containers as the test jobs run within docker:dind and containers get disposed after a test run.
-        container = new MsSqlBuilder("mcr.microsoft.com/mssql/server:2022-latest")
-            .WithReuse(true)
-            .WithName("test.mssql.extensions.unittests")
-            .Build();
+        var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__Mssql");
+        if (string.IsNullOrWhiteSpace(connectionString))
+        {
+            container = new MsSqlBuilder("mcr.microsoft.com/mssql/server:2022-latest")
+                .WithReuse(true)
+                .WithName("test.mssql.extensions.unittests")
+                .Build();
 
-        await container.StartAsync();
+            await container.StartAsync();
+            connectionString = container.GetConnectionString();
+        }
 
-        ConnectionString = new SqlConnectionStringBuilder(container.GetConnectionString())
+        ConnectionString = new SqlConnectionStringBuilder(connectionString)
         {
             InitialCatalog = "efcore"
         }.ConnectionString;

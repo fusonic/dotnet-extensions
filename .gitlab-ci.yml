@@ -18,13 +18,8 @@ stages:
 
 variables:
   BUILD_IMAGE: mcr.microsoft.com/dotnet/sdk:10.0
-  DOCKER_VERSION: "29"
-  DOCKER_BUILDKIT: 1
-  DOCKER_HOST: tcp://docker:2376
-  DOCKER_TLS_CERTDIR: "/certs/${CI_JOB_ID}"
-  DOCKER_TLS_VERIFY: 1
-  DOCKER_CERT_PATH: "/certs/${CI_JOB_ID}/client"
-  TESTCONTAINERS_RYUK_DISABLED: "true" # Disable Ryuk as we're running in dind-rootless and there is no docker.sock available.
+  POSTGRES_IMAGE: "postgres:17-alpine"
+  SQLSERVER_IMAGE: "mcr.microsoft.com/mssql/server:2022-latest"
 
 default:
   interruptible: true
@@ -50,9 +45,22 @@ build:
   rules:
     - when: always
 
+# Databases run as services in CI instead of Testcontainers (see TestStartup.cs in the test projects).
 dotnet:test:
+  variables:
+    POSTGRES_DB: "postgres"
+    POSTGRES_USER: "postgres"
+    POSTGRES_PASSWORD: "Developer123!"
+    ConnectionStrings__Postgres: "Host=postgres;Port=5432;Database=postgres;Username=postgres;Password=Developer123!"
+    ACCEPT_EULA: "Y"
+    MSSQL_PID: "Developer"
+    MSSQL_SA_PASSWORD: "Developer123!"
+    ConnectionStrings__Mssql: "Server=mssql,1433;User Id=sa;Password=Developer123!;Initial Catalog=master;TrustServerCertificate=True"
   services:
-    - docker:${DOCKER_VERSION}-dind-rootless
+    - name: ${POSTGRES_IMAGE}
+      alias: postgres
+    - name: ${SQLSERVER_IMAGE}
+      alias: mssql
 
 release:lint-merge-request:
   stage: test
