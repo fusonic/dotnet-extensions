@@ -81,12 +81,29 @@ publish:
   stage: publish
   variables:
     GIT_STRATEGY: none
+    NUGET_USERNAME: droth # nuget.org user who created the trusted publishing policy (not the package-owner org, not the email)
+  id_tokens:
+    NUGET_ID_TOKEN:
+      aud: "https://www.nuget.org"
   allow_failure: true
   script:
     - |
       if [ $CI_PIPELINE_SOURCE != "merge_request_event" ]; then
+        echo "Exchanging GitLab OIDC token for a short-lived NuGet API key"
+        apt-get update -qq && apt-get install -y -qq jq > /dev/null
+        RESPONSE=$(curl -sS -w "\n%{http_code}" -X POST "https://www.nuget.org/api/v2/token" \
+          -H "Content-Type: application/json" \
+          -H "Authorization: Bearer $NUGET_ID_TOKEN" \
+          -d "{\"username\": \"$NUGET_USERNAME\", \"tokenType\": \"ApiKey\"}")
+        HTTP_CODE=$(echo "$RESPONSE" | tail -n 1)
+        if [ "$HTTP_CODE" != "200" ]; then
+          echo "Token exchange failed (HTTP $HTTP_CODE): $(echo "$RESPONSE" | head -n -1)"
+          exit 1
+        fi
+        NUGET_API_KEY=$(echo "$RESPONSE" | head -n -1 | jq -r '.apiKey')
+
         echo "Publishing to NuGet.org"
-        dotnet nuget push "artifacts/package/release/*.nupkg" -k $Nuget_Key -s https://api.nuget.org/v3/index.json --skip-duplicate
+        dotnet nuget push "artifacts/package/release/*.nupkg" -k "$NUGET_API_KEY" -s https://api.nuget.org/v3/index.json --skip-duplicate
       fi
     
     - echo "Publishing to GitLab"
