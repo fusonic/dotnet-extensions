@@ -21,6 +21,9 @@ Fusonic Extensions consists of several thoughtfully designed class libraries whi
 [![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.AspNetCore.svg?label=Fusonic.Extensions.AspNetCore&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.AspNetCore/)
 Provides ASP<span>.</span>NET Core extensions (Middelwares, Utilities ...). See the [documentation](docs/AspNetCore/README.md) for more details.
 
+[![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.Aspire.Hosting.svg?label=Fusonic.Extensions.Aspire.Hosting&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.Aspire.Hosting/)
+Extensions for the Aspire AppHost: groups the containers as a Docker Compose stack, keeps secrets entered in the dashboard in the OS's secret store. See the [documentation](docs/Aspire/README.md) for more details.
+
 [![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.Common.svg?label=Fusonic.Extensions.Common&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.Common/)
 Adds serval small helpers and common abstractions. See the [documentation](docs/Common/README.md) for more details.
 

@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyName>Fusonic.Extensions.Aspire.Hosting</AssemblyName>
+    <RootNamespace>Fusonic.Extensions.Aspire.Hosting</RootNamespace>
+    <PackageProjectUrl>https://github.com/fusonic/dotnet-extensions</PackageProjectUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <DocumentationFile>$(ArtifactsPath)\bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    <Description>Extensions for the Aspire AppHost: group containers as a Docker Compose stack, keep secrets in the OS's secret store.</Description>
+    <PackageTags>aspire;apphost;docker;secrets</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\..\docs\Aspire\README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Aspire.Hosting" />
+    <PackageReference Include="Microsoft.Identity.Client.Extensions.Msal" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Fusonic.Extensions.Aspire.Hosting.Tests" />
+  </ItemGroup>
+
+</Project>

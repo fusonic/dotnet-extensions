@@ -11,6 +11,7 @@
   </Folder>
   <Folder Name="/Tests/">
     <Project Path="src/AspNetCore/test/AspNetCore.Tests.csproj" />
+    <Project Path="src/Aspire.Hosting/test/Aspire.Hosting.Tests.csproj" />
     <Project Path="src/Common/test/Common.Tests.csproj" />
     <Project Path="src/Email/test/Email.Tests.csproj" />
     <Project Path="src/EntityFrameworkCore/test/EntityFrameworkCore.Tests.csproj" />
@@ -22,6 +23,7 @@
     <Project Path="src/UnitTests.EntityFrameworkCore/test/UnitTests.EntityFrameworkCore.Tests.csproj" />
   </Folder>
   <Project Path="src/AspNetCore/src/AspNetCore.csproj" />
+  <Project Path="src/Aspire.Hosting/src/Aspire.Hosting.csproj" />
   <Project Path="src/Common/src/Common.csproj" />
   <Project Path="src/Email/src/Email.csproj" />
   <Project Path="src/EntityFrameworkCore/src/EntityFrameworkCore.csproj" />
