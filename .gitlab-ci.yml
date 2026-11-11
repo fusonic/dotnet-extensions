@@ -7,6 +7,10 @@ include:
     inputs:
       sln-path: Extensions.slnx
       image: mcr.microsoft.com/dotnet/sdk:10.0
+  - component: $CI_SERVER_FQDN/fusonic/devops/components/renovate/renovate@2
+    inputs:
+      presets: [nuget]
+      assignees: [david.roth]
   - project: "fusonic/devops/images/gitlab-ci-tools"
     file: "release_tool.yml"
     ref: "5.12"
