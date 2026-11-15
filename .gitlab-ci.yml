@@ -11,10 +11,7 @@ include:
     inputs:
       presets: [nuget]
       assignees: [david.roth]
-  - project: "fusonic/devops/images/gitlab-ci-tools"
-    file: "release_tool.yml"
-    ref: "5.12"
-
+  - component: gitlab.com/fusonic/devops/components/release-tool/release-tool@1
 stages:
   - build
   - test
