@@ -1,6 +1,7 @@
 <Solution>
   <Folder Name="/Solution Items/">
     <File Path=".editorconfig" />
+    <File Path="AGENTS.md" />
     <File Path=".editorconfig.disableAnalyzers" />
     <File Path=".gitlab-ci.yml" />
     <File Path="global.json" />

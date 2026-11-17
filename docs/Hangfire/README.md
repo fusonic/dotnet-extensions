@@ -21,6 +21,21 @@ Container.RegisterDecorator(typeof(IRequestHandler<,>), typeof(TransactionalRequ
 
 If you want to process notifications out of band it is important to call `Container.RegisterOutOfBandDecorators()` before you register any other decorator. Otherwise this would cause the `NotificationDispatcher` to try to resolve a decorator instead of the actual `NotificationHandler`.
 
+### Registration with Microsoft.Extensions.DependencyInjection and Scrutor
+
+```cs
+services.AddSingleton<IUserAccessor, YourUserAccessor>();
+
+// Register your handlers, e.g. via services.Scan(...) (see Mediator documentation)
+
+services.AddOutOfBandDecorators();
+services.Decorate(typeof(IRequestHandler<,>), typeof(TransactionalRequestHandlerDecorator<,>));
+```
+
+`AddOutOfBandDecorators()` decorates the handlers based on their implementation type. Therefore the handlers and the `IUserAccessor` must be registered before and all other handler decorators after it. It throws if out-of-band handlers are already decorated.
+It uses the `ServiceProviderJobProcessor` by default. Custom job processors can be configured with `options.UseJobProcessor<T>()` and should derive from `ServiceProviderJobProcessor`.
+Hangfire resolves the job processor from the `IServiceProvider` when using `services.AddHangfire()` (`Hangfire.NetCore`/`Hangfire.AspNetCore`).
+
 Usage:
 
 ```cs

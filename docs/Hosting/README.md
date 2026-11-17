@@ -62,6 +62,11 @@ var host = new HostBuilder()
    .Build()
 ```
 
+When using Microsoft.Extensions.DependencyInjection, use the extension on `IServiceCollection` instead. The service gets registered as scoped and is resolved in a new scope for each run:
+```cs
+services.AddTimedHostedService<HelloWorldService>(cfg => hostContext.Configuration.Bind("HelloWorld", cfg), (svc, ct) => svc.Run(ct));
+```
+
 The according configuration in the appettings for this example could look like the following. Note that all parameters are optional and the config could also be injected via EnvironmentVariables, depending on your HostConfiguration.
 ```cs
 {

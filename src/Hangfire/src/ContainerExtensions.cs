@@ -14,7 +14,7 @@ public static class ContainerExtensions
     {
         var options = new OutOfBandOptions();
         configure?.Invoke(options);
-        var jobProcessorType = options.JobProcessorType;
+        var jobProcessorType = options.JobProcessorType ?? typeof(JobProcessor);
 
         container.Register(jobProcessorType, jobProcessorType, Lifestyle.Scoped);
         container.Register<RuntimeOptions>(Lifestyle.Scoped);
@@ -40,7 +40,7 @@ public static class ContainerExtensions
 
     public sealed class OutOfBandOptions
     {
-        internal Type JobProcessorType { get; private set; } = typeof(JobProcessor);
+        internal Type? JobProcessorType { get; private set; }
 
         public void UseJobProcessor<TJobProcessor>()
             where TJobProcessor : class, IJobProcessor

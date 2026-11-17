@@ -19,6 +19,7 @@
     <ItemGroup>
         <PackageReference Include="Hangfire.Core" />
         <PackageReference Include="Newtonsoft.Json" />
+        <PackageReference Include="Scrutor" />
         <PackageReference Include="SimpleInjector" />
     </ItemGroup>
     <ItemGroup>

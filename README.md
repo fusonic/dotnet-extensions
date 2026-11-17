@@ -104,6 +104,7 @@ If possible, only .NET BCL libraries should be referenced. Especially with abstr
 However, we agree on the following core technologies, if absolutely necessary for the meaningfulness of the package:
 
 * SimpleInjector
+* Scrutor (for Microsoft.Extensions.DependencyInjection)
 * Entity FrameworkCore
 
 

@@ -23,6 +23,11 @@ The settings contain sender Email and name, SMTP settings, Debug settings, PostP
 container.RegisterEmail(options => Configuration.GetSection("Email").Bind(options));
 ```
 
+When using Microsoft.Extensions.DependencyInjection (with Scrutor for the BCC decorator):
+```cs
+services.AddEmail(options => Configuration.GetSection("Email").Bind(options));
+```
+
 ## Razor Views (MVC)
 
 ### Create and send an email
@@ -76,6 +81,9 @@ Per default the SubjectKey is "Subject" and it is being tried to resolve from th
 By default, only attachments in file://-Uris are supported. To allow adding attachments from other sources (eg. AWS S3), implement `IEmailAttachmentResolver` and register it SimpleInjector with
 ```cs
 container.Collections.Append<IEmailAttachmentResolver, YourResolver>()
+
+// Microsoft.Extensions.DependencyInjection
+services.AddSingleton<IEmailAttachmentResolver, YourResolver>();
 ```
 
 ## Headers

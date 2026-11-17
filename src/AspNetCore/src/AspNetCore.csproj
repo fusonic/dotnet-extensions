@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <PackageReference Include="SimpleInjector" PrivateAssets="all" />
+    <PackageReference Include="Scrutor" PrivateAssets="all" />
     <PackageReference Include="OpenTelemetry.Api" />
   </ItemGroup>
 

@@ -35,7 +35,15 @@ public class TestFixture : SimpleInjectorTestFixture
         });
         var services = new ServiceCollection();
         container.RegisterMediator(services, [typeof(SendEmail).Assembly]);
+        AddFrameworkServices(services);
 
+        services.AddSimpleInjector(container, setup => setup.AutoCrossWireFrameworkComponents = true);
+        services.BuildServiceProvider(validateScopes: true).UseSimpleInjector(container);
+    }
+
+    /// <summary> ASP.NET Core services required for rendering emails. </summary>
+    internal static void AddFrameworkServices(IServiceCollection services)
+    {
         services.AddRazorComponents();
         services.AddRazorPages()
                 .ConfigureApplicationPartManager(apm => apm.ApplicationParts.Add(new CompiledRazorAssemblyPart(Assembly.GetExecutingAssembly())));
@@ -69,7 +77,5 @@ public class TestFixture : SimpleInjectorTestFixture
         services.AddSingleton(listener);
         services.AddSingleton<DiagnosticSource>(listener);
 
-        services.AddSimpleInjector(container, setup => setup.AutoCrossWireFrameworkComponents = true);
-        services.BuildServiceProvider(validateScopes: true).UseSimpleInjector(container);
     }
 }

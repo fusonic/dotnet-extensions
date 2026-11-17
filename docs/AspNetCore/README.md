@@ -96,9 +96,14 @@ This also works with records.
 To easily trace every request and notification sent by our Mediator-package, simply register the tracing decorators:
 
 ```cs
+// SimpleInjector
 container.RegisterMediatorTracingDecorators();
 
 container.RegisterMediator( /* Mediator configuration */ );
+
+// Microsoft.Extensions.DependencyInjection with Scrutor
+// Register your handlers first, as Scrutor only decorates already registered services.
+services.AddMediatorTracingDecorators();
 ```
 
 Also, when configuring the OpenTelemetry-Tracer, you need to enable the instrumentation:
@@ -107,4 +112,4 @@ services.AddOpenTelemetry()
         .WithTracing(tracer => tracer.AddMediatorInstrumentation());
 ```
 
-Note that the order matters. You must register the tracing decorators before mediator.
+Note that the order matters. With SimpleInjector you must register the tracing decorators before mediator, with Scrutor after the handlers. Scrutor is not a transitive dependency and must be referenced in your project.
