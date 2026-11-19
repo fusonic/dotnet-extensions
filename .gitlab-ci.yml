@@ -7,7 +7,7 @@ include:
     inputs:
       sln-path: Extensions.slnx
       image: mcr.microsoft.com/dotnet/sdk:10.0
-  - component: $CI_SERVER_FQDN/fusonic/devops/components/renovate/renovate@2
+  - component: $CI_SERVER_FQDN/fusonic/devops/components/renovate/renovate@3
     inputs:
       presets: [nuget]
       assignees: [david.roth]
