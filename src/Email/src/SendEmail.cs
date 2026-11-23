@@ -61,9 +61,10 @@ public record SendEmail(
                 Subject = subject
             };
 
-            if (!string.IsNullOrWhiteSpace(request.BccRecipient) && !ShouldIgnore(request.BccRecipient))
+            var bccRecipient = string.IsNullOrWhiteSpace(request.BccRecipient) ? emailOptions.BccAddress : request.BccRecipient;
+            if (!string.IsNullOrWhiteSpace(bccRecipient) && !ShouldIgnore(bccRecipient))
             {
-                message.Bcc.Add(new MailboxAddress(request.BccRecipient, request.BccRecipient));
+                message.Bcc.Add(new MailboxAddress(bccRecipient, bccRecipient));
             }
 
             if (!string.IsNullOrWhiteSpace(request.ReplyTo))

@@ -23,7 +23,6 @@
     <ItemGroup>
         <PackageReference Include="MailKit" />
         <PackageReference Include="PreMailer.Net" />
-        <PackageReference Include="Scrutor" />
         <PackageReference Include="SimpleInjector" />
     </ItemGroup>
 </Project>

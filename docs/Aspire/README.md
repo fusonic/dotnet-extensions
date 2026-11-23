@@ -1,5 +1,7 @@
 # Aspire Hosting
 
+Package: `Fusonic.Extensions.Aspire.Hosting` (reference it in the AppHost project)
+
 Extensions for the [Aspire](https://aspire.dev) AppHost. Tested with Aspire 13.6.
 
 - [Aspire Hosting](#aspire-hosting)
@@ -8,7 +10,7 @@ Extensions for the [Aspire](https://aspire.dev) AppHost. Tested with Aspire 13.6
     - [Where the secrets are kept](#where-the-secrets-are-kept)
     - [Limitations](#limitations)
 
-The extension methods are in the namespace `Aspire.Hosting`, like Aspire's own, so they are available in the AppHost without a `using`.
+The extension methods are in the namespace `Aspire.Hosting`, like Aspire's own, so they are available in the AppHost without a `using`. `ProtectedSecretsOptions` is in `Fusonic.Extensions.Aspire.Hosting`.
 
 ## Compose stack
 
@@ -27,7 +29,7 @@ builder.AddContainer("mailpit", "axllent/mailpit")
 ```
 
 - The stack name defaults to the AppHost's name without `.AppHost`; pass one to override it: `UseComposeStack("my-stack")`.
-- Names are normalized to what Compose allows: lowercase letters, digits, `-` and `_`.
+- Names are normalized to what Compose allows: lowercase letters, digits, `-` and `_`. Other characters become `-`, leading and trailing `-`/`_` are trimmed. A name without any letter or digit throws an `ArgumentException`.
 - Only in run mode; `aspire publish` and `aspire deploy` are not affected.
 - Changing the labels changes the configuration of a persistent container (`ContainerLifetime.Persistent`), so Aspire recreates it once. Its volumes stay.
 
@@ -42,7 +44,7 @@ builder.UseProtectedSecrets();
 var apiKey = builder.AddParameter("api-key", secret: true);   // entered in the dashboard as usual
 ```
 
-- Stored secrets are loaded over the user secrets, so a stale value in `secrets.json` doesn't win. Environment variables and command line arguments still do.
+- Stored secrets are loaded right after the user secrets, so a stale value in `secrets.json` doesn't win, but environment variables and command line arguments still do. If the AppHost has no user secrets configured (no `UserSecretsId`), the stored secrets are added last and override environment variables and command line arguments as well.
 - Aspire's deployment state (`aspire publish`/`aspire deploy`) stays in the user secrets.
 - Where no store is available (Linux without a keyring, e.g. headless or WSL), the AppHost logs a warning at startup and uses the plaintext user secrets as before.
 

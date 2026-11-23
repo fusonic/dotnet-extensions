@@ -3,6 +3,7 @@
 
 using Fusonic.Extensions.Mediator;
 using Hangfire;
+using Hangfire.Common;
 using NSubstitute;
 using NSubstitute.ClearExtensions;
 
@@ -51,5 +52,21 @@ public class DecoratorTests : TestBase
         jobClient.ReceivedWithAnyArgs(1).Enqueue<JobProcessor>(x => x.ProcessAsync(null!, null!));
         outOfBandHandled.Should().BeFalse("Handle must not be called if handler is marked for out of band processing.");
         syncHandled.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task EnqueuesActualHandlerType_IfNotificationHandlerIsDecorated()
+    {
+        // Act
+        foreach (var handler in Fixture.Container.GetAllInstances<INotificationHandler<OutOfBandNotification>>())
+        {
+            await handler.Handle(new OutOfBandNotification(), CancellationToken.None);
+        }
+
+        // Assert
+        var job = jobClient.ReceivedCalls().Should().ContainSingle(c => c.GetMethodInfo().Name == nameof(IBackgroundJobClient.Create))
+                           .Which.GetArguments()[0].Should().BeOfType<Job>().Subject;
+        job.Args[0].Should().BeOfType<MediatorHandlerContext>()
+           .Which.HandlerType.Should().Be(typeof(OutOfBandNotificationHandler).AssemblyQualifiedName);
     }
 }

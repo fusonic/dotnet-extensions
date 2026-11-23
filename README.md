@@ -16,25 +16,25 @@ Latest Fusonic Extensions main branch targets .NET 10.0.
 Packages
 ===============
 
-Fusonic Extensions consists of several thoughtfully designed class libraries which are split into logical areas. Documentation is provided per package. In order to increase versioning and deployment complexity, all packages share a common semantic versioning scheme.
+Fusonic Extensions consists of several thoughtfully designed class libraries which are split into logical areas. Documentation is provided per package. In order to reduce versioning and deployment complexity, all packages share a common semantic versioning scheme.
 
 [![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.AspNetCore.svg?label=Fusonic.Extensions.AspNetCore&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.AspNetCore/)
-Provides ASP<span>.</span>NET Core extensions (Middelwares, Utilities ...). See the [documentation](docs/AspNetCore/README.md) for more details.
+Provides ASP<span>.</span>NET Core extensions (Middlewares, Utilities ...). See the [documentation](docs/AspNetCore/README.md) for more details.
 
 [![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.Aspire.Hosting.svg?label=Fusonic.Extensions.Aspire.Hosting&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.Aspire.Hosting/)
 Extensions for the Aspire AppHost: groups the containers as a Docker Compose stack, keeps secrets entered in the dashboard in the OS's secret store. See the [documentation](docs/Aspire/README.md) for more details.
 
 [![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.Common.svg?label=Fusonic.Extensions.Common&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.Common/)
-Adds serval small helpers and common abstractions. See the [documentation](docs/Common/README.md) for more details.
+Adds several small helpers and common abstractions. See the [documentation](docs/Common/README.md) for more details.
 
 [![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.Email.svg?label=Fusonic.Extensions.Email&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.Email/)
 Adds support for sending emails. See the [documentation](docs/Email/README.md) for more details.
 
 [![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.EntityFrameworkCore.svg?label=Fusonic.Extensions.EntityFrameworkCore&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.EntityFrameworkCore/)
-Extensions for EF Core.
+Extensions for EF Core. See the [documentation](docs/EntityFrameworkCore/README.md) for more details.
 
 [![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.Hangfire.svg?label=Fusonic.Extensions.Hangfire&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.Hangfire/)
-Provides Hangfire extensions, especially suited for CQRS developement. (Out of band processing). See the [documentation](docs/Hangfire/README.md) for more details.
+Provides Hangfire extensions, especially suited for CQRS development. (Out of band processing). See the [documentation](docs/Hangfire/README.md) for more details.
 
 [![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.Hosting.svg?label=Fusonic.Extensions.Hosting&style=plastic)](https://www.nuget.org/packages/Fusonic.Extensions.Hosting/)
 Provides services and extensions for hosting. See the [documentation](docs/Hosting/README.md) for more details.
@@ -71,7 +71,7 @@ Non-Goals
 --------------------
 
 - We do not implement **framework-code** but focus on **re-usable class libraries**
-- No DI abstractions necessary (SimpleInjector is a committed core library used in Fusonic Extensions)
+- No DI abstractions: packages register their services directly with SimpleInjector and Microsoft.Extensions.DependencyInjection
 
 
 Naming

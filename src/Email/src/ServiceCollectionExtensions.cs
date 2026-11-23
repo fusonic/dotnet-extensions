@@ -13,7 +13,7 @@ namespace Fusonic.Extensions.Email;
 public static class ServiceCollectionExtensions
 {
     /// <summary>
-    /// Registers the components for sending emails using Microsoft.Extensions.DependencyInjection and Scrutor.
+    /// Registers the components for sending emails using Microsoft.Extensions.DependencyInjection.
     ///
     /// Note: You need to register ViewLocalization as well as the HtmlRenderer in your services.
     /// Example:
@@ -46,12 +46,6 @@ public static class ServiceCollectionExtensions
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IEmailAttachmentResolver, FileAttachmentResolver>());
 
         services.AddScoped<IRequestHandler<SendEmail, Unit>, SendEmail.Handler>();
-
-        if (!string.IsNullOrWhiteSpace(options.BccAddress))
-        {
-            services.AddSingleton(new SendEmailBccDecorator.Options(options.BccAddress));
-            services.Decorate<IRequestHandler<SendEmail, Unit>, SendEmailBccDecorator>();
-        }
 
         return services;
     }

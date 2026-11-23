@@ -1,88 +1,123 @@
 # Hangfire
 
-- [Hangfire](#hangfire)
-    - [DisableHangfireDashboardAuthorizationFilter](#disablehangfiredashboardauthorizationfilter)
-    - [Transactional job processor](#transactional-job-processor)
+Package: `Fusonic.Extensions.Hangfire` (namespace `Fusonic.Extensions.Hangfire`)
 
-## Out-Of-Band Processing of CQRS Command and Event-Handlers
+- [Out-of-band processing of commands and notifications](#out-of-band-processing-of-commands-and-notifications)
+  - [Prerequisites](#prerequisites)
+  - [Registration with SimpleInjector](#registration-with-simpleinjector)
+  - [Registration with Microsoft.Extensions.DependencyInjection and Scrutor](#registration-with-microsoftextensionsdependencyinjection-and-scrutor)
+  - [Custom job processor](#custom-job-processor)
+- [Job display names](#job-display-names)
+- [DisableHangfireDashboardAuthorizationFilter](#disablehangfiredashboardauthorizationfilter)
 
-When applying CQRS, it allows us to easily decorate handlers with generic decorators.
-By applying the `Fusonic.Extensions.Common.OutOfBandAttribute`, you can decorate handlers which are allowed to run outside of the current flow. Whenever this handler gets called, the execution pipeline looks for the attribute on the handler. If the attribute is available, the handler is scheduled for async execution, meaning it runs “out of band” of the current logical flow.
-That means that the message will be stored in the outbox as part of the current ACID transaction and so it gets scheduled for async background processing as soon as the current transaction completes.
+## Out-of-band processing of commands and notifications
 
-This way we you can atomically perform your business operation including scheduling commands/events which must be executed afterwards, so that we get into an consistent state.
-
-Registration:
+Mark a handler of the [Mediator](https://github.com/fusonic/dotnet-extensions/blob/main/docs/Mediator/README.md) with `Fusonic.Extensions.Mediator.OutOfBandAttribute`. Instead of running the handler, the out-of-band decorator enqueues a Hangfire job that runs it in the background.
+If the Hangfire storage enlists in the current transaction, the job is only scheduled when the transaction commits. This way the business operation and the follow-up commands/notifications are stored atomically.
 
 ```cs
-Container.RegisterOutOfBandDecorators();
-Container.RegisterDecorator(typeof(IRequestHandler<,>), typeof(TransactionalRequestHandlerDecorator<,>));
+using Fusonic.Extensions.Mediator;
+
+[OutOfBand]
+public class SendWelcomeEmailHandler : IRequestHandler<SendWelcomeEmail>
+{
+    public Task<Unit> Handle(SendWelcomeEmail request, CancellationToken cancellationToken) { ... }
+}
 ```
 
-If you want to process notifications out of band it is important to call `Container.RegisterOutOfBandDecorators()` before you register any other decorator. Otherwise this would cause the `NotificationDispatcher` to try to resolve a decorator instead of the actual `NotificationHandler`.
+Only handlers without a response (`IRequestHandler<TRequest, Unit>`, e.g. for `ICommand`/`IRequest`) and notification handlers are decorated. `[OutOfBand]` on a handler returning a response is ignored.
+
+The job restores the culture, UI culture and user (via `IUserAccessor`) of the caller before running the handler. Inside the job, the out-of-band decorator is skipped, so the handler runs directly (still wrapped by the other decorators, e.g. the transactional decorators).
+
+### Prerequisites
+
+- Hangfire is configured, so `IBackgroundJobClient` can be resolved. With Microsoft DI use `services.AddHangfire(...)` from `Hangfire.NetCore` or `Hangfire.AspNetCore` (not referenced by this package).
+- An `Fusonic.Extensions.Common.Security.IUserAccessor` is registered. It gets decorated with `HangfireUserAccessorDecorator`, which provides the user of the caller inside the job. With ASP.NET Core, `HttpContextUserAccessor` from `Fusonic.Extensions.AspNetCore` can be used.
+
+### Registration with SimpleInjector
+
+The out-of-band decorator must be the innermost decorator of a handler, so it can enqueue the actual handler type. SimpleInjector applies decorators in registration order, so call `RegisterOutOfBandDecorators()` **before** `RegisterMediator(...)` (which registers the transactional decorators) and before any other handler decorator.
+
+```cs
+using Fusonic.Extensions.Hangfire;
+using Fusonic.Extensions.Mediator;
+using Hangfire;
+
+container.Register<IUserAccessor, YourUserAccessor>(Lifestyle.Scoped);
+
+container.RegisterOutOfBandDecorators();
+container.RegisterMediator(services, [typeof(Program).Assembly]);
+
+// Hangfire resolves the JobProcessor from the container
+services.AddHangfire(c => c
+    .UseActivator(new ContainerJobActivator(container))
+    .UsePostgreSqlStorage(...));
+
+// IBackgroundJobClient must be resolvable from the container, e.g. via cross-wiring
+// (SimpleInjector.Integration.ServiceCollection, plus UseSimpleInjector(container) on the built service provider)
+services.AddSimpleInjector(container, o => o.AutoCrossWireFrameworkComponents = true);
+```
 
 ### Registration with Microsoft.Extensions.DependencyInjection and Scrutor
 
+Scrutor moves decorated registrations to keyed ones and hides their implementation type. Therefore register the handlers and the `IUserAccessor` first, then call `AddOutOfBandDecorators()`, then register all other handler decorators. It throws if an out-of-band handler is already decorated.
+
 ```cs
-services.AddSingleton<IUserAccessor, YourUserAccessor>();
+using Fusonic.Extensions.Common.Transactions;
+using Fusonic.Extensions.Hangfire;
+using Fusonic.Extensions.Mediator;
+using Fusonic.Extensions.Mediator.DependencyInjection;
 
-// Register your handlers, e.g. via services.Scan(...) (see Mediator documentation)
+services.AddScoped<IUserAccessor, YourUserAccessor>();
+services.AddTransient<IMediator>(sp => new ServiceProviderMediator(sp));
 
+// 1. Handlers
+services.Scan(s => s.FromAssemblyOf<Program>()
+        .AddClasses(c => c.AssignableToAny(typeof(IRequestHandler<,>), typeof(INotificationHandler<>), typeof(IAsyncEnumerableRequestHandler<,>)))
+        .AsImplementedInterfaces()
+        .WithScopedLifetime());
+
+// 2. Out-of-band decorators
 services.AddOutOfBandDecorators();
-services.Decorate(typeof(IRequestHandler<,>), typeof(TransactionalRequestHandlerDecorator<,>));
+
+// 3. Other decorators
+services.TryDecorate(typeof(IRequestHandler<,>), typeof(TransactionalRequestHandlerDecorator<,>));
+services.TryDecorate(typeof(INotificationHandler<>), typeof(TransactionalNotificationHandlerDecorator<>));
+services.AddSingleton<ITransactionScopeHandler, TransactionScopeHandler>();
+
+services.AddHangfire(c => c.UsePostgreSqlStorage(...));
 ```
 
-`AddOutOfBandDecorators()` decorates the handlers based on their implementation type. Therefore the handlers and the `IUserAccessor` must be registered before and all other handler decorators after it. It throws if out-of-band handlers are already decorated.
-It uses the `ServiceProviderJobProcessor` by default. Custom job processors can be configured with `options.UseJobProcessor<T>()` and should derive from `ServiceProviderJobProcessor`.
-Hangfire resolves the job processor from the `IServiceProvider` when using `services.AddHangfire()` (`Hangfire.NetCore`/`Hangfire.AspNetCore`).
+Notes:
+- Handlers are detected by their `ServiceDescriptor.ImplementationType`. Handlers registered via factory or instance are not decorated.
+- `AddOutOfBandDecorators()` re-registers the `IUserAccessor` as scoped. Do not inject it into singletons.
+- Hangfire resolves the `ServiceProviderJobProcessor` from the `IServiceProvider` (`Hangfire.NetCore`/`Hangfire.AspNetCore`).
 
-Usage:
+### Custom job processor
+
+Both registrations accept a custom job processor:
 
 ```cs
-[OutOfBand]
-public class SendEmailCommandHandler : IRequestHandler<SendEmailCommand>
-{
-     ...
-}
+container.RegisterOutOfBandDecorators(o => o.UseJobProcessor<MyJobProcessor>());   // derive from JobProcessor
+services.AddOutOfBandDecorators(o => o.UseJobProcessor<MyJobProcessor>());         // derive from ServiceProviderJobProcessor
+```
+
+The job processor must implement `IJobProcessor`. `JobProcessorBase.ProcessAsync` is virtual.
+
+## Job display names
+
+Out-of-band jobs are shown as `OutOfBand Message: <message type> (<namespace>)` in the Hangfire dashboard. To show the handler type instead, use:
+
+```cs
+var dashboardOptions = new DashboardOptions { DisplayNameFunc = DashboardHelpers.FormatJobDisplayName };
+app.UseHangfireDashboard(options: dashboardOptions);
 ```
 
 ## DisableHangfireDashboardAuthorizationFilter
 
-For local development, where you have other means of authorization, you may want to disable the hangfire authorization for the dashboard.
-
-For disabling the local development authorization for local development, you usually just can use the default options. However, those may not work when running the backend in a docker container, as hangfire still filters the requests to "only local requests".
-To completly disable any authorization use this filter instead.
-
-Usage:
+By default the Hangfire dashboard only allows local requests. This fails when the app runs in a Docker container. For local development, where you have other means of authorization, disable the authorization completely:
 
 ```cs
-dashboardOptions = new DashboardOptions { Authorization = new[] { new DisableHangfireDashboardAuthorizationFilter() } };
+var dashboardOptions = new DashboardOptions { Authorization = [new DisableHangfireDashboardAuthorizationFilter()] };
 app.UseHangfireDashboard(options: dashboardOptions);
 ```
-
-## Transactional job processor
-
-If you want all your background jobs to run within a transaction (which is usually the case), you can use the `TransactionalJobProcessor`.
-
-Configuration with SimpleInjector:
-
-```cs
-Container.RegisterSingleton<ITransactionScopeHandler, TransactionScopeHandler>();
-
-// Transaction scope for all request handlers:
-Container.RegisterDecorator(typeof(IRequestHandler<,>), typeof(TransactionalCommandHandlerDecorator<,>));
-
-// Transaction scope for all notification handlers:
-Container.RegisterDecorator(typeof(INotificationHandler<>), typeof(TransactionalNotificationHandlerDecorator<>));
-```
-
-## Using DisplayNameFunc.DisplayNameFunc
-
-OutOfBand jobs are processed via `IJobProcessor.ProcessAsync`. As a consequence, each jobs name in hangfires dashboard will be listed as "JobProcessor.ProcessAsync".  
-Fortunately there is an easy way to enable meaningful job display names:
-
-```cs
-dashboardOptions.DisplayNameFunc = DashboardHelpers.FormatJobDisplayName;
-```
-
-Once enabled, request handlers type name (without assembly information) will be used as the job display name.

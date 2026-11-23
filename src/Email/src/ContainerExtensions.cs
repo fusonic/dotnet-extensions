@@ -49,11 +49,5 @@ public static class ContainerExtensions
         container.Collection.Append<IEmailAttachmentResolver, FileAttachmentResolver>(Lifestyle.Singleton);
 
         container.Register(typeof(IRequestHandler<,>), Assembly.GetExecutingAssembly());
-
-        if (!string.IsNullOrWhiteSpace(options.BccAddress))
-        {
-            container.RegisterInstance(new SendEmailBccDecorator.Options(options.BccAddress));
-            container.RegisterDecorator<IRequestHandler<SendEmail, Unit>, SendEmailBccDecorator>();
-        }
     }
 }

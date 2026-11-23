@@ -8,7 +8,7 @@ using SimpleInjector;
 
 namespace Fusonic.Extensions.Email.Tests;
 
-public class SendEmailBccDecoratorTests(SendEmailBccDecoratorTests.SendEmailBccDecoratorTestsFixture fixture) : TestBase<SendEmailBccDecoratorTests.SendEmailBccDecoratorTestsFixture>(fixture)
+public class SendEmailBccAddressTests(SendEmailBccAddressTests.SendEmailBccAddressTestsFixture fixture) : TestBase<SendEmailBccAddressTests.SendEmailBccAddressTestsFixture>(fixture)
 {
     [Fact]
     public async Task SendEmail_NoBccDefined_SetsConfiguredBccAddress()
@@ -38,7 +38,7 @@ public class SendEmailBccDecoratorTests(SendEmailBccDecoratorTests.SendEmailBccD
         email.BccAddresses.Select(a => a.Address).Should().BeEquivalentTo(["franz@fusonic.net"]);
     }
 
-    public class SendEmailBccDecoratorTestsFixture : TestFixture
+    public class SendEmailBccAddressTestsFixture : TestFixture
     {
         public SimpleSmtpServer? SmtpServer { get; private set; }
 

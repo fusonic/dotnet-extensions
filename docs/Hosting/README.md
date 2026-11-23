@@ -1,29 +1,28 @@
 # Hosting
 
+Package: `Fusonic.Extensions.Hosting`
+
 - [Hosting](#hosting)
   - [TimedHostedService](#timedhostedservice)
     - [Setup](#setup)
+    - [Configuration](#configuration)
 
 ## TimedHostedService
 
-If you have a service that should execute every once in a while, for example a sync, you can use `TimedHostedService<>` for triggering your service. You just have to care about your business logic, not about the hosting logic.
-
-The `TimedHostedService<>` is a hosted service which executes a method in your service class, repeating after a specified interval.
+If you have a service that should execute every once in a while, for example a sync, you can use the `TimedHostedService` for triggering your service. You just have to care about your business logic, not about the hosting logic.
 
 It has the following behaviour:
-- Execute a method on your service repeatedly
-- The interval between executions can be configured, defaulting at 15 minutes.
-- It ensures, that your method is not called concurrently.
-  - If your method takes longer than the interval to execute, it will not be triggered again.
-  - Example: Method takes 20 minutes
-    - First trigger after 15 minutes sees that your method is still running => nothing happens
-    - Second trigger after 30 minutes sees that your method is not running => method gets startet again
-- After your method executed successfully, a watchdog URL gets called. That way you can monitor if your service is still running successfully.
-  - The URL is optional 
-- When the program gets stopped, your service is kindly notified to shutdown with the provided CancellationToken.
+- The first run starts immediately when the host starts.
+- The next run starts after the configured interval has passed since the **end** of the previous run (default: 15 minutes). Runs never overlap.
+  - Example: Interval 15 minutes, the method takes 20 minutes. The runs start at 0, 35 and 70 minutes.
+- Exceptions are logged and do not stop the service. The next run is scheduled as usual.
+- After a successful run, an optional watchdog URI gets called (HTTP GET). That way you can monitor if your service is still running successfully.
+- When the host stops, your method is notified via the provided `CancellationToken`.
+- Each run resolves your service in a new scope.
 
 ### Setup
-Given the following Service:
+
+Given the following service:
 ```cs
 public class HelloWorldService
 {
@@ -33,46 +32,56 @@ public class HelloWorldService
         return LongRunningLogic(cancellationToken);
     }
 
-    private Task LongRunningLogic(CancellationToken cancellationToken) 
+    private Task LongRunningLogic(CancellationToken cancellationToken)
         => Task.Delay(10_000_000, cancellationToken);
 }
 ```
 
-When configuring your host you can register timed services in the `AddSimpleInjector`-part. There's an extension to the options `AddTimedHostedService<TService>`. It has a parameter for the configuration and one to call your method.  
-The configuration only consists of two options:
-- `Interval`: The interval in seconds in which your method should be executed. Defaults to 900 (15 minutes).
-- `WatchdogUri`: The URI which should be called after a successfull run. Defaults to `null`.
+Register it with `AddTimedHostedService<TService>`. The first parameter configures the settings, the second calls your method. The extensions are in the namespace `Fusonic.Extensions.Hosting`, the settings in `Fusonic.Extensions.Hosting.TimedHostedService`.
 
-Example configuration:
+**Microsoft.Extensions.DependencyInjection**
+
+The service gets registered as scoped:
 ```cs
-var host = new HostBuilder()
-   .ConfigureHostConfiguration(/* ... */)
-   .ConfigureServices((hostContext, services) => {
-       // Some config
+using Fusonic.Extensions.Hosting;
 
-       services.AddSimpleInjector(container, options =>
-       {
-           // Add HelloWorldService
-           // Configuration is in the appsettings-section "HelloWorld"
-           // We want to run our service method "Run" and we react to the provided cancellation token in there.
-           options.AddTimedHostedService<HelloWorldService>(cfg => hostContext.Configuration.Bind("HelloWorld", cfg), (svc, ct) => svc.Run(ct));
-       });
-       // Some more config
+services.AddTimedHostedService<HelloWorldService>(cfg => configuration.Bind("HelloWorld", cfg), (svc, ct) => svc.Run(ct));
+```
+
+**SimpleInjector**
+
+Use the extension on the `AddSimpleInjector` options. The service gets registered with the container's default lifestyle and is resolved within an `AsyncScopedLifestyle` scope per run, so set `container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle()` if the service has scoped dependencies.
+
+The hosted service requires an `IHttpClientFactory`, which you have to register yourself with `services.AddHttpClient()`:
+```cs
+using Fusonic.Extensions.Hosting;
+
+var host = Host.CreateDefaultBuilder(args)
+    .ConfigureServices((hostContext, services) =>
+    {
+        services.AddHttpClient();
+        services.AddSimpleInjector(container, options =>
+        {
+            options.AddTimedHostedService<HelloWorldService>(cfg => hostContext.Configuration.Bind("HelloWorld", cfg), (svc, ct) => svc.Run(ct));
+        });
     })
-   .Build()
+    .Build();
+
+host.Services.UseSimpleInjector(container);
 ```
 
-When using Microsoft.Extensions.DependencyInjection, use the extension on `IServiceCollection` instead. The service gets registered as scoped and is resolved in a new scope for each run:
-```cs
-services.AddTimedHostedService<HelloWorldService>(cfg => hostContext.Configuration.Bind("HelloWorld", cfg), (svc, ct) => svc.Run(ct));
-```
+### Configuration
 
-The according configuration in the appettings for this example could look like the following. Note that all parameters are optional and the config could also be injected via EnvironmentVariables, depending on your HostConfiguration.
-```cs
+`TimedHostedServiceSettings` has two options:
+- `Interval`: Seconds between the end of a run and the start of the next one. Defaults to 900 (15 minutes). Must be greater than zero.
+- `WatchdogUri`: URI which is called after each successful run. Defaults to `null` (no call).
+
+The matching configuration in the `appsettings.json` could look like the following. All values are optional.
+```json
 {
     "HelloWorld": {
         "Interval": 300,
-        "WatchdogUrl": "https://watchdog.fusonic.net/?projectId=12345"
+        "WatchdogUri": "https://watchdog.example.com/?projectId=12345"
     }
 }
 ```

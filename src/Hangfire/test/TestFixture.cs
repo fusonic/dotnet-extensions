@@ -24,9 +24,10 @@ public class TestFixture : SimpleInjectorTestFixture
     {
         var services = new ServiceCollection();
 
-        RegisterMediator(container, services);
-
+        // Out-of-band decorators must be the innermost decorators, so they enqueue the actual handler type.
         container.RegisterOutOfBandDecorators();
+
+        RegisterMediator(container, services);
 
         container.RegisterInstance(Substitute.For<IUserAccessor>());
 

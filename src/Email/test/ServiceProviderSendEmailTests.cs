@@ -14,7 +14,7 @@ using netDumbster.smtp;
 
 namespace Fusonic.Extensions.Email.Tests;
 
-/// <summary> Tests the registration with Microsoft.Extensions.DependencyInjection and Scrutor. </summary>
+/// <summary> Tests the registration with Microsoft.Extensions.DependencyInjection. </summary>
 public class ServiceProviderSendEmailTests(ServiceProviderSendEmailTests.ServiceProviderFixture fixture) : DependencyInjectionUnitTest<ServiceProviderSendEmailTests.ServiceProviderFixture>(fixture)
 {
     [Fact]
@@ -39,6 +39,23 @@ public class ServiceProviderSendEmailTests(ServiceProviderSendEmailTests.Service
 
         var email = Fixture.SmtpServer.ReceivedEmail.Should().ContainSingle().Subject;
         email.MessageParts[0].BodyData.Should().Contain("Some field.");
+    }
+
+    [Fact]
+    public void AddEmail_WithBccAddress_DoesNotDecorateHandler()
+    {
+        // Decorated handlers are hidden from the Hangfire out-of-band decorators.
+        var services = new ServiceCollection();
+
+        services.AddEmail(c =>
+        {
+            c.SmtpServer = "localhost";
+            c.SenderAddress = "test@fusonic.net";
+            c.BccAddress = "bcc@fusonic.net";
+        });
+
+        services.Should().ContainSingle(d => d.ServiceType == typeof(IRequestHandler<SendEmail, Unit>))
+                .Which.ImplementationType.Should().Be<SendEmail.Handler>();
     }
 
     [DebuggerStepThrough]

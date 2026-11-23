@@ -1,72 +1,91 @@
 # Unit tests
 
+This documentation covers the following packages:
+
+| Package | Purpose |
+|---|---|
+| `Fusonic.Extensions.UnitTests` | Test base classes with dependency injection (SimpleInjector or Microsoft.Extensions.DependencyInjection) and configuration |
+| `Fusonic.Extensions.UnitTests.EntityFrameworkCore` | Database tests with EF Core: one database per test |
+| `Fusonic.Extensions.UnitTests.EntityFrameworkCore.Npgsql` | PostgreSQL support |
+| `Fusonic.Extensions.UnitTests.EntityFrameworkCore.SqlServer` | Microsoft SQL Server support |
+
+The packages target xUnit v3. Your test project must reference the test framework itself (`xunit.v3`, a runner such as `xunit.runner.visualstudio` or Microsoft.Testing.Platform) and the assertion library of your choice. When using SimpleInjector, reference `SimpleInjector` as well. It is not a transitive dependency of `Fusonic.Extensions.UnitTests`.
+
 - [Unit tests](#unit-tests)
   - [Introduction](#introduction)
   - [Setup](#setup)
+    - [Microsoft.Extensions.DependencyInjection](#microsoftextensionsdependencyinjection)
+    - [SimpleInjector](#simpleinjector)
+    - [Test base](#test-base)
   - [Test settings / Microsoft.Extensions.Configuration](#test-settings--microsoftextensionsconfiguration)
   - [Database setup](#database-setup)
-    - [Test base](#test-base)
-    - [PostgreSQL - Configure DbContext](#postgresql---configure-dbcontext)
-    - [PostgreSQL - Template](#postgresql---template)
-    - [PostgreSQL - TestContainers](#postgresql---testcontainers)
-    - [Microsoft SQL Server - Configure DbContext](#microsoft-sql-server---configure-dbcontext)
-    - [Microsoft SQL Server - TestContainers](#microsoft-sql-server---testcontainers)
+    - [Database test base](#database-test-base)
+    - [Test startup](#test-startup)
+    - [PostgreSQL](#postgresql)
+    - [Microsoft SQL Server](#microsoft-sql-server)
+    - [Database tests with SimpleInjector](#database-tests-with-simpleinjector)
     - [Configuring any other database](#configuring-any-other-database)
-    - [Support mulitple databases in a test](#support-mulitple-databases-in-a-test)
+    - [Support multiple databases in a test](#support-multiple-databases-in-a-test)
   - [Running in GitLab](#running-in-gitlab)
 
 ## Introduction
 
-The unit test framwork tries to provide the following features & design goals:
+The unit test framework provides the following features:
 
-- **Simplicity:** The unit test base classes provide several helper methods targeted to support you using our currently used default architectural structures and libraries. To reduce reading and writing overhead (clutter) the methods tend have short, less descriptive names. For example, `Scoped` instead of `RunInSeparateLifetimeScope`, but they aren't that much and are easy to learn.
-  - **Resolving types:** Can be done using `GetInstance<T>()`
-  - **Scope separation:** In reality, creating data and consuming that data is not done in the same scope. In order to be able to see issues when using different scopes in the unit tests you can run your code in the provided `Scoped` and `ScopedAsync` methods. They run your code in separate lifetime scopes of the DI-Container. Within the tests you usually want to run your data preparations and your queries in different scopes.
-
-- **Dependency injection:** The test base is layed out to be support dependency injection. Extensions for IServiceProvider and SimpleInjector are provided.
-
-- **Database support:** The basic framework, `Fusonic.Extensions.UnitTests` does not come with any support for Databases, but we do provide support for fast and parallel database tests with `Fusonic.Extensions.UnitTests.EntityFrameworkCore`, currently specifically supporting PostgreSQL with `Fusonic.Extensions.UnitTests.EntityFrameworkCore.Npgsql`.
-
-- **Configuration support:** Microsoft.Extensions.Configuration is supported out of a box with usable default settings.
+- **Simplicity:** The helper methods have short names to reduce clutter, e.g. `Scoped` instead of `RunInSeparateLifetimeScope`.
+  - **Resolving types:** `GetInstance<T>()` or `GetInstance(Type)`.
+  - **Scope separation:** In reality, creating data and consuming that data is not done in the same scope. `Scoped` and `ScopedAsync` run your code in a separate lifetime scope of the DI container, so you see issues that only occur across scopes. Run data preparation and queries in different scopes.
+- **Dependency injection:** SimpleInjector and Microsoft.Extensions.DependencyInjection are supported.
+- **Database support:** `Fusonic.Extensions.UnitTests.EntityFrameworkCore` enables fast, parallel database tests, with providers for PostgreSQL and Microsoft SQL Server.
+- **Configuration support:** Microsoft.Extensions.Configuration is supported out of the box with usable default settings.
 
 ## Setup
 
-Currently SimpleInjector and Microsofts dependency injection are supported.
+Create a `TestFixture` to register your dependencies and a `TestBase` that ties the test base class of the extensions to your fixture. All types are in the namespace `Fusonic.Extensions.UnitTests`.
 
-Create a `TestBase` and a `TestFixture` for the assembly.
+`DependencyInjectionUnitTest<TFixture>` implements xUnit's `IClassFixture<TFixture>`, so every test class gets one fixture instance and therefore one container.
 
-The `TestFixture` is used for registering your depdendencies. Override `ServiceProviderTestFixture` or `SimpleInjectorTestFixture`, depending on the DI container you want to use. Note that when using SimpleInjector, you must reference it in your projects, as it does not come as a transient build dependency when using `Fusonic.Extensions.UnitTests`.
+In `RegisterCoreDependencies` you register the dependencies that all tests need (Mediator, services, ASP.NET Core services and the like). Seal it, so specific fixtures do not override it by accident. Use `RegisterDependencies` for test specific registrations.
 
-The `TestBase` is used for tying up the test base from the extensions and your test fixture.
+### Microsoft.Extensions.DependencyInjection
 
-The setup of the `TestBase` and the `TestFixture` is quick and easy. In `RegisterCoreDependencies` you register those dependencies that you usually need for your tests (Mediator, Services, ASP.Net services and the like). It should not be overwritten in your specific tests, so consider to make it `sealed`. For your test specific fixtures use `RegisterDependencies` instead.
+Inherit from `ServiceProviderTestFixture`. The service provider is built with `ValidateOnBuild` and `ValidateScopes` enabled. Override `ServiceProviderOptions` to change that.
+
+```cs
+public class TestFixture : ServiceProviderTestFixture
+{
+    protected sealed override void RegisterCoreDependencies(IServiceCollection services)
+    {
+        // Your core dependencies here.
+    }
+}
+```
+
+### SimpleInjector
+
+Inherit from `SimpleInjectorTestFixture`. The container is configured with `DefaultLifestyle = Lifestyle.Scoped`, `DefaultScopedLifestyle = new AsyncScopedLifestyle()` and `AllowOverridingRegistrations = true`, and it is verified after registration. Override `VerifyContainer` to return `false` to skip the verification.
 
 ```cs
 public class TestFixture : SimpleInjectorTestFixture
 {
     protected sealed override void RegisterCoreDependencies(Container container)
     {
-        //Your core dependencies here.
+        // Your core dependencies here.
     }
 }
 ```
 
-The test class is also abstract and requires a fixture as type parameter. Create the following base classes:
+### Test base
+
+The test class requires the fixture as type parameter. Create the following base classes:
 
 ```cs
-public abstract class TestBase<TFixture> : DependencyInjectionUnitTest<TFixture>
-    where TFixture : TestFixture
-{
-    protected TestBase(TFixture fixture) : base(fixture)
-    { }
-}
+public abstract class TestBase<TFixture>(TFixture fixture) : DependencyInjectionUnitTest<TFixture>(fixture)
+    where TFixture : TestFixture;
 
-public abstract class TestBase : TestBase<TestFixture>
+public abstract class TestBase(TestFixture fixture) : TestBase<TestFixture>(fixture)
 {
-    protected TestBase(TestFixture fixture) : base(fixture)
-    { }
-
-    // Also add common helper methods and properties to this class, eg.
+    // Add common helper methods and properties to this class, e.g.:
 
     /// <summary> Runs a mediator command in its own scope. Used to reduce possible side effects from test data creation and the like. </summary>
     [DebuggerStepThrough]
@@ -75,52 +94,70 @@ public abstract class TestBase : TestBase<TestFixture>
 }
 ```
 
-That's it, you're good to go. Inherit your classes from the `TestBase` and get all the fancy features. If you need own fixtures, inherit them from `TestFixture` and your test class from `TestBase<TFixture>`. Register your test specific dependencies by overriding `RegisterDependencies`.
+Inherit your test classes from `TestBase`. If you need specific fixtures, inherit them from `TestFixture`, override `RegisterDependencies` and inherit the test class from `TestBase<TFixture>`. The base implementation of `RegisterDependencies` is empty.
 
 ```cs
 public class FixtureForASpecificTestClass : TestFixture
 {
-    protected override void RegisterDependencies(Container container)
+    protected override void RegisterDependencies(IServiceCollection services) // Container container for SimpleInjector
     {
-        //Your test specific fixtures here.
-        //No need to call the base as it does nothing.
+        // Your test specific registrations here.
+    }
+}
+
+public class SpecificTests(FixtureForASpecificTestClass fixture) : TestBase<FixtureForASpecificTestClass>(fixture)
+{
+    [Fact]
+    public async Task Test()
+    {
+        var result = await ScopedAsync(() => GetInstance<IMyService>().DoAsync());
+        // ...
     }
 }
 ```
 
 ## Test settings / Microsoft.Extensions.Configuration
 
-That's the default configuration:
+The fixture provides the configuration in its `Configuration` property (`Fixture.Configuration` in the test class). That's the default configuration:
 
 ```cs
-public static IConfigurationBuilder ConfigureTestDefault(this IConfigurationBuilder builder, string basePath, Assembly assembly)
-        => builder.SetBasePath(basePath) // basePath = Directory.GetCurrentDirectory()
-                  .AddJsonFile("testsettings.json", optional: true)
-                  .AddUserSecrets(assembly, optional: true) // assembly = GetType().Assembly
-                  .AddEnvironmentVariables();
+builder.SetBasePath(Directory.GetCurrentDirectory())
+       .AddJsonFile("testsettings.json", optional: true)
+       .AddUserSecrets(fixtureAssembly, optional: true)
+       .AddEnvironmentVariables();
 ```
 
-If you want to, overwrite it in your `TestBase` by overwriting `BuildConfiguration`. You can access the configuration with the `Configuration` property. Example:
+The default configuration is built once and shared by all fixtures of the test assembly. To change it, override `BuildConfiguration` in your `TestFixture`:
 
 ```cs
-protected override void RegisterDependencies(Container container)
+public class TestFixture : ServiceProviderTestFixture
 {
-    var settings = Configuration.Get<TestSettings>();
-    // ...
+    protected override IConfiguration BuildConfiguration()
+        => new ConfigurationBuilder().AddJsonFile("mysettings.json").Build();
+
+    protected sealed override void RegisterCoreDependencies(IServiceCollection services)
+    {
+        var settings = Configuration.Get<TestSettings>();
+        // ...
+    }
 }
 ```
 
 ## Database setup
 
-For database support you can use `Fusonic.Extensions.UnitTests.EntityFrameworkCore`, optionally with specific support for 
-- PostgreSQL in `Fusonic.Extensions.UnitTests.EntityFrameworkCore.Npgsql`
-- SQL Server in `Fusonic.Extensions.UnitTests.EntityFrameworkCore.SqlServer`
+For database support use `Fusonic.Extensions.UnitTests.EntityFrameworkCore` (namespace `Fusonic.Extensions.UnitTests.EntityFrameworkCore`) together with
+- `Fusonic.Extensions.UnitTests.EntityFrameworkCore.Npgsql` for PostgreSQL or
+- `Fusonic.Extensions.UnitTests.EntityFrameworkCore.SqlServer` for Microsoft SQL Server.
 
-The basic idea behind those is that every test gets its own database copy. This enables parallel database testing and avoids any issues from tests affecting other tests.
+Every test gets its own copy of a template database. This enables parallel database tests and keeps tests from affecting each other. The setup consists of three parts:
+1. A [test startup](#test-startup) that starts the database server and creates the template once per test run.
+2. An `ITestStore` registered as singleton, together with your `DbContext`, in the fixture.
+3. A test base inheriting from `DatabaseUnitTest`.
 
-### Test base
+### Database test base
 
-A test base for your database tests is available called `DatabaseUnitTest`. Type parameters are the test fixture optionally the `DbContext`. Example base classes in your test lib:
+`DatabaseUnitTest<TDbContext, TFixture>` uses `TDbContext` as default `DbContext`. Use `DatabaseUnitTest<TFixture>` if you do not want a default `DbContext`. Example base classes:
+
 ```cs
 public abstract class TestBase(TestFixture fixture) : TestBase<TestFixture>(fixture);
 
@@ -128,34 +165,88 @@ public abstract class TestBase<TFixture>(TFixture fixture) : DatabaseUnitTest<Ap
     where TFixture : TestFixture;
 ```
 
-The `DatabaseUnitTest` provides the methods `Query` and `QueryAsync`. This is basically shortcut to resolving the `DbContext` and using it. So instead of writing
+`DatabaseUnitTest` provides the methods `Query` and `QueryAsync`. They resolve the `DbContext` in a separate scope and run your query. So instead of writing
 
 ```cs
-var count = await ScopedAsync(() => 
+var count = await ScopedAsync(() =>
 {
-    var context = GetInstance<DbContext>();
+    var context = GetInstance<AppDbContext>();
     return context.Documents.CountAsync();
 });
 ```
- you can just use
- ```cs
- var count = await QueryAsync(ctx => ctx.Documents.CountAsync());
- ```
 
-`QueryAsync` uses the `DbContext`-type provided in `DatabaseUnitTest<,>`.
+you can just write
 
-If you have multiple `DbContextTypes` you can always run queries for the other types with `QueryAsync<TDbContext>` or `Query<TDbContext>`. You can also use the `DatabaseUnitTest<>` base class without `TDbContext` if you do not want to use a default `DbContext`-type.
+```cs
+var count = await QueryAsync(ctx => ctx.Documents.CountAsync());
+```
 
-### PostgreSQL - Configure DbContext
+For other `DbContext` types, specify the type: `QueryAsync<OtherDbContext>(ctx => ...)` and `Query<OtherDbContext>(ctx => ...)` for queries without a result, `QueryAsync<OtherDbContext, int>(ctx => ...)` and `Query<OtherDbContext, int>(ctx => ...)` for queries with a result.
 
-A `TestStore` is used for handling the test databases. For PostgreSQL, you can use the `NpgsqlDatabasePerTestStore`, which creates a separate database for each test, based on a database template. You just have to pass it the connection string to the template and register it as follows:
+`DatabaseUnitTest` implements `IAsyncLifetime`. The test database is dropped in `DisposeAsync`. When you override `InitializeAsync` or `DisposeAsync`, call the base implementation.
+
+### Test startup
+
+Start the database server and create the template once per test run with an xUnit v3 [assembly fixture](https://xunit.net/docs/shared-context#assembly-fixture). [TestContainers](https://testcontainers.com/) is a simple way to get the database server running locally. In CI the database can be provided as service, passed in by an environment variable. Example for PostgreSQL:
+
+```cs
+[assembly: AssemblyFixture(typeof(TestStartup))]
+
+public class TestStartup : IAsyncLifetime
+{
+    public static string ConnectionString { get; private set; } = null!;
+
+    public async ValueTask InitializeAsync()
+    {
+        // In CI the database is provided as a service. Locally, a test container is started.
+        var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__Postgres");
+        if (string.IsNullOrWhiteSpace(connectionString))
+        {
+            var container = new PostgreSqlBuilder("postgres:17-alpine")
+                .WithReuse(true)
+                .WithName("test.myproject")
+                .WithTmpfsMount("/var/lib/postgresql/data") // Keep the database in memory, which speeds up the tests significantly.
+                .WithTmpfsMount("/dev/shm")
+                .Build();
+
+            await container.StartAsync();
+            connectionString = container.GetConnectionString();
+        }
+
+        // The database name is the name of the template.
+        ConnectionString = new NpgsqlConnectionStringBuilder(connectionString) { Database = "myproject_test" }.ConnectionString;
+
+        await PostgreSqlUtil.CreateTestDbTemplate<AppDbContext>(
+            ConnectionString,
+            o => new AppDbContext(o),
+            seed: ctx => new TestDataSeed(ctx).Seed());
+    }
+
+    public ValueTask DisposeAsync() => ValueTask.CompletedTask;
+}
+```
+
+For SQL Server, use `MsSqlBuilder` from `Testcontainers.MsSql`, set `InitialCatalog` instead of `Database` and call `SqlServerTestUtil.CreateTestDbTemplate`.
+
+`CreateTestDbTemplate` (both `PostgreSqlUtil` and `SqlServerTestUtil`) has these optional parameters:
+- `npgsqlOptionsAction` / `sqlServerOptionsAction`: configures the provider, e.g. for `UseNetTopologySuite()`.
+- `seed`: seeds the template after creation.
+- `logger`: defaults to a console logger.
+- `useMigrations`: applies the migrations (default). Set it to `false` to create the schema with `EnsureCreated`.
+- `overwrite`: by default the template is only created if it does not exist yet, which speeds up local test runs. Set it to `true` to always create a fresh template. Without `overwrite`, delete the template (or the reused container) after changing the schema.
+
+`PostgreSqlUtil` and `SqlServerTestUtil` also provide `CheckDatabaseExists` and `DropDatabase`.
+
+### PostgreSQL
+
+Register the `NpgsqlDatabasePerTestStore` with the template connection string. The database name in the connection string is the template name and must not be `postgres`. The test database is created lazily when the first connection is opened.
 
 ```cs
 public class TestFixture : ServiceProviderTestFixture
 {
-    protected sealed override void RegisterCoreDependencies(ServiceCollection services)
+    protected sealed override void RegisterCoreDependencies(IServiceCollection services)
     {
-        var testStore = new NpgsqlDatabasePerTestStore(Configuration.GetConnectionString("Npgsql")); // or TestStartup.ConnectionString when using TestContainers
+        var testStore = new NpgsqlDatabasePerTestStore(TestStartup.ConnectionString);
         services.AddSingleton<ITestStore>(testStore);
 
         services.AddDbContext<AppDbContext>(b => b.UseNpgsqlDatabasePerTest(testStore));
@@ -163,41 +254,23 @@ public class TestFixture : ServiceProviderTestFixture
 }
 ```
 
-When using `IDbContextFactory`, the factory must be registered with scoped lifetime, not with the default singleton lifetime.  
+`UseNpgsqlDatabasePerTest` has an optional `npgsqlOptionsAction` parameter to configure the provider.
+
+When using `IDbContextFactory`, the factory must be registered with scoped lifetime, not with the default singleton lifetime:
 ```cs
-services.AddDbContext<AppDbContext>(b => b.UseNpgsqlDatabasePerTest(testStore), ServiceLifetime.Scoped);
+services.AddDbContextFactory<AppDbContext>(b => b.UseNpgsqlDatabasePerTest(testStore), ServiceLifetime.Scoped);
 ```
 
-### PostgreSQL - Template
+### Microsoft SQL Server
 
-When using the `NpgsqlDatabasePerTest` it is assumed that you use a prepared database template. This template should have all migrations applied and may contain some seeded data. Each test gets a copy of this template. With the `PostgreSqlUtil`, we provide an easy way to create such a template.
-
-You can either create a small console application that creates the template, or do it directly once in the test startup.
-
-A simple way to create that template is provided in `PostgreSqlUtil`. Example:
-
-```cs
-PostgreSqlUtil.CreateTestDbTemplate<AppDbContext>(templateConnectionString, o => new AppDbContext(o), seed: ctx => new TestDataSeed(ctx).Seed());
-```
-
-By default this only creates the template, if the database does not exist yet. This speeds up testing in local development when running tests multiple times. You can change this behaviour to always create a fresh template by setting the parameter `overwrite` to `true`.
-
-### PostgreSQL - TestContainers
-
-To get your test PostgreSQL server up and running, a simple solution is to use [TestContainers](https://testcontainers.com/) and start one during test startup. This ensures that the test configuration in your local development and in your CI pipelines is the same.
-
-For an example how we use TestContainers see [UnitTests.EntityFrameworkCore.Npgsql.Tests.TestStartup](../../src/UnitTests.EntityFrameworkCore.Npgsql/test/TestStartup.cs) and [TestFixture](../../src/UnitTests.EntityFrameworkCore.Npgsql/test/TestFixture.cs)
-
-### Microsoft SQL Server - Configure DbContext
-
-A `TestStore` is used for handling the test databases. For Microsoft SQL Server, you can use the `SqlServerDatabasePerTestStore`, which creates a separate database for each test. You just have to pass it the connection string to the template and register it as follows:
+Register the `SqlServerDatabasePerTestStore` with the template connection string. The `Initial Catalog` of the connection string is the template name and must not be `master`.
 
 ```cs
 public class TestFixture : ServiceProviderTestFixture
 {
-    protected sealed override void RegisterCoreDependencies(ServiceCollection services)
+    protected sealed override void RegisterCoreDependencies(IServiceCollection services)
     {
-        var testStore = new SqlServerDatabasePerTestStore(Configuration.GetConnectionString("SqlServer")); // or TestStartup.ConnectionString when using TestContainers
+        var testStore = new SqlServerDatabasePerTestStore(TestStartup.ConnectionString);
         services.AddSingleton<ITestStore>(testStore);
 
         services.AddDbContext<AppDbContext>(b => b.UseSqlServerDatabasePerTest(testStore));
@@ -205,43 +278,59 @@ public class TestFixture : ServiceProviderTestFixture
 }
 ```
 
-The connection string must have the `Intial catalog` set. It determines the name of the template database. All tests will use a copy of the template database.
+SQL Server creates a backup of the template (`<template>.bak`) and restores it for each test. The files are stored in the data directory **on the SQL Server host**. It defaults to `/var/opt/mssql/data`, which matches the official Linux Docker image. Pass `dataDirectoryPath` to the constructor if your server uses another directory. The optional `databasePrefix` sets a prefix for the test database names.
 
-When using `IDbContextFactory`, the factory must be registered with scoped lifetime, not with the default singleton lifetime.  
+`UseSqlServerDatabasePerTest` has an optional `sqlServerOptionsAction` parameter to configure the provider.
+
+When using `IDbContextFactory`, the factory must be registered with scoped lifetime, not with the default singleton lifetime:
 ```cs
-services.AddDbContext<AppDbContext>(b => b.UseSqlServerDatabasePerTest(testStore), ServiceLifetime.Scoped);
+services.AddDbContextFactory<AppDbContext>(b => b.UseSqlServerDatabasePerTest(testStore), ServiceLifetime.Scoped);
 ```
 
-### Microsoft SQL Server - TestContainers
+### Database tests with SimpleInjector
 
-To get your test SQL Server server up and running, a simple solution is to use [TestContainers](https://testcontainers.com/) and start one during test startup. This ensures that the test configuration in your local development and in your CI pipelines is the same.
+`AddDbContext` is only available for `IServiceCollection`, so register the `DbContext` in a `ServiceCollection` and cross-wire it into SimpleInjector (requires `SimpleInjector.Integration.ServiceCollection`). `DatabaseUnitTest` resolves the `ITestStore` from the container, so it must be resolvable there as singleton.
 
-For an example how we use TestContainers see [UnitTests.EntityFrameworkCore.SqlServer.Tests.TestStartup](../../src/UnitTests.EntityFrameworkCore.SqlServer/test/TestStartup.cs) and [TestFixture](../../src/UnitTests.EntityFrameworkCore.SqlServer/test/TestFixture.cs)
+```cs
+public class TestFixture : SimpleInjectorTestFixture
+{
+    protected sealed override void RegisterCoreDependencies(Container container)
+    {
+        var services = new ServiceCollection();
+
+        var testStore = new NpgsqlDatabasePerTestStore(TestStartup.ConnectionString);
+        services.AddSingleton<ITestStore>(testStore);
+        services.AddDbContext<AppDbContext>(b => b.UseNpgsqlDatabasePerTest(testStore));
+
+        services.AddSimpleInjector(container, setup => setup.AutoCrossWireFrameworkComponents = true);
+        services.BuildServiceProvider(validateScopes: true).UseSimpleInjector(container);
+    }
+}
+```
 
 ### Configuring any other database
 
-The database support is not limited to PostgreSql and SQL Server. You just have to implement and register the `ITestStore`.
+The database support is not limited to PostgreSQL and SQL Server. Implement and register an `ITestStore`:
+- `OnTestConstruction()` is called in the constructor of each `DatabaseUnitTest`. Create a new database name for the test here.
+- `OnTestEnd()` is called in `DisposeAsync` of the test. Drop the test database here.
 
-For a simple example with SqLite, check [UnitTests.EntityFrameworkCore.Tests.SqliteTestStore](../../src/UnitTests.EntityFrameworkCore/test/SqliteTestStore.cs) and [TestFixture](../../src/UnitTests.EntityFrameworkCore/test/TestFixture.cs).
+To create the database lazily when the first connection opens, add `new ConnectionOpeningInterceptor(testStore.CreateDatabase)` to the `DbContextOptionsBuilder` with `AddInterceptors`. For an example with SQLite, see [SqliteTestStore](https://github.com/fusonic/dotnet-extensions/blob/main/src/UnitTests.EntityFrameworkCore/test/SqliteTestStore.cs) and its [TestFixture](https://github.com/fusonic/dotnet-extensions/blob/main/src/UnitTests.EntityFrameworkCore/test/TestFixture.cs).
 
-### Support mulitple databases in a test
+### Support multiple databases in a test
 
-You can test with multiple, different database systems at once. The setup stays basically the same, but instead of registering the test stores one by one, use the `AggregateTestStore`. Example:
+You can test with multiple database systems at once. Instead of registering the test stores one by one, combine them in an `AggregateTestStore`:
 
 ```cs
 public class TestFixture : ServiceProviderTestFixture
 {
-    private void RegisterDatabase(IServiceCollection services)
+    protected sealed override void RegisterCoreDependencies(IServiceCollection services)
     {
-        // Register Npgsql (PostgreSQL) using TestContainers in the TestStartup
         var npgsqlTestStore = new NpgsqlDatabasePerTestStore(TestStartup.NpgsqlConnectionString);
         services.AddDbContext<NpgsqlDbContext>(b => b.UseNpgsqlDatabasePerTest(npgsqlTestStore));
 
-        // Register SQL Server using TestContainers in the TestStartup
         var sqlServerTestStore = new SqlServerDatabasePerTestStore(TestStartup.SqlServerConnectionString);
         services.AddDbContext<SqlServerDbContext>(b => b.UseSqlServerDatabasePerTest(sqlServerTestStore));
 
-        // Combine the test stores in the AggregateTestStore
         services.AddSingleton<ITestStore>(new AggregateTestStore(npgsqlTestStore, sqlServerTestStore));
     }
 }
@@ -249,9 +338,22 @@ public class TestFixture : ServiceProviderTestFixture
 
 ## Running in GitLab
 
-In order to use TestContainers in GitLab, start `docker:dind-rootless` as a service. When running rootless dind, you also must set `TESTCONTAINERS_RYUK_DISABLED` to `true`, as there is no `docker.sock` available. Ryuk is responsible for cleaning up the test containers, even when test jobs get cancelled. Disabling it should be safe though, as the containers started within `docker:dind` get cleaned up anyway after the job ends.
+There are two options to provide the database in GitLab CI.
 
-Example:
+**Database as service:** Start the database as a service and pass the connection string as environment variable. The [test startup](#test-startup) above uses it instead of starting a container:
+
+```yaml
+dotnet:test:
+  services:
+    - name: postgres:17-alpine
+      alias: postgres
+  variables:
+    POSTGRES_PASSWORD: postgres
+    ConnectionStrings__Postgres: "Host=postgres;Username=postgres;Password=postgres"
+```
+
+**TestContainers in Docker-in-Docker:** Start `docker:dind-rootless` as a service. When running rootless dind, you also must set `TESTCONTAINERS_RYUK_DISABLED` to `true`, as there is no `docker.sock` available. Ryuk is responsible for cleaning up the test containers, even when test jobs get cancelled. Disabling it is safe, as the containers started within `docker:dind` get cleaned up after the job ends anyway.
+
 ```yaml
 variables:
   DOCKER_VERSION: "29"

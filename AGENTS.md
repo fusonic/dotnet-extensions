@@ -14,7 +14,7 @@ Fusonic Extensions: reusable .NET class libraries, published as NuGet packages. 
 
 ## Structure
 
-- Each package lives in `src/<Package>/src`, its tests in `src/<Package>/test` and its documentation in `docs/<Package>/README.md`, which is packed into the NuGet package. Update the docs with every change to the public API or its usage.
+- Each package lives in `src/<Package>/src`, its tests in `src/<Package>/test` and its documentation in `docs/<Package>/README.md`, which is packed into the NuGet package (see [Documentation](#documentation)). Exceptions: `Aspire.Hosting` is documented in `docs/Aspire`; the four `UnitTests*` packages share `docs/UnitTests`; `UnitTests` is tested through the other test projects. The csproj's `<None Include="...README.md" Pack="true">` shows which doc a package ships.
 - A new package needs: a `src/<Package>/src/<Package>.csproj` with `AssemblyName`/`RootNamespace` `Fusonic.Extensions.<Package>`, `Description` and `PackageReadmeFile` (copy an existing csproj), a test project, entries in `Extensions.slnx` (`/Tests/` folder for the test project), its `docs/<Package>/README.md` and an entry in the package list of the root `README.md`.
 - `src/Directory.Build.props` holds the properties shared by all projects, including the common release `<Version>` of all `Fusonic.Extensions.*` packages.
 - `src/Directory.Packages.props` holds the versions of all referenced NuGet packages (central package management). **Never** add a `Version` attribute to `<PackageReference>` entries in `.csproj` files.
@@ -42,6 +42,18 @@ Rules:
 - Scrutor only decorates services registered before the `Decorate` call. Document the required registration order.
 - Where a package only uses a container for optional registration helpers, reference it with `PrivateAssets="all"` so consumers are not forced to use it.
 - Test both registrations and document both in the package's README.
+- Exception: Mediator has no `ServiceCollectionExtensions`; with Microsoft DI, consumers register `ServiceProviderMediator` and scan handlers with Scrutor (see `docs/Mediator/README.md`).
+
+## Documentation
+
+The package docs are integration guides for consumers who only see the NuGet page. Update them with every change to the public API or its usage, and verify every statement against the code. Each doc:
+
+- Names the NuGet package(s) right under the title and the namespaces to import.
+- Lists prerequisites: framework services the package resolves (e.g. MVC, localization, `IHttpClientFactory`, `IUserAccessor`), SimpleInjector cross-wiring, and packages the consumer must reference because ours use `PrivateAssets="all"` (SimpleInjector, Scrutor).
+- Shows registration for SimpleInjector and Microsoft DI, including the required order when decorators are involved, and keeps it consistent with the docs of packages it is combined with (e.g. Mediator and Hangfire).
+- Uses complete samples that compile against the current code (correct names, signatures, `await`s). Prefer the test projects as the source of truth for working setups.
+- Documents defaults and behaviour that are not obvious from signatures (e.g. timing, validation, what is silently skipped). No exhaustive API listings.
+- Uses only in-page anchors or absolute `https://github.com/fusonic/dotnet-extensions/blob/main/...` links: relative links break on nuget.org. Keep the table of contents in sync.
 
 ## Tests
 

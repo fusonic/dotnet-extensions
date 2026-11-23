@@ -55,7 +55,17 @@ public abstract class DependencyInjectionUnitTest<TFixture>(TFixture fixture) : 
         {
             var newScope = Fixture.BeginScope();
             currentScope = newScope;
-            return await taskFactory();
+            try
+            {
+                return await taskFactory();
+            }
+            finally
+            {
+                if (newScope is IAsyncDisposable ad)
+                    await ad.DisposeAsync();
+                else if (newScope is IDisposable d)
+                    d.Dispose();
+            }
         }
         finally
         {
