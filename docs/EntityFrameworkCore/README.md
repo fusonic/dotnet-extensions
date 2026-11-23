@@ -1,6 +1,10 @@
 # EntityFrameworkCore
 
-Package: `Fusonic.Extensions.EntityFrameworkCore`
+[![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.EntityFrameworkCore.svg?style=flat-square&logo=nuget&label=Fusonic.Extensions.EntityFrameworkCore)](https://www.nuget.org/packages/Fusonic.Extensions.EntityFrameworkCore/) ![.NET 11](https://img.shields.io/badge/.NET-11.0-512BD4?style=flat-square&logo=dotnet)
+
+```bash
+dotnet add package Fusonic.Extensions.EntityFrameworkCore
+```
 
 - [EntityFrameworkCore](#entityframeworkcore)
   - [Query extensions](#query-extensions)
@@ -8,6 +12,14 @@ Package: `Fusonic.Extensions.EntityFrameworkCore`
   - [Conventions](#conventions)
 
 All types are in the namespace `Fusonic.Extensions.EntityFrameworkCore`.
+
+**At a glance**
+
+| Feature | What it does |
+|---|---|
+| [Query extensions](#query-extensions) | Query entities that must exist; throw `EntityNotFoundException` instead of returning `null` |
+| [HasIndex](#hasindex) | Create a composite index from property expressions |
+| [Conventions](#conventions) | `NoActionDeleteConvention`: `NO ACTION` instead of `CASCADE` on foreign keys |
 
 ## Query extensions
 
@@ -56,3 +68,7 @@ protected override void ConfigureConventions(ModelConfigurationBuilder configura
     configurationBuilder.Conventions.Add(static _ => new NoActionDeleteConvention());
 }
 ```
+
+---
+
+<sub>Part of [Fusonic Extensions](https://github.com/fusonic/dotnet-extensions) · [All packages](https://github.com/fusonic/dotnet-extensions#-packages) · MIT License</sub>

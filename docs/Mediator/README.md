@@ -1,6 +1,12 @@
 # Mediator
 
-Package: `Fusonic.Extensions.Mediator` (namespace `Fusonic.Extensions.Mediator`)
+[![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.Mediator.svg?style=flat-square&logo=nuget&label=Fusonic.Extensions.Mediator)](https://www.nuget.org/packages/Fusonic.Extensions.Mediator/) ![.NET 11](https://img.shields.io/badge/.NET-11.0-512BD4?style=flat-square&logo=dotnet)
+
+```bash
+dotnet add package Fusonic.Extensions.Mediator
+```
+
+Namespace: `Fusonic.Extensions.Mediator`
 
 - [Mediator](#mediator)
   - [Usage](#usage)
@@ -98,3 +104,7 @@ services.AddSingleton<ITransactionScopeHandler, TransactionScopeHandler>();
 ```
 
 Scrutor only decorates services registered before the `Decorate`/`TryDecorate` call, so register the handlers first.
+
+---
+
+<sub>Part of [Fusonic Extensions](https://github.com/fusonic/dotnet-extensions) · [All packages](https://github.com/fusonic/dotnet-extensions#-packages) · MIT License</sub>

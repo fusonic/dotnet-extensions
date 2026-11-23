@@ -1,6 +1,12 @@
 # Aspire Hosting
 
-Package: `Fusonic.Extensions.Aspire.Hosting` (reference it in the AppHost project)
+[![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.Aspire.Hosting.svg?style=flat-square&logo=nuget&label=Fusonic.Extensions.Aspire.Hosting)](https://www.nuget.org/packages/Fusonic.Extensions.Aspire.Hosting/) ![.NET 11](https://img.shields.io/badge/.NET-11.0-512BD4?style=flat-square&logo=dotnet)
+
+```bash
+dotnet add package Fusonic.Extensions.Aspire.Hosting
+```
+
+Reference the package in the AppHost project.
 
 Extensions for the [Aspire](https://aspire.dev) AppHost. Tested with Aspire 13.6.
 
@@ -73,3 +79,7 @@ Uses the cache storage of [Microsoft.Identity.Client.Extensions.Msal](https://ww
 - **Generated parameter defaults** (e.g. a password Aspire generates for `AddPostgres` without one) are still saved to the plaintext user secrets: Aspire saves them through `IDistributedApplicationBuilder.UserSecretsManager`, which can't be replaced. Set such parameters explicitly (`AddParameter(..., secret: true)`) to keep them in the store.
 - Values already in `secrets.json` stay there. Remove them by hand (`dotnet user-secrets remove <key>`) after entering them again in the dashboard.
 - Builds on Aspire's experimental `IUserSecretsManager` (`ASPIREUSERSECRETS001`). A newer Aspire version may need a new version of this package.
+
+---
+
+<sub>Part of [Fusonic Extensions](https://github.com/fusonic/dotnet-extensions) · [All packages](https://github.com/fusonic/dotnet-extensions#-packages) · MIT License</sub>

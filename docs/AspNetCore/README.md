@@ -1,6 +1,10 @@
 # ASP .Net Core Extensions
 
-Package: `Fusonic.Extensions.AspNetCore`
+[![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.AspNetCore.svg?style=flat-square&logo=nuget&label=Fusonic.Extensions.AspNetCore)](https://www.nuget.org/packages/Fusonic.Extensions.AspNetCore/) ![.NET 11](https://img.shields.io/badge/.NET-11.0-512BD4?style=flat-square&logo=dotnet)
+
+```bash
+dotnet add package Fusonic.Extensions.AspNetCore
+```
 
 - [ASP .Net Core Extensions](#asp-net-core-extensions)
   - [ServiceCollection extensions](#servicecollection-extensions)
@@ -13,6 +17,18 @@ Package: `Fusonic.Extensions.AspNetCore`
   - [Mediator tracing](#mediator-tracing)
 
 The package references SimpleInjector and Scrutor with `PrivateAssets="all"`. If you use the SimpleInjector or Scrutor based registrations below, reference `SimpleInjector` or `Scrutor` in your own project.
+
+**At a glance**
+
+| Feature | What it does |
+|---|---|
+| [ServiceCollection extensions](#servicecollection-extensions) | Register all implementations of an interface from assemblies |
+| [CultureUtil](#cultureutil) | Pick the best common culture from a user's list and the supported cultures |
+| [Ignore paths Middleware](#ignore-paths-middleware) | Return 404 for configured paths, e.g. so a SPA doesn't handle API typos |
+| [Cache headers Middleware](#cache-headers-middleware) | Set `Cache-Control` per route prefix |
+| [HttpContextUserAccessor](#httpcontextuseraccessor) | `IUserAccessor` implementation based on the current `HttpContext` |
+| [Validation of Mediator requests](#validation-of-mediator-requests) | Validate requests with DataAnnotations / `IValidatableObject` |
+| [OpenTelemetry](#opentelemetry) | Trace every Mediator request and notification |
 
 ## ServiceCollection extensions
 
@@ -172,3 +188,7 @@ Also, when configuring the OpenTelemetry tracer, you need to enable the instrume
 services.AddOpenTelemetry()
         .WithTracing(tracer => tracer.AddMediatorInstrumentation());
 ```
+
+---
+
+<sub>Part of [Fusonic Extensions](https://github.com/fusonic/dotnet-extensions) · [All packages](https://github.com/fusonic/dotnet-extensions#-packages) · MIT License</sub>

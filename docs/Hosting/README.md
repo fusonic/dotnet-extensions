@@ -1,6 +1,10 @@
 # Hosting
 
-Package: `Fusonic.Extensions.Hosting`
+[![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.Hosting.svg?style=flat-square&logo=nuget&label=Fusonic.Extensions.Hosting)](https://www.nuget.org/packages/Fusonic.Extensions.Hosting/) ![.NET 11](https://img.shields.io/badge/.NET-11.0-512BD4?style=flat-square&logo=dotnet)
+
+```bash
+dotnet add package Fusonic.Extensions.Hosting
+```
 
 - [Hosting](#hosting)
   - [TimedHostedService](#timedhostedservice)
@@ -85,3 +89,7 @@ The matching configuration in the `appsettings.json` could look like the followi
     }
 }
 ```
+
+---
+
+<sub>Part of [Fusonic Extensions](https://github.com/fusonic/dotnet-extensions) · [All packages](https://github.com/fusonic/dotnet-extensions#-packages) · MIT License</sub>

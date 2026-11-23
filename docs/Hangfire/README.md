@@ -1,6 +1,12 @@
 # Hangfire
 
-Package: `Fusonic.Extensions.Hangfire` (namespace `Fusonic.Extensions.Hangfire`)
+[![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.Hangfire.svg?style=flat-square&logo=nuget&label=Fusonic.Extensions.Hangfire)](https://www.nuget.org/packages/Fusonic.Extensions.Hangfire/) ![.NET 11](https://img.shields.io/badge/.NET-11.0-512BD4?style=flat-square&logo=dotnet)
+
+```bash
+dotnet add package Fusonic.Extensions.Hangfire
+```
+
+Namespace: `Fusonic.Extensions.Hangfire`
 
 - [Out-of-band processing of commands and notifications](#out-of-band-processing-of-commands-and-notifications)
   - [Prerequisites](#prerequisites)
@@ -121,3 +127,7 @@ By default the Hangfire dashboard only allows local requests. This fails when th
 var dashboardOptions = new DashboardOptions { Authorization = [new DisableHangfireDashboardAuthorizationFilter()] };
 app.UseHangfireDashboard(options: dashboardOptions);
 ```
+
+---
+
+<sub>Part of [Fusonic Extensions](https://github.com/fusonic/dotnet-extensions) · [All packages](https://github.com/fusonic/dotnet-extensions#-packages) · MIT License</sub>

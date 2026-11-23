@@ -1,13 +1,15 @@
 # Unit tests
 
+![.NET 11](https://img.shields.io/badge/.NET-11.0-512BD4?style=flat-square&logo=dotnet) ![xUnit v3](https://img.shields.io/badge/xUnit-v3-5E2750?style=flat-square)
+
 This documentation covers the following packages:
 
-| Package | Purpose |
-|---|---|
-| `Fusonic.Extensions.UnitTests` | Test base classes with dependency injection (SimpleInjector or Microsoft.Extensions.DependencyInjection) and configuration |
-| `Fusonic.Extensions.UnitTests.EntityFrameworkCore` | Database tests with EF Core: one database per test |
-| `Fusonic.Extensions.UnitTests.EntityFrameworkCore.Npgsql` | PostgreSQL support |
-| `Fusonic.Extensions.UnitTests.EntityFrameworkCore.SqlServer` | Microsoft SQL Server support |
+| Package | Version | Purpose |
+|---|---|---|
+| `Fusonic.Extensions.UnitTests` | [![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.UnitTests.svg?style=flat-square&logo=nuget&label=nuget)](https://www.nuget.org/packages/Fusonic.Extensions.UnitTests/) | Test base classes with dependency injection (SimpleInjector or Microsoft.Extensions.DependencyInjection) and configuration |
+| `Fusonic.Extensions.UnitTests.EntityFrameworkCore` | [![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.UnitTests.EntityFrameworkCore.svg?style=flat-square&logo=nuget&label=nuget)](https://www.nuget.org/packages/Fusonic.Extensions.UnitTests.EntityFrameworkCore/) | Database tests with EF Core: one database per test |
+| `Fusonic.Extensions.UnitTests.EntityFrameworkCore.Npgsql` | [![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.UnitTests.EntityFrameworkCore.Npgsql.svg?style=flat-square&logo=nuget&label=nuget)](https://www.nuget.org/packages/Fusonic.Extensions.UnitTests.EntityFrameworkCore.Npgsql/) | PostgreSQL support |
+| `Fusonic.Extensions.UnitTests.EntityFrameworkCore.SqlServer` | [![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.UnitTests.EntityFrameworkCore.SqlServer.svg?style=flat-square&logo=nuget&label=nuget)](https://www.nuget.org/packages/Fusonic.Extensions.UnitTests.EntityFrameworkCore.SqlServer/) | Microsoft SQL Server support |
 
 The packages target xUnit v3. Your test project must reference the test framework itself (`xunit.v3`, a runner such as `xunit.runner.visualstudio` or Microsoft.Testing.Platform) and the assertion library of your choice. When using SimpleInjector, reference `SimpleInjector` as well. It is not a transitive dependency of `Fusonic.Extensions.UnitTests`.
 
@@ -370,3 +372,7 @@ dotnet:test:
   script:
     - echo "Running Tests..."
 ```
+
+---
+
+<sub>Part of [Fusonic Extensions](https://github.com/fusonic/dotnet-extensions) · [All packages](https://github.com/fusonic/dotnet-extensions#-packages) · MIT License</sub>

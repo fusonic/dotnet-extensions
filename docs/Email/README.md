@@ -1,6 +1,10 @@
 # Email
 
-Package: `Fusonic.Extensions.Email`
+[![NuGet](https://img.shields.io/nuget/v/Fusonic.Extensions.Email.svg?style=flat-square&logo=nuget&label=Fusonic.Extensions.Email)](https://www.nuget.org/packages/Fusonic.Extensions.Email/) ![.NET 11](https://img.shields.io/badge/.NET-11.0-512BD4?style=flat-square&logo=dotnet)
+
+```bash
+dotnet add package Fusonic.Extensions.Email
+```
 
 Renders emails from Razor views (`.cshtml`) or Razor components (`.razor`) and sends them via SMTP (MailKit). Emails are sent with the Mediator command `SendEmail`.
 
@@ -215,3 +219,7 @@ services.AddEmail(o => // or container.RegisterEmail
     };
 });
 ```
+
+---
+
+<sub>Part of [Fusonic Extensions](https://github.com/fusonic/dotnet-extensions) · [All packages](https://github.com/fusonic/dotnet-extensions#-packages) · MIT License</sub>
