@@ -2,22 +2,21 @@
 // Licensed under the MIT License. See LICENSE file in the project root for license information.
 
 using System.Globalization;
-using System.Text;
-using System.Text.RegularExpressions;
 using Fusonic.Extensions.Email.Tests.Models;
 using MailKit.Net.Smtp;
-using netDumbster.smtp;
+using MimeKit;
 using SimpleInjector;
 
 namespace Fusonic.Extensions.Email.Tests;
 
-public partial class SendEmailTests(SendEmailTests.SendEmailFixture fixture) : TestBase<SendEmailTests.SendEmailFixture>(fixture)
+[Collection("Mailpit")]
+public class SendEmailTests(SendEmailTests.SendEmailFixture fixture) : TestBase<SendEmailTests.SendEmailFixture>(fixture)
 {
     [Fact]
     public async Task SendEmail_Razor()
     {
         // Arrange
-        Fixture.SmtpServer!.ClearReceivedEmail();
+        await Mailpit.DeleteEmailsAsync();
 
         var model = new SendEmailTestEmailViewModel { SomeField = "Some field." };
 
@@ -25,20 +24,15 @@ public partial class SendEmailTests(SendEmailTests.SendEmailFixture fixture) : T
         await SendAsync(new SendEmail("recipient@fusonic.net", "The Recipient", new CultureInfo("de-AT"), model));
 
         // Assert
-        Fixture.SmtpServer.ReceivedEmailCount.Should().Be(1);
-        var email = Fixture.SmtpServer.ReceivedEmail.Single();
-        email.ToAddresses
-             .Should()
-             .ContainSingle()
-             .And.Contain(a => a.Address == "recipient@fusonic.net");
+        var email = (await Mailpit.GetEmailsAsync()).Should().ContainSingle().Subject;
+        var message = email.Message;
+        message.To.Mailboxes.Select(a => a.Address).Should().BeEquivalentTo(["recipient@fusonic.net"]);
 
-        email.FromAddress.Address.Should().Be("test@fusonic.net");
-        email.Headers.AllKeys.Should().Contain("Subject");
-        email.Headers["Subject"].Should().Be("The subject");
 
-        email.MessageParts.Should().ContainSingle();
-        email.MessageParts[0]
-             .BodyData.Should()
+        message.From.Mailboxes.Single().Address.Should().Be("test@fusonic.net");
+        message.Subject.Should().Be("The subject");
+
+        message.BodyParts.Should().ContainSingle().Which.Should().BeOfType<TextPart>().Which.Text.TrimEnd().ReplaceLineEndings().Should()
              .Be(
                   "<html><head><title>Render Test</title></head>" + Environment.NewLine
                                                                   + "<body style=\"color: red\"><p>Some field.</p>" + Environment.NewLine
@@ -49,7 +43,7 @@ public partial class SendEmailTests(SendEmailTests.SendEmailFixture fixture) : T
     public async Task SendEmail_Blazor()
     {
         // Arrange
-        Fixture.SmtpServer!.ClearReceivedEmail();
+        await Mailpit.DeleteEmailsAsync();
 
         var model = new SendEmailTestEmailComponentModel { SomeField = "Some field." };
 
@@ -57,20 +51,15 @@ public partial class SendEmailTests(SendEmailTests.SendEmailFixture fixture) : T
         await SendAsync(new SendEmail("recipient@fusonic.net", "The Recipient", new CultureInfo("de-AT"), model));
 
         // Assert
-        Fixture.SmtpServer.ReceivedEmailCount.Should().Be(1);
-        var email = Fixture.SmtpServer.ReceivedEmail.Single();
-        email.ToAddresses
-             .Should()
-             .ContainSingle()
-             .And.Contain(a => a.Address == "recipient@fusonic.net");
+        var email = (await Mailpit.GetEmailsAsync()).Should().ContainSingle().Subject;
+        var message = email.Message;
+        message.To.Mailboxes.Select(a => a.Address).Should().BeEquivalentTo(["recipient@fusonic.net"]);
 
-        email.FromAddress.Address.Should().Be("test@fusonic.net");
-        email.Headers.AllKeys.Should().Contain("Subject");
-        email.Headers["Subject"].Should().Be("The subject");
 
-        email.MessageParts.Should().ContainSingle();
-        email.MessageParts[0]
-             .BodyData.Should()
+        message.From.Mailboxes.Single().Address.Should().Be("test@fusonic.net");
+        message.Subject.Should().Be("The subject");
+
+        message.BodyParts.Should().ContainSingle().Which.Should().BeOfType<TextPart>().Which.Text.TrimEnd().ReplaceLineEndings().Should()
              .Be(
                   "<html><head><title>Render Test</title></head>" + Environment.NewLine
                                                                   + "<body style=\"color: red\"><p>Some field.</p></body></html>");
@@ -80,7 +69,7 @@ public partial class SendEmailTests(SendEmailTests.SendEmailFixture fixture) : T
     public async Task SendEmail_BccAdded()
     {
         // Arrange
-        Fixture.SmtpServer!.ClearReceivedEmail();
+        await Mailpit.DeleteEmailsAsync();
 
         var model = new SendEmailTestEmailViewModel { SomeField = "Some field." };
 
@@ -88,18 +77,15 @@ public partial class SendEmailTests(SendEmailTests.SendEmailFixture fixture) : T
         await SendAsync(new SendEmail("recipient@fusonic.net", "The Recipient", new CultureInfo("de-AT"), model, BccRecipient: "bcc@fusonic.net"));
 
         // Assert
-        Fixture.SmtpServer.ReceivedEmailCount.Should().Be(1);
-        var email = Fixture.SmtpServer.ReceivedEmail.Single();
-        email.ToAddresses.Select(a => a.Address).Should().BeEquivalentTo(["recipient@fusonic.net"]);
-        email.BccAddresses.Select(a => a.Address).Should().BeEquivalentTo(["bcc@fusonic.net"]);
+        var email = (await Mailpit.GetEmailsAsync()).Should().ContainSingle().Subject;
+        var message = email.Message;
+        message.To.Mailboxes.Select(a => a.Address).Should().BeEquivalentTo(["recipient@fusonic.net"]);
+        email.BccAddresses.Should().BeEquivalentTo(["bcc@fusonic.net"]);
 
-        email.FromAddress.Address.Should().Be("test@fusonic.net");
-        email.Headers.AllKeys.Should().Contain("Subject");
-        email.Headers["Subject"].Should().Be("The subject");
+        message.From.Mailboxes.Single().Address.Should().Be("test@fusonic.net");
+        message.Subject.Should().Be("The subject");
 
-        email.MessageParts.Should().ContainSingle();
-        email.MessageParts[0]
-             .BodyData.Should()
+        message.BodyParts.Should().ContainSingle().Which.Should().BeOfType<TextPart>().Which.Text.TrimEnd().ReplaceLineEndings().Should()
              .Be(
                   "<html><head><title>Render Test</title></head>" + Environment.NewLine
                                                                   + "<body style=\"color: red\"><p>Some field.</p>" + Environment.NewLine
@@ -114,7 +100,7 @@ public partial class SendEmailTests(SendEmailTests.SendEmailFixture fixture) : T
     {
         // Arrange
         var attachmentPath = Path.Combine(Path.GetDirectoryName(typeof(TestFixture).Assembly.Location)!, "email.css");
-        Fixture.SmtpServer!.ClearReceivedEmail();
+        await Mailpit.DeleteEmailsAsync();
 
         var model = new SendEmailTestEmailViewModel { SomeField = "Some field." };
         var attachments = new Attachment[]
@@ -129,29 +115,22 @@ public partial class SendEmailTests(SendEmailTests.SendEmailFixture fixture) : T
         await SendAsync(new SendEmail("recipient@fusonic.net", "The Recipient", new CultureInfo("de-AT"), model, Attachments: attachments));
 
         // Assert
-        Fixture.SmtpServer.ReceivedEmailCount.Should().Be(1);
-        var email = Fixture.SmtpServer.ReceivedEmail.Single();
-        email.MessageParts.Should().HaveCount(2);
+        var email = (await Mailpit.GetEmailsAsync()).Should().ContainSingle().Subject;
+        var message = email.Message;
+        message.BodyParts.Should().HaveCount(2);
+        var attachment = message.Attachments.Should().ContainSingle().Which.Should().BeOfType<MimePart>().Subject;
+        attachment.FileName.Should().Be(attachmentName);
 
-        if (!GetAsciiCharsRegex().IsMatch(attachmentName))
-        {
-            var base64EncodedName = Convert.ToBase64String(Encoding.UTF8.GetBytes(attachmentName));
-            email.MessageParts[1].HeaderData.Should().Contain($"application/octet-stream; name=\"=?utf-8?B?{base64EncodedName}?=\"");
-        }
-        else
-        {
-            email.MessageParts[1].HeaderData.Should().Contain(attachmentName);
-        }
-
-        var expectedAttachmentContent = await File.ReadAllTextAsync(attachmentPath, TestContext.Current.CancellationToken);
-        email.MessageParts[1].BodyData.Should().Be(expectedAttachmentContent);
+        using var content = new MemoryStream();
+        await attachment.Content!.DecodeToAsync(content, TestContext.Current.CancellationToken);
+        content.ToArray().Should().Equal(await File.ReadAllBytesAsync(attachmentPath, TestContext.Current.CancellationToken));
     }
 
     [Fact]
     public async Task SendEmail_HeadersAdded()
     {
         // Arrange
-        Fixture.SmtpServer!.ClearReceivedEmail();
+        await Mailpit.DeleteEmailsAsync();
 
         var model = new SendEmailTestEmailViewModel { SomeField = "Some field." };
 
@@ -159,18 +138,17 @@ public partial class SendEmailTests(SendEmailTests.SendEmailFixture fixture) : T
         await SendAsync(new SendEmail("recipient@fusonic.net", "The Recipient", new CultureInfo("de-AT"), model, Headers: new Dictionary<string, string> { ["my-header"] = "value" }));
 
         // Assert
-        Fixture.SmtpServer.ReceivedEmailCount.Should().Be(1);
-        var email = Fixture.SmtpServer.ReceivedEmail.Single();
+        var email = (await Mailpit.GetEmailsAsync()).Should().ContainSingle().Subject;
+        var message = email.Message;
 
-        email.Headers.AllKeys.Should().Contain("my-header");
-        email.Headers["my-header"].Should().Be("value");
+        message.Headers["my-header"].Should().Be("value");
     }
 
     [Fact]
     public async Task SendEmail_DefaultHeadersAdded()
     {
         // Arrange
-        Fixture.SmtpServer!.ClearReceivedEmail();
+        await Mailpit.DeleteEmailsAsync();
 
         var options = GetInstance<EmailOptions>();
 
@@ -182,18 +160,17 @@ public partial class SendEmailTests(SendEmailTests.SendEmailFixture fixture) : T
         await SendAsync(new SendEmail("recipient@fusonic.net", "The Recipient", new CultureInfo("de-AT"), model));
 
         // Assert
-        Fixture.SmtpServer.ReceivedEmailCount.Should().Be(1);
-        var email = Fixture.SmtpServer.ReceivedEmail.Single();
+        var email = (await Mailpit.GetEmailsAsync()).Should().ContainSingle().Subject;
+        var message = email.Message;
 
-        email.Headers.AllKeys.Should().Contain("my-header");
-        email.Headers["my-header"].Should().Be("value");
+        message.Headers["my-header"].Should().Be("value");
     }
 
     [Fact]
     public async Task SendEmail_DefaultHeadersOverriddenIfSetTwice()
     {
         // Arrange
-        Fixture.SmtpServer!.ClearReceivedEmail();
+        await Mailpit.DeleteEmailsAsync();
 
         var options = GetInstance<EmailOptions>();
 
@@ -205,20 +182,18 @@ public partial class SendEmailTests(SendEmailTests.SendEmailFixture fixture) : T
         await SendAsync(new SendEmail("recipient@fusonic.net", "The Recipient", new CultureInfo("de-AT"), model, Headers: new Dictionary<string, string> { ["replaced"] = "new-value" }));
 
         // Assert
-        Fixture.SmtpServer.ReceivedEmailCount.Should().Be(1);
-        var email = Fixture.SmtpServer.ReceivedEmail.Single();
+        var email = (await Mailpit.GetEmailsAsync()).Should().ContainSingle().Subject;
+        var message = email.Message;
 
-        email.Headers.AllKeys.Should().Contain("replaced");
-        email.Headers["replaced"].Should().Be("new-value");
-        email.Headers.AllKeys.Should().Contain("default");
-        email.Headers["default"].Should().Be("value");
+        message.Headers["replaced"].Should().Be("new-value");
+        message.Headers["default"].Should().Be("value");
     }
 
     [Fact]
     public async Task SendEmail_ReplyToAdded()
     {
         // Arrange
-        Fixture.SmtpServer!.ClearReceivedEmail();
+        await Mailpit.DeleteEmailsAsync();
 
         var model = new SendEmailTestEmailViewModel { SomeField = "Some field." };
 
@@ -226,11 +201,10 @@ public partial class SendEmailTests(SendEmailTests.SendEmailFixture fixture) : T
         await SendAsync(new SendEmail("recipient@fusonic.net", "The Recipient", new CultureInfo("de-AT"), model, ReplyTo: "reply@mail.com"));
 
         // Assert
-        Fixture.SmtpServer.ReceivedEmailCount.Should().Be(1);
-        var email = Fixture.SmtpServer.ReceivedEmail.Single();
+        var email = (await Mailpit.GetEmailsAsync()).Should().ContainSingle().Subject;
+        var message = email.Message;
 
-        email.Headers.AllKeys.Should().Contain("Reply-To");
-        email.Headers["Reply-To"].Should().Be("reply@mail.com");
+        message.ReplyTo.ToString().Should().Be("reply@mail.com");
     }
 
     [Fact]
@@ -265,7 +239,7 @@ public partial class SendEmailTests(SendEmailTests.SendEmailFixture fixture) : T
     public async Task SendEmail_SubjectFormatParameters_GetPassedToRenderer()
     {
         // Arrange
-        Fixture.SmtpServer!.ClearReceivedEmail();
+        await Mailpit.DeleteEmailsAsync();
         var model = new SendEmailTestEmailViewModel { SomeField = "Some field." };
 
         var formatParams = new object[] { 1, "Test" };
@@ -274,9 +248,9 @@ public partial class SendEmailTests(SendEmailTests.SendEmailFixture fixture) : T
         await SendAsync(new SendEmail("recipient@fusonic.net", "The Recipient", new CultureInfo("de-AT"), model, SubjectKey: "SubjectFormat", SubjectFormatParameters: formatParams));
 
         // Assert
-        Fixture.SmtpServer.ReceivedEmailCount.Should().Be(1);
-        var email = Fixture.SmtpServer.ReceivedEmail.Single();
-        email.Subject.Should().Be("The formatted subject 1 Test");
+        var email = (await Mailpit.GetEmailsAsync()).Should().ContainSingle().Subject;
+        var message = email.Message;
+        message.Subject.Should().Be("The formatted subject 1 Test");
     }
 
     [Theory]
@@ -289,44 +263,30 @@ public partial class SendEmailTests(SendEmailTests.SendEmailFixture fixture) : T
     public async Task SendEmail_IgnoredDomain_DoesNotSendEmail(string recipient)
     {
         // Arrange
-        Fixture.SmtpServer!.ClearReceivedEmail();
+        await Mailpit.DeleteEmailsAsync();
         var model = new SendEmailTestEmailViewModel { SomeField = "Some field." };
 
         // Act
         await SendAsync(new SendEmail(recipient, recipient, new CultureInfo("de-AT"), model));
 
         // Assert
-        Fixture.SmtpServer.ReceivedEmailCount.Should().Be(0);
+        (await Mailpit.GetEmailsAsync()).Should().BeEmpty();
     }
 
     public class SendEmailFixture : TestFixture
     {
-        public SimpleSmtpServer? SmtpServer { get; private set; }
-
         protected override void RegisterDependencies(Container container)
         {
             base.RegisterDependencies(container);
 
-            SmtpServer = SimpleSmtpServer.Start();
-
             container.RegisterEmail(c =>
             {
                 c.CssPath = "email.css";
-                c.SmtpServer = "localhost";
-                c.SmtpPort = SmtpServer.Configuration.Port;
+                c.SmtpServer = TestStartup.SmtpHost;
+                c.SmtpPort = TestStartup.SmtpPort;
                 c.SenderAddress = "test@fusonic.net";
                 c.SenderName = "Test Fusonic";
             });
         }
-
-        public override async ValueTask DisposeAsync()
-        {
-            SmtpServer?.Dispose();
-            await base.DisposeAsync();
-            GC.SuppressFinalize(this);
-        }
     }
-
-    [GeneratedRegex("^[a-zA-Z0-9.!-]*$")]
-    private static partial Regex GetAsciiCharsRegex();
 }

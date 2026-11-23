@@ -2,25 +2,26 @@ include:
   - component: $CI_SERVER_FQDN/fusonic/devops/components/dotnet-test/dotnet-test@2
     inputs:
       sln-path: Extensions.slnx
-      image: mcr.microsoft.com/dotnet/sdk:10.0
+      image: mcr.microsoft.com/dotnet/sdk:11.0
   - component: $CI_SERVER_FQDN/fusonic/devops/components/dotnet-test/dotnet-check-warnings@2
     inputs:
       sln-path: Extensions.slnx
-      image: mcr.microsoft.com/dotnet/sdk:10.0
+      image: mcr.microsoft.com/dotnet/sdk:11.0
   - component: $CI_SERVER_FQDN/fusonic/devops/components/renovate/renovate@3
     inputs:
       presets: [nuget]
       assignees: [david.roth]
-  - component: gitlab.com/fusonic/devops/components/release-tool/release-tool@1
+  - component: $CI_SERVER_FQDN/fusonic/devops/components/release-tool/release-tool@2
 stages:
   - build
   - test
   - publish
 
 variables:
-  BUILD_IMAGE: mcr.microsoft.com/dotnet/sdk:10.0
-  POSTGRES_IMAGE: "postgres:17-alpine"
-  SQLSERVER_IMAGE: "mcr.microsoft.com/mssql/server:2022-latest"
+  BUILD_IMAGE: mcr.microsoft.com/dotnet/sdk:11.0
+  POSTGRES_IMAGE: "postgres:18-alpine"
+  SQLSERVER_IMAGE: "mcr.microsoft.com/mssql/server:2025-latest"
+  MAILPIT_IMAGE: "axllent/mailpit:v1.34"
 
 default:
   interruptible: true
@@ -46,7 +47,7 @@ build:
   rules:
     - when: always
 
-# Databases run as services in CI instead of Testcontainers (see TestStartup.cs in the test projects).
+# Databases and Mailpit run as services in CI instead of Testcontainers (see TestStartup.cs in the test projects).
 dotnet:test:
   variables:
     POSTGRES_DB: "postgres"
@@ -57,11 +58,14 @@ dotnet:test:
     MSSQL_PID: "Developer"
     MSSQL_SA_PASSWORD: "Developer123!"
     ConnectionStrings__Mssql: "Server=mssql,1433;User Id=sa;Password=Developer123!;Initial Catalog=master;TrustServerCertificate=True"
+    Mailpit__Host: "mailpit"
   services:
     - name: ${POSTGRES_IMAGE}
       alias: postgres
     - name: ${SQLSERVER_IMAGE}
       alias: mssql
+    - name: ${MAILPIT_IMAGE}
+      alias: mailpit
 
 release:lint-merge-request:
   stage: test

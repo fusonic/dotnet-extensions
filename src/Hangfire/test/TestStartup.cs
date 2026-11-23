@@ -25,10 +25,10 @@ public class TestStartup : IAsyncLifetime
         var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__Postgres");
         if (string.IsNullOrWhiteSpace(connectionString))
         {
-            container = new PostgreSqlBuilder("postgres:17-alpine")
+            container = new PostgreSqlBuilder("postgres:18-alpine")
                 .WithReuse(true)
                 .WithName("test.npgsql.extensions.hangfire")
-                .WithTmpfsMount("/var/lib/postgresql/data")
+                .WithTmpfsMount("/var/lib/postgresql")
                 .WithTmpfsMount("/dev/shm")
                 .Build();
 

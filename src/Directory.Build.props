@@ -1,7 +1,7 @@
 <Project>
   <PropertyGroup>
-    <Version>10.3.0</Version>
-    <TargetFramework>net10.0</TargetFramework>
+    <Version>11.0.0</Version>
+    <TargetFramework>net11.0</TargetFramework>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -18,7 +18,7 @@
   <PropertyGroup>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <Nullable>enable</Nullable>
-    <Features>strict</Features>
+    <Features>strict;runtime-async=on</Features>
     <ImplicitUsings>enable</ImplicitUsings>
     <NugetAuditMode>direct</NugetAuditMode>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>

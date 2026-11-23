@@ -27,7 +27,7 @@ public class SmtpClient(EmailOptions options) : ISmtpClient
             {
                 await client.AuthenticateAsync(options.SmtpUsername, options.SmtpPassword ?? "");
             }
-            await client.SendAsync(message);
+            await client.SendAsync(new MailKit.SendRequest(message));
             await client.DisconnectAsync(true);
         }
     }

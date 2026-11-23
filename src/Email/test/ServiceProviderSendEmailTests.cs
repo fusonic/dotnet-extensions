@@ -10,35 +10,35 @@ using Fusonic.Extensions.UnitTests;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using netDumbster.smtp;
 
 namespace Fusonic.Extensions.Email.Tests;
 
 /// <summary> Tests the registration with Microsoft.Extensions.DependencyInjection. </summary>
+[Collection("Mailpit")]
 public class ServiceProviderSendEmailTests(ServiceProviderSendEmailTests.ServiceProviderFixture fixture) : DependencyInjectionUnitTest<ServiceProviderSendEmailTests.ServiceProviderFixture>(fixture)
 {
     [Fact]
     public async Task SendEmail_RazorView_IsSentWithBcc()
     {
-        Fixture.SmtpServer.ClearReceivedEmail();
+        await Mailpit.DeleteEmailsAsync();
 
         await SendAsync(new SendEmail("recipient@fusonic.net", "The Recipient", new CultureInfo("de-AT"), new SendEmailTestEmailViewModel { SomeField = "Some field." }));
 
-        var email = Fixture.SmtpServer.ReceivedEmail.Should().ContainSingle().Subject;
-        email.ToAddresses.Select(a => a.Address).Should().BeEquivalentTo(["recipient@fusonic.net"]);
-        email.BccAddresses.Select(a => a.Address).Should().BeEquivalentTo(["bcc@fusonic.net"]);
-        email.MessageParts[0].BodyData.Should().Contain("Some field.");
+        var email = (await Mailpit.GetEmailsAsync()).Should().ContainSingle().Subject;
+        email.Message.To.Mailboxes.Select(a => a.Address).Should().BeEquivalentTo(["recipient@fusonic.net"]);
+        email.BccAddresses.Should().BeEquivalentTo(["bcc@fusonic.net"]);
+        email.Message.HtmlBody.Should().Contain("Some field.");
     }
 
     [Fact]
     public async Task SendEmail_BlazorComponent_IsSent()
     {
-        Fixture.SmtpServer.ClearReceivedEmail();
+        await Mailpit.DeleteEmailsAsync();
 
         await SendAsync(new SendEmail("recipient@fusonic.net", "The Recipient", new CultureInfo("de-AT"), new SendEmailTestEmailComponentModel { SomeField = "Some field." }));
 
-        var email = Fixture.SmtpServer.ReceivedEmail.Should().ContainSingle().Subject;
-        email.MessageParts[0].BodyData.Should().Contain("Some field.");
+        var email = (await Mailpit.GetEmailsAsync()).Should().ContainSingle().Subject;
+        email.Message.HtmlBody.Should().Contain("Some field.");
     }
 
     [Fact]
@@ -62,10 +62,8 @@ public class ServiceProviderSendEmailTests(ServiceProviderSendEmailTests.Service
     private Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> request)
         => ScopedAsync(() => GetInstance<IMediator>().Send(request));
 
-    public class ServiceProviderFixture : ServiceProviderTestFixture, IDisposable
+    public class ServiceProviderFixture : ServiceProviderTestFixture
     {
-        public SimpleSmtpServer SmtpServer { get; } = SimpleSmtpServer.Start();
-
         protected override void RegisterCoreDependencies(IServiceCollection services)
         {
             TestFixture.AddFrameworkServices(services);
@@ -75,18 +73,12 @@ public class ServiceProviderSendEmailTests(ServiceProviderSendEmailTests.Service
             services.AddEmail(c =>
             {
                 c.CssPath = "email.css";
-                c.SmtpServer = "localhost";
-                c.SmtpPort = SmtpServer.Configuration.Port;
+                c.SmtpServer = TestStartup.SmtpHost;
+                c.SmtpPort = TestStartup.SmtpPort;
                 c.SenderAddress = "test@fusonic.net";
                 c.SenderName = "Test Fusonic";
                 c.BccAddress = "bcc@fusonic.net";
             });
-        }
-
-        void IDisposable.Dispose()
-        {
-            SmtpServer.Dispose();
-            Dispose();
         }
     }
 }

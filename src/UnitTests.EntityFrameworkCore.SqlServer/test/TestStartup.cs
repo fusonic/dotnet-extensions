@@ -21,7 +21,7 @@ public class TestStartup : IAsyncLifetime
         var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__Mssql");
         if (string.IsNullOrWhiteSpace(connectionString))
         {
-            container = new MsSqlBuilder("mcr.microsoft.com/mssql/server:2022-latest")
+            container = new MsSqlBuilder("mcr.microsoft.com/mssql/server:2025-latest")
                 .WithReuse(true)
                 .WithName("test.mssql.extensions.unittests")
                 .Build();

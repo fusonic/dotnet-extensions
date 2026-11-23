@@ -10,7 +10,7 @@ The project on Github.com is updated on a daily basis, but does not include any 
 If we see broader community engagement in the future, we may consider switching our primary development to Github.
 
 Fusonic Extensions follows the official yearly .NET release cycle.
-Latest Fusonic Extensions main branch targets .NET 10.0.
+Latest Fusonic Extensions main branch targets .NET 11.0.
 
 
 Packages
@@ -116,3 +116,10 @@ Integration Workflow
 4. Discussion in GL Issue or Mr Request or Design Meeting
 5. New APIs require the approval of at least one board member
 6. New APIs should be communicated (announcement)
+
+Migration
+===============
+
+Breaking changes between major versions and the changes they require in your code are described in the migration guides:
+
+* [Migrating from 10 to 11](docs/migrate-10-to-11.md)

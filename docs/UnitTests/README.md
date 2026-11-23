@@ -202,10 +202,10 @@ public class TestStartup : IAsyncLifetime
         var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__Postgres");
         if (string.IsNullOrWhiteSpace(connectionString))
         {
-            var container = new PostgreSqlBuilder("postgres:17-alpine")
+            var container = new PostgreSqlBuilder("postgres:18-alpine")
                 .WithReuse(true)
                 .WithName("test.myproject")
-                .WithTmpfsMount("/var/lib/postgresql/data") // Keep the database in memory, which speeds up the tests significantly.
+                .WithTmpfsMount("/var/lib/postgresql") // Keep the database in memory, which speeds up the tests significantly.
                 .WithTmpfsMount("/dev/shm")
                 .Build();
 
@@ -232,7 +232,7 @@ For SQL Server, use `MsSqlBuilder` from `Testcontainers.MsSql`, set `InitialCata
 - `npgsqlOptionsAction` / `sqlServerOptionsAction`: configures the provider, e.g. for `UseNetTopologySuite()`.
 - `seed`: seeds the template after creation.
 - `logger`: defaults to a console logger.
-- `useMigrations`: applies the migrations (default). Set it to `false` to create the schema with `EnsureCreated`.
+- `useMigrations`: applies the migrations (default). Set it to `false` to create the schema with `EnsureCreated`. Since EF Core 11, applying migrations throws if the `DbContext` has no migrations, so set it to `false` for contexts without migrations.
 - `overwrite`: by default the template is only created if it does not exist yet, which speeds up local test runs. Set it to `true` to always create a fresh template. Without `overwrite`, delete the template (or the reused container) after changing the schema.
 
 `PostgreSqlUtil` and `SqlServerTestUtil` also provide `CheckDatabaseExists` and `DropDatabase`.
@@ -345,7 +345,7 @@ There are two options to provide the database in GitLab CI.
 ```yaml
 dotnet:test:
   services:
-    - name: postgres:17-alpine
+    - name: postgres:18-alpine
       alias: postgres
   variables:
     POSTGRES_PASSWORD: postgres

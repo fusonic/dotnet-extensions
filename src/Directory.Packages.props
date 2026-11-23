@@ -5,37 +5,36 @@
     <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="Aspire.Hosting" Version="13.6.5" />
+    <PackageVersion Include="Aspire.Hosting" Version="17.0.0" />
     <PackageVersion Include="AwesomeAssertions" Version="9.6.0" />
     <PackageVersion Include="AwesomeAssertions.Analyzers" Version="9.0.8" />
-    <PackageVersion Include="Dapper" Version="2.1.89" />
+    <PackageVersion Include="Dapper" Version="2.1.100" />
     <PackageVersion Include="Hangfire" Version="1.8.25" />
     <PackageVersion Include="Hangfire.Core" Version="1.8.25" />
     <PackageVersion Include="Hangfire.PostgreSql" Version="1.21.1" />
-    <PackageVersion Include="MailKit" Version="4.18.2" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="10.0.15" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.15" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.0.15" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.15" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.15" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.15" />
-    <PackageVersion Include="Microsoft.Extensions.Configuration" Version="10.0.15" />
-    <PackageVersion Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="10.0.15" />
-    <PackageVersion Include="Microsoft.Extensions.Configuration.FileExtensions" Version="10.0.15" />
-    <PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="10.0.15" />
-    <PackageVersion Include="Microsoft.Extensions.Configuration.UserSecrets" Version="10.0.15" />
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.15" />
-    <PackageVersion Include="Microsoft.Extensions.Http" Version="10.0.15" />
-    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.15" />
-    <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="10.0.15" />
+    <PackageVersion Include="MailKit" Version="5.0.0" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="11.0.0" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="11.0.0" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.InMemory" Version="11.0.0" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="11.0.0" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="11.0.0" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="11.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration" Version="11.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="11.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.FileExtensions" Version="11.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="11.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.UserSecrets" Version="11.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="11.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Http" Version="11.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="11.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="11.0.0" />
     <PackageVersion Include="Microsoft.Identity.Client.Extensions.Msal" Version="4.92.0" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.12.0" />
-    <PackageVersion Include="Microsoft.SourceLink.Github" Version="10.0.404" />
+    <PackageVersion Include="Microsoft.SourceLink.Github" Version="11.0.100" />
     <PackageVersion Include="Microsoft.Testing.Extensions.CodeCoverage" Version="18.12.0" />
     <PackageVersion Include="Microsoft.Testing.Extensions.TrxReport" Version="2.5.3" />
-    <PackageVersion Include="netDumbster" Version="3.1.1" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.4" />
-    <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.3" />
+    <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="11.0.0" />
     <PackageVersion Include="NSubstitute" Version="6.2.0" />
     <PackageVersion Include="OpenTelemetry.Api" Version="1.21.0" />
     <PackageVersion Include="Polly" Version="8.9.1" />
@@ -46,8 +45,9 @@
     <PackageVersion Include="SimpleInjector.Integration.AspNetCore.Mvc.Core" Version="5.5.0" />
     <PackageVersion Include="SimpleInjector.Integration.GenericHost" Version="5.5.0" />
     <PackageVersion Include="SimpleInjector.Integration.ServiceCollection" Version="5.5.0" />
-    <PackageVersion Include="Testcontainers.MsSql" Version="4.16.0" />
-    <PackageVersion Include="Testcontainers.PostgreSql" Version="4.16.0" />
+    <PackageVersion Include="Testcontainers.Mailpit" Version="4.17.0" />
+    <PackageVersion Include="Testcontainers.MsSql" Version="4.17.0" />
+    <PackageVersion Include="Testcontainers.PostgreSql" Version="4.17.0" />
     <PackageVersion Include="xunit.analyzers" Version="2.3.0" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="4.0.1" />
     <PackageVersion Include="xunit.v3.core" Version="4.0.3" />

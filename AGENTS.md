@@ -9,7 +9,7 @@ Fusonic Extensions: reusable .NET class libraries, published as NuGet packages. 
 - **Complete changes**: YAGNI never justifies dropping validation at trust boundaries, error handling that prevents data loss, or security. Finish every part the change needs, including the callers, tests, fixtures and docs it breaks.
 - **Bug fixes**: Before changing a shared function's behaviour, find every caller, then fix the root cause once in the shared code.
 - **No redundant comments**: Never write a comment that restates what the code already says. Comment only what the code cannot show: a non-obvious reason, constraint or workaround.
-- **Public API**: Every public type is used by other projects. Avoid breaking changes (semantic versioning); when one is unavoidable, call it out in the merge request. Keep logic extensible where reasonable (e.g. `virtual` methods). New public APIs need the approval of a design board member (see `Integration Workflow` in `README.md`), so describe them in the merge request.
+- **Public API**: Every public type is used by other projects. Avoid breaking changes (semantic versioning); when one is unavoidable, call it out in the merge request and describe the required changes for consumers in the migration guide of the upcoming major version (currently `docs/migrate-10-to-11.md`). Keep logic extensible where reasonable (e.g. `virtual` methods). New public APIs need the approval of a design board member (see `Integration Workflow` in `README.md`), so describe them in the merge request.
 - **Dependencies**: Reference as few packages as possible; check the allowed base dependencies in `README.md` before adding one.
 
 ## Structure
@@ -62,7 +62,7 @@ The package docs are integration guides for consumers who only see the NuGet pag
 - Structure test methods with `// Arrange`, `// Act`, `// Assert` comments where the test is longer than a few lines.
 - The runner is xUnit v3 via Microsoft.Testing.Platform (`global.json`). Run tests with `dotnet test` from the test project directory, or `dotnet test --solution Extensions.slnx` for all.
 - `dotnet test --filter ...` (VSTest syntax) is silently ignored and runs all tests. To run a subset, build and run the test executable directly with xUnit v3 arguments, e.g. `artifacts/bin/<TestProject>/debug/<AssemblyName>.exe -class "<Namespace>.<TestClass>"` (or `-method`, `-list classes`, `--help`).
-- Database tests (Hangfire, `UnitTests.EntityFrameworkCore.*`) start PostgreSQL/SQL Server via Testcontainers, so **Docker must be running**. Locally the containers are reused across runs; in CI the databases run as services instead.
+- Database tests (Hangfire, `UnitTests.EntityFrameworkCore.*`) start PostgreSQL/SQL Server and the Email tests start Mailpit via Testcontainers, so **Docker must be running**. Locally the database containers are reused across runs; in CI they run as services instead.
 - A reused container keeps its databases and does not pick up schema changes (e.g. changed test entities or migrations). Remove the containers so the next test run recreates them:
 
   ```bash
